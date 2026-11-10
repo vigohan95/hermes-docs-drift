@@ -195,8 +195,9 @@ hermes plugins install vigohan95/hermes-docs-drift --enable
 Needs Hermes 0.21.6 or later. That is the oldest numbered release, and its source already
 has the three hooks and the registration calls used here
 ([evidence/requires-hermes.txt](evidence/requires-hermes.txt)); the plugin itself was run
-only on Hermes `main` at commit `b7db40d` (2026-11-10, after v0.23.1). No Python packages are
-installed: the plugin uses the standard library only. `git` should be on `PATH`; without it
+on Hermes `main` only: the recorded sessions at commit `b7db40d` (2026-11-10, after v0.23.1),
+and the two scripted sessions in CI at `b7db40d` and at `3d4dd10`, 986 commits later. No
+Python packages are installed: the plugin uses the standard library only. `git` should be on `PATH`; without it
 the plugin walks the directory and cannot compare with an earlier state.
 
 Hermes scans every file of a plugin repository before it installs it, and with a verdict of
@@ -637,6 +638,9 @@ the numbers of the code that is shipped.
 - Writes nothing. The baseline and the cache live in memory for the session.
 - Makes no network request and sends no telemetry.
 
+[SECURITY.md](SECURITY.md) adds what text from the repository reaches the model through a
+finding, and how to report a problem.
+
 ## The demos
 
 There are three drivers. Each runs an unmodified Hermes (agent loop, `patch` tool, plugin
@@ -721,12 +725,13 @@ says which file comes from which run.
 
 The output of `hermes plugins validate` is in [evidence/validate.txt](evidence/validate.txt).
 The workflow in `.github/workflows/ci.yml` runs the tests on Linux, macOS and Windows with
-Python 3.11, 3.12 and 3.14 and then, on Linux, validates and installs the plugin in a pinned
-Hermes checkout and runs both scripted demos. The Linux job fails if the validator's security
-scan line says anything but `safe`, and it installs without `--force` and without a terminal.
-It does not run `demo/run_real.py` or `demo/type_drift.py`. All ten jobs passed on commit
-`9f94e8d`, those two checks included. The one commit after it changed this paragraph and
-added the images in `media/` and the frame near the top of this file; no code, test or
+Python 3.11, 3.12 and 3.14 and then, on Linux, validates and installs the plugin and runs both
+scripted demos in two Hermes checkouts: `b7db40d`, the commit the recorded sessions were made
+with, and `3d4dd10`, which was upstream `main` on 2026-11-10 at 17:13 UTC, 986 commits later.
+Each of those two jobs fails if the validator's security scan line says anything but `safe`,
+and installs without `--force` and without a terminal. They do not run `demo/run_real.py` or
+`demo/type_drift.py`. All eleven jobs passed on commit `dd5df40`. The one commit after it
+changed text in this file and added `CHANGELOG.md` and `SECURITY.md`; no code, test or
 workflow file changed. The first run, on `35e6564`, failed in the nine test jobs: pytest
 imported the entry point under the name of the checkout directory, which is not a Python
 identifier there. That is fixed in `2eb97cd` and `tests/test_layout.py` guards it. The
