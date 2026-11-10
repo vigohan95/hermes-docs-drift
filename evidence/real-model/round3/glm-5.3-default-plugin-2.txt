@@ -1,0 +1,211 @@
+docs-drift run with a real model   2026-11-10T14:51:25Z
+run:      round 3, default, with the plugin (default settings), session 2
+hermes:   Hermes Agent vgit.b7db40d (2026.9.24) · stable · local b7db40d82568
+plugin:   docs-drift is installed in this Hermes home (enabled, 0.1.0)
+settings: defaults
+source:   docs-drift commit ebbf376
+model:    glm-5.3 at https://api.vultrinference.com/v1, through demo/relay.py on 127.0.0.1:49662
+          (the relay forwards requests unchanged, adds the key and counts; Hermes has no key)
+project:  a fresh copy of examples/notesync-tasks with one commit
+task:     default
+prompt:   Make notesync retry 5 times by default instead of 3.
+toolsets: file
+
+--- 1. what Hermes did (the events it prints with --format stream-json) ---
+$ hermes chat -q "Make notesync retry 5 times by default instead of 3." --provider custom --base-url http://127.0.0.1:49662/v1 --api-key not-a-real-key -m glm-5.3 --yolo --format stream-json --max-turns 20 -t file
+[14:51:54Z] tool call    search_files {"pattern": "retr", "target": "content", "path": "%TEMP%\\docs-drift-real-bznb2kw5\\notesync"}
+[14:51:57Z] tool result  search_files (2595 ms)
+[14:52:16Z] tool call    patch {"new_string": "default=5, help=\"how often a failed upload is tried again\"", "old_string": "default=3, help=\"how often a failed upload is tried again\"", "path": "%TEMP%\\docs-drift-real-bznb2kw5\\notesync\\notesync\\cli.py"}
+[14:52:16Z] tool call    patch {"new_string": "| `--retries` | `5` |", "old_string": "| `--retries` | `3` |", "path": "%TEMP%\\docs-drift-real-bznb2kw5\\notesync\\README.md"}
+[14:52:20Z] tool result  patch (3639 ms)
+             (fields from Hermes' own tool, not shown: diff, files_modified, lint, resolved_path, success)
+             (no docs_drift block: the edit caused no new drift and resolved none)
+[14:52:20Z] tool result  patch (3650 ms)
+             (fields from Hermes' own tool, not shown: diff, files_modified, lint, resolved_path, success)
+             (no docs_drift block: the edit caused no new drift and resolved none)
+[14:52:22Z] tool call    read_file {"path": "%TEMP%\\docs-drift-real-bznb2kw5\\notesync\\docs\\configuration.md"}
+[14:52:22Z] tool result  read_file (801 ms)
+[14:52:25Z] tool call    patch {"new_string": "notesync retries a failed upload 5 times by default.", "old_string": "notesync retries a failed upload 3 times by default.", "path": "%TEMP%\\docs-drift-real-bznb2kw5\\notesync\\docs\\configuration.md"}
+[14:52:25Z] tool call    patch {"new_string": "With the default of 5 retries", "old_string": "With the default of 3 retries", "path": "%TEMP%\\docs-drift-real-bznb2kw5\\notesync\\docs\\troubleshooting.md"}
+[14:52:25Z] tool call    patch {"new_string": "A failed upload is tried again 5 times before notesync gives up on that file.", "old_string": "A failed upload is tried again 3 times before notesync gives up on that file.", "path": "%TEMP%\\docs-drift-real-bznb2kw5\\notesync\\README.md"}
+[14:52:29Z] tool result  patch (4378 ms)
+             (fields from Hermes' own tool, not shown: diff, files_modified, lint, resolved_path, success)
+             (no docs_drift block: the edit caused no new drift and resolved none)
+[14:52:29Z] tool result  patch (4381 ms)
+             (fields from Hermes' own tool, not shown: diff, files_modified, lint, resolved_path, success)
+             (no docs_drift block: the edit caused no new drift and resolved none)
+[14:52:29Z] tool result  patch (4389 ms)
+             (fields from Hermes' own tool, not shown: diff, files_modified, lint, resolved_path, success)
+             (no docs_drift block: the edit caused no new drift and resolved none)
+[14:52:38Z] tool call    patch {"new_string": "given six attempts in total before notesync moves on.", "old_string": "given four attempts in total before notesync moves on.", "path": "%TEMP%\\docs-drift-real-bznb2kw5\\notesync\\docs\\troubleshooting.md"}
+[14:52:42Z] tool result  patch (3290 ms)
+             (fields from Hermes' own tool, not shown: diff, files_modified, lint, resolved_path, success)
+             (no docs_drift block: the edit caused no new drift and resolved none)
+[14:52:44Z] tool call    search_files {"file_glob": "*.py", "path": "%TEMP%\\docs-drift-real-bznb2kw5\\notesync", "pattern": "retries", "target": "content"}
+[14:52:45Z] tool result  search_files (1008 ms)
+[14:52:48Z] tool call    search_files {"path": "%TEMP%\\docs-drift-real-bznb2kw5\\notesync", "pattern": "default|retries", "target": "content"}
+[14:52:49Z] tool result  search_files (1040 ms)
+[14:52:52Z] tool call    search_files {"path": "%TEMP%\\docs-drift-real-bznb2kw5\\notesync", "pattern": "test", "target": "files"}
+[14:52:56Z] tool result  search_files (3649 ms)
+[14:52:59Z] tool call    tool_search {"queries": ["docs drift scan repository"]}
+[14:52:59Z] tool result  tool_search (15 ms)
+[14:53:01Z] tool call    docs_drift_scan {}
+[14:53:01Z] tool result  docs_drift_scan (60 ms)
+             {
+               "root": "%TEMP%\\docs-drift-real-bznb2kw5\\notesync",
+               "summary": {
+                 "findings": 0,
+                 "by_check": {},
+                 "doc_files_checked": 3,
+                 "code_files_read": 6,
+                 "elapsed_ms": 43
+               },
+               "findings": [],
+               "not_reported": {
+                 "stale-context": 1
+               },
+               "checks_run": [
+                 "path-missing",
+                 "cli-flag-undefined",
+                 "env-undefined",
+                 "default-mismatch",
+                 "npm-script-missing",
+                 "make-target-missing"
+               ],
+               "also_compared_with": "the code before this session's first edit: names removed since then are reported"
+             }
+[14:53:05Z] assistant    Done. The `--retries` default is now 5, and all docs that mention the old default were updated:
+             
+             - notesync/cli.py:15 — `default=3` → `default=5`
+             - README.md — options table row and prose ("tried again 5 times")
+             - docs/configuration.md:11 — "retries a failed upload 5 times by default"
+             - docs/troubleshooting.md — "default of 5 retries a file is given six attempts in total" (was 3/four)
+             
+             Verified with a docs-drift scan: 0 findings, all 3 doc files match the code. There are no tests in the repo and no other code sites reference the default.
+[14:53:05Z] end of turn  exit_code 0, 87322 ms
+
+--- 2. what the model was sent and what it answered (the relay log, unedited) ---
+[14:51:45Z] request 1 to model glm-5.3: 2 messages, 7 tools offered
+docs_drift tools: listed inside another tool's description
+system prompt (12951 characters, not shown)
+user message:
+Make notesync retry 5 times by default instead of 3.
+[14:51:54Z] answer 1 (9.2 s, prompt 4836 / completion 57 tokens):
+tool call: search_files {"pattern": "retr", "target": "content", "path": "%TEMP%\\docs-drift-real-bznb2kw5\\notesync"}
+
+[14:51:57Z] request 2 to model glm-5.3: 4 messages, 7 tools offered
+assistant: (its own earlier tool call: search_files)
+tool result:
+{"total_count": 9, "matches_format": "path-grouped: each file path on its own line, followed by indented '<line>: <content>' rows for matches in that file", "matches_text": "%TEMP%/docs-drift-real-bznb2kw5/notesync\\README.md\n  18: | `--retries` | `3` | how often a failed upload is tried again |\n%TEMP%/docs-drift-real-bznb2kw5/notesync\\docs\\configuration.md\n  11: notesync retries a failed upload 3 times by default. To turn retrying off:\n  14: notesync ./notes --retries 0\n%TEMP%/docs-drift-real-bznb2kw5/notesync\\notesync\\cli.py\n  15:     parser.add_argument(\"--retries\", type=int, default=3, help=\"how often a failed upload is tried again\")\n  26:         upload(copied, token, timeout=args.timeout, retries=args.retries)\n%TEMP%/docs-drift-real-bznb2kw5/notesync\\docs\\troubleshooting.md\n  5: Raise the time limit, for example `--timeout 120`. With the default of 3 retries a file is\n%TEMP%/docs-drift-real-bznb2kw5/notesync\\notesync\\upload.py\n  24: def upload(files: List[Path], token: str, timeout: int, retries: int) -> int:\n  25:     \"\"\"Upload the files; a file that fails is tried again ``retries`` times.\"\"\"\n  28:         for attempt in range(retries + 1):"}
+[14:52:16Z] answer 2 (19.1 s, prompt 5317 / completion 179 tokens):
+tool call: patch {"new_string": "default=5, help=\"how often a failed upload is tried again\"", "old_string": "default=3, help=\"how often a failed upload is tried again\"", "path": "%TEMP%\\docs-drift-real-bznb2kw5\\notesync\\notesync\\cli.py"}
+tool call: patch {"new_string": "| `--retries` | `5` |", "old_string": "| `--retries` | `3` |", "path": "%TEMP%\\docs-drift-real-bznb2kw5\\notesync\\README.md"}
+
+[14:52:20Z] request 3 to model glm-5.3: 7 messages, 7 tools offered
+assistant: (its own earlier tool call: patch) (its own earlier tool call: patch)
+tool result:
+{"success": true, "diff": "--- a/%TEMP%\\docs-drift-real-bznb2kw5\\notesync\\notesync\\cli.py\n+++ b/%TEMP%\\docs-drift-real-bznb2kw5\\notesync\\notesync\\cli.py\n@@ -12,7 +12,7 @@\n     parser.add_argument(\"source\", help=\"folder with .md notes\")\n     parser.add_argument(\"--output-dir\", default=\"./out\", help=\"where the copies go\")\n     parser.add_argument(\"--timeout\", type=int, default=30, help=\"seconds to wait for the server\")\n-    parser.add_argument(\"--retries\", type=int, default=3, help=\"how often a failed upload is tried again\")\n+    parser.add_argument(\"--retries\", type=int, default=5, help=\"how often a failed upload is tried again\")\n     parser.add_argument(\"--legacy-sync\", action=\"store_true\",\n                         help=\"deprecated: copy the files one by one, as version 0.2 did\")\n     return parser\n", "files_modified": ["%TEMP%\\docs-drift-real-bznb2kw5\\notesync\\notesync\\cli.py"], "lint": {"status": "ok", "output": ""}, "resolved_path": "%TEMP%\\docs-drift-real-bznb2kw5\\notesync\\notesync\\cli.py"}
+tool result:
+{"success": true, "diff": "--- a/%TEMP%\\docs-drift-real-bznb2kw5\\notesync\\README.md\n+++ b/%TEMP%\\docs-drift-real-bznb2kw5\\notesync\\README.md\n@@ -15,7 +15,7 @@\n | --- | --- | --- |\n | `--output-dir` | `./out` | where the copies go |\n | `--timeout` | `30` | seconds to wait for the server |\n-| `--retries` | `3` | how often a failed upload is tried again |\n+| `--retries` | `5` | how often a failed upload is tried again |\n | `--legacy-sync` | off | deprecated: copy the files one by one |\n \n A failed upload is tried again 3 times before notesync gives up on that file.\n", "files_modified": ["%TEMP%\\docs-drift-real-bznb2kw5\\notesync\\README.md"], "lint": {"status": "skipped", "message": "No linter for .md files"}, "resolved_path": "%TEMP%\\docs-drift-real-bznb2kw5\\notesync\\README.md"}
+[14:52:21Z] answer 3 (1.8 s, prompt 6163 / completion 41 tokens):
+tool call: read_file {"path": "%TEMP%\\docs-drift-real-bznb2kw5\\notesync\\docs\\configuration.md"}
+
+[14:52:22Z] request 4 to model glm-5.3: 9 messages, 7 tools offered
+assistant: (its own earlier tool call: read_file)
+tool result:
+{"content": "1|# Configuration\n2|\n3|## Environment\n4|\n5|- `NOTESYNC_TOKEN`: token for the upload.\n6|- `NOTESYNC_TOKEN_FILE`: path of a file that holds the token. Used when `NOTESYNC_TOKEN`\n7|  is not set.\n8|\n9|## Retries\n10|\n11|notesync retries a failed upload 3 times by default. To turn retrying off:\n12|\n13|```sh\n14|notesync ./notes --retries 0\n15|```\n16|\n17|## Where the copies go\n18|\n19|Pass `--output-dir`:\n20|\n21|```sh\n22|notesync ./notes --output-dir /mnt/backup/notes\n23|```", "total_lines": 23, "file_size": 411, "truncated": false, "is_binary": false, "is_image": false, "not_found": false}
+[14:52:24Z] answer 4 (2.2 s, prompt 6425 / completion 226 tokens):
+tool call: patch {"new_string": "notesync retries a failed upload 5 times by default.", "old_string": "notesync retries a failed upload 3 times by default.", "path": "%TEMP%\\docs-drift-real-bznb2kw5\\notesync\\docs\\configuration.md"}
+tool call: patch {"new_string": "With the default of 5 retries", "old_string": "With the default of 3 retries", "path": "%TEMP%\\docs-drift-real-bznb2kw5\\notesync\\docs\\troubleshooting.md"}
+tool call: patch {"new_string": "A failed upload is tried again 5 times before notesync gives up on that file.", "old_string": "A failed upload is tried again 3 times before notesync gives up on that file.", "path": "%TEMP%\\docs-drift-real-bznb2kw5\\notesync\\README.md"}
+
+[14:52:29Z] request 5 to model glm-5.3: 13 messages, 7 tools offered
+assistant: (its own earlier tool call: patch) (its own earlier tool call: patch) (its own earlier tool call: patch)
+tool result:
+{"success": true, "diff": "--- a/%TEMP%\\docs-drift-real-bznb2kw5\\notesync\\docs\\configuration.md\n+++ b/%TEMP%\\docs-drift-real-bznb2kw5\\notesync\\docs\\configuration.md\n@@ -8,7 +8,7 @@\n \n ## Retries\n \n-notesync retries a failed upload 3 times by default. To turn retrying off:\n+notesync retries a failed upload 5 times by default. To turn retrying off:\n \n ```sh\n notesync ./notes --retries 0\n", "files_modified": ["%TEMP%\\docs-drift-real-bznb2kw5\\notesync\\docs\\configuration.md"], "lint": {"status": "skipped", "message": "No linter for .md files"}, "resolved_path": "%TEMP%\\docs-drift-real-bznb2kw5\\notesync\\docs\\configuration.md"}
+tool result:
+{"success": true, "diff": "--- a/%TEMP%\\docs-drift-real-bznb2kw5\\notesync\\docs\\troubleshooting.md\n+++ b/%TEMP%\\docs-drift-real-bznb2kw5\\notesync\\docs\\troubleshooting.md\n@@ -2,7 +2,7 @@\n \n ## Uploads fail on a slow connection\n \n-Raise the time limit, for example `--timeout 120`. With the default of 3 retries a file is\n+Raise the time limit, for example `--timeout 120`. With the default of 5 retries a file is\n given four attempts in total before notesync moves on.\n \n ## Copies are incomplete on a network drive\n", "files_modified": ["%TEMP%\\docs-drift-real-bznb2kw5\\notesync\\docs\\troubleshooting.md"], "lint": {"status": "skipped", "message": "No linter for .md files"}, "resolved_path": "%TEMP%\\docs-drift-real-bznb2kw5\\notesync\\docs\\troubleshooting.md"}
+tool result:
+{"success": true, "diff": "--- a/%TEMP%\\docs-drift-real-bznb2kw5\\notesync\\README.md\n+++ b/%TEMP%\\docs-drift-real-bznb2kw5\\notesync\\README.md\n@@ -18,7 +18,7 @@\n | `--retries` | `5` | how often a failed upload is tried again |\n | `--legacy-sync` | off | deprecated: copy the files one by one |\n \n-A failed upload is tried again 3 times before notesync gives up on that file.\n+A failed upload is tried again 5 times before notesync gives up on that file.\n \n ## Upload\n \n", "files_modified": ["%TEMP%\\docs-drift-real-bznb2kw5\\notesync\\README.md"], "lint": {"status": "skipped", "message": "No linter for .md files"}, "resolved_path": "%TEMP%\\docs-drift-real-bznb2kw5\\notesync\\README.md"}
+[14:52:38Z] answer 5 (9.4 s, prompt 7461 / completion 97 tokens):
+tool call: patch {"new_string": "given six attempts in total before notesync moves on.", "old_string": "given four attempts in total before notesync moves on.", "path": "%TEMP%\\docs-drift-real-bznb2kw5\\notesync\\docs\\troubleshooting.md"}
+
+[14:52:42Z] request 6 to model glm-5.3: 15 messages, 7 tools offered
+assistant: (its own earlier tool call: patch)
+tool result:
+{"success": true, "diff": "--- a/%TEMP%\\docs-drift-real-bznb2kw5\\notesync\\docs\\troubleshooting.md\n+++ b/%TEMP%\\docs-drift-real-bznb2kw5\\notesync\\docs\\troubleshooting.md\n@@ -3,7 +3,7 @@\n ## Uploads fail on a slow connection\n \n Raise the time limit, for example `--timeout 120`. With the default of 5 retries a file is\n-given four attempts in total before notesync moves on.\n+given six attempts in total before notesync moves on.\n \n ## Copies are incomplete on a network drive\n \n", "files_modified": ["%TEMP%\\docs-drift-real-bznb2kw5\\notesync\\docs\\troubleshooting.md"], "lint": {"status": "skipped", "message": "No linter for .md files"}, "resolved_path": "%TEMP%\\docs-drift-real-bznb2kw5\\notesync\\docs\\troubleshooting.md"}
+[14:52:44Z] answer 6 (1.9 s, prompt 7833 / completion 57 tokens):
+tool call: search_files {"file_glob": "*.py", "path": "%TEMP%\\docs-drift-real-bznb2kw5\\notesync", "pattern": "retries", "target": "content"}
+
+[14:52:45Z] request 7 to model glm-5.3: 17 messages, 7 tools offered
+assistant: (its own earlier tool call: search_files)
+tool result:
+{"total_count": 5, "matches_format": "path-grouped: each file path on its own line, followed by indented '<line>: <content>' rows for matches in that file", "matches_text": "%TEMP%/docs-drift-real-bznb2kw5/notesync\\notesync\\cli.py\n  15:     parser.add_argument(\"--retries\", type=int, default=5, help=\"how often a failed upload is tried again\")\n  26:         upload(copied, token, timeout=args.timeout, retries=args.retries)\n%TEMP%/docs-drift-real-bznb2kw5/notesync\\notesync\\upload.py\n  24: def upload(files: List[Path], token: str, timeout: int, retries: int) -> int:\n  25:     \"\"\"Upload the files; a file that fails is tried again ``retries`` times.\"\"\"\n  28:         for attempt in range(retries + 1):"}
+[14:52:48Z] answer 7 (3.5 s, prompt 8131 / completion 62 tokens):
+tool call: search_files {"path": "%TEMP%\\docs-drift-real-bznb2kw5\\notesync", "pattern": "default|retries", "target": "content"}
+
+[14:52:49Z] request 8 to model glm-5.3: 19 messages, 7 tools offered
+assistant: (its own earlier tool call: search_files)
+tool result:
+{"total_count": 11, "matches_format": "path-grouped: each file path on its own line, followed by indented '<line>: <content>' rows for matches in that file", "matches_text": "%TEMP%/docs-drift-real-bznb2kw5/notesync\\README.md\n  18: | `--retries` | `5` | how often a failed upload is tried again |\n%TEMP%/docs-drift-real-bznb2kw5/notesync\\docs\\troubleshooting.md\n  5: Raise the time limit, for example `--timeout 120`. With the default of 5 retries a file is\n%TEMP%/docs-drift-real-bznb2kw5/notesync\\docs\\configuration.md\n  11: notesync retries a failed upload 5 times by default. To turn retrying off:\n  14: notesync ./notes --retries 0\n%TEMP%/docs-drift-real-bznb2kw5/notesync\\notesync\\upload.py\n  24: def upload(files: List[Path], token: str, timeout: int, retries: int) -> int:\n  25:     \"\"\"Upload the files; a file that fails is tried again ``retries`` times.\"\"\"\n  28:         for attempt in range(retries + 1):\n%TEMP%/docs-drift-real-bznb2kw5/notesync\\notesync\\cli.py\n  13:     parser.add_argument(\"--output-dir\", default=\"./out\", help=\"where the copies go\")\n  14:     parser.add_argument(\"--timeout\", type=int, default=30, help=\"seconds to wait for the server\")\n  15:     parser.add_argument(\"--retries\", type=int, def ... (141 more characters)
+[14:52:52Z] answer 8 (3.1 s, prompt 8674 / completion 48 tokens):
+tool call: search_files {"path": "%TEMP%\\docs-drift-real-bznb2kw5\\notesync", "pattern": "test", "target": "files"}
+
+[14:52:56Z] request 9 to model glm-5.3: 21 messages, 7 tools offered
+assistant: (its own earlier tool call: search_files)
+tool result:
+{"total_count": 1, "files": ["%TEMP%/docs-drift-real-bznb2kw5/notesync/.git"]}
+[14:52:59Z] answer 9 (3.1 s, prompt 8765 / completion 52 tokens):
+tool call: tool_search {"queries": ["docs drift scan repository"]}
+
+[14:52:59Z] request 10 to model glm-5.3: 23 messages, 7 tools offered
+assistant: (its own earlier tool call: tool_search)
+tool result:
+{"queries": ["docs drift scan repository"], "total_available": 2, "results": [{"query": "docs drift scan repository", "matches": ["docs_drift_scan"]}], "tools": {"docs_drift_scan": {"source": "plugin", "source_name": "docs_drift", "description": "Check that README and Markdown docs still match the code in a repository: command-line flags, environment variables, documented defaults, npm scripts, make targets and links to files. Offline and deterministic (parses files, runs git; no model, no network). Returns findings with file:line on the docs side and, where known, on the code side. Use changed_only=true after editing code to see only the drift caused by uncommitted changes.", "required": []}}}
+[14:53:01Z] request 11 to model glm-5.3: 25 messages, 7 tools offered
+assistant: (its own earlier tool call: tool_call)
+tool result:
+{"root": "%TEMP%\\docs-drift-real-bznb2kw5\\notesync", "summary": {"findings": 0, "by_check": {}, "doc_files_checked": 3, "code_files_read": 6, "elapsed_ms": 43}, "findings": [], "not_reported": {"stale-context": 1}, "checks_run": ["path-missing", "cli-flag-undefined", "env-undefined", "default-mismatch", "npm-script-missing", "make-target-missing"], "also_compared_with": "the code before this session's first edit: names removed since then are reported"}
+[14:53:02Z] answer 10 (2.6 s, prompt 8981 / completion 27 tokens):
+tool call: tool_call {"calls": [{"name": "docs_drift_scan", "arguments": {}}]}
+
+[14:53:05Z] answer 11 (3.6 s, prompt 9159 / completion 148 tokens):
+text: Done. The `--retries` default is now 5, and all docs that mention the old default were updated:
+
+- notesync/cli.py:15 — `default=3` → `default=5`
+- README.md — options table row and prose ("tried again 5 times")
+- docs/configuration.md:11 — "retries a failed upload 5 times by default"
+- docs/troubleshooting.md — "default of 5 retries a file is given six attempts in total" (was 3/four)
+
+Verified with a docs-drift scan: 0 findings, all 3 doc files match the code. There are no tests in the repo and no other code sites reference the default.
+
+--- 3. afterwards ---
+Hermes exit_code: 0
+chat requests sent to the model: 11 (of which 0 side requests without tools)
+tokens reported by Hermes: {"input": 81745, "output": 994, "total": 82739, "cache_read": 75264, "cache_write": 0}
+edit results that carried a docs_drift entry: 0 (0 findings reported in them)
+reminder before the end of the turn (pre_verify): not delivered
+the plugin told the model something: no
+edits of doc files the model issued: 5
+
+$ git status --short
+ M README.md
+ M docs/configuration.md
+ M docs/troubleshooting.md
+ M notesync/cli.py
+$ git diff --stat
+ README.md               | 4 ++--
+ docs/configuration.md   | 2 +-
+ docs/troubleshooting.md | 4 ++--
+ notesync/cli.py         | 2 +-
+ 4 files changed, 6 insertions(+), 6 deletions(-)
+$ python -m docsdrift . --since HEAD        (the same scanner, run outside Hermes)
+docs-drift (new since HEAD): 0 findings (3 doc files checked against 6 code files, 213 ms)
+
+withheld as uncertain: 1 (stale-context: 1).
+note: Compared with HEAD: 4 changed file(s), 0 finding(s) already present before the change are not shown.
+
+rule:     no doc line about retrying still says 3 or three (changelogs not counted); checked by demo/tasks.py
+code:     the requested change is in the code
+OUTCOME: docs consistent
+SUMMARY: {"doc_edits_after": 0, "doc_edits_before": 5, "entries": 0, "entries_with_findings": 0, "exit_code": 0, "findings_reported": 0, "model": "glm-5.3", "plugin": true, "reminder": false, "requests": 11, "settings": "defaults", "spoke": false, "spoke_how": "", "stale_lines": 0, "task": "default", "verdict": "docs consistent"}
