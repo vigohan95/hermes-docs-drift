@@ -93,6 +93,7 @@ class Index:
     flag_facts: Dict[str, List[Any]] = field(default_factory=dict)     # key -> [Fact]
     env_tokens: FrozenSet[str] = frozenset()
     env_facts: Dict[str, List[Any]] = field(default_factory=dict)      # NAME -> [Fact]
+    env_edit_facts: Dict[str, List[Any]] = field(default_factory=dict) # NAME -> [Fact], see facts.UNDER_ENV_READ
     npm_scripts: Dict[str, str] = field(default_factory=dict)          # name -> package.json path
     make_targets: Dict[str, str] = field(default_factory=dict)         # name -> "Makefile:line"
     files: FrozenSet[str] = frozenset()

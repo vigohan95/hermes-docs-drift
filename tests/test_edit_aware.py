@@ -222,3 +222,129 @@ def test_fixing_the_docs_clears_the_findings(notesync):
     edit(notesync, "docs/configuration.md", "--output-dir", "--dest")
     assert sc.scan(before=before.index).findings == []
     assert sc.scan_changes("HEAD")[0].findings == []
+
+
+# ------------------------------------------------------------------ names only the edit-aware path knows
+ZO = {
+    "Cargo.toml": """
+        [package]
+        name = "zo"
+        version = "0.1.0"
+        """,
+    "src/config.rs": """
+        use std::env;
+
+        pub fn maxage() -> Option<std::ffi::OsString> {
+            env::var_os("_ZO_MAXAGE")
+        }
+
+        pub fn data_dir() -> Option<std::ffi::OsString> {
+            env::var_os("_ZO_DATA_DIR")
+        }
+        """,
+    "README.md": """
+        # zo
+
+        ## Environment variables
+
+        - `_ZO_DATA_DIR`: where the database is kept.
+        - `_ZO_MAXAGE`: the total age after which entries are deleted.
+        """,
+}
+
+
+def test_removed_variable_whose_name_starts_with_an_underscore(make_repo):
+    root = make_repo(dict(ZO))
+    sc = Scanner(root)
+    before = sc.scan(checks="all")
+    assert before.findings == []
+    edit(root, "src/config.rs", '"_ZO_MAXAGE"', '"_ZO_MAX_AGE"')
+    found = by_check(sc.scan(before=before.index), "env-undefined")
+    assert [(f.name, f.doc_file, f.doc_line) for f in found] == [("_ZO_MAXAGE", "README.md", 6)]
+    assert "before the edit the code read `_ZO_MAXAGE` at src/config.rs:4" in found[0].why
+
+
+def test_underscore_variable_still_written_in_the_code_was_not_removed(make_repo):
+    files = dict(ZO)
+    files["src/help.rs"] = 'pub const HELP: &str = "_ZO_MAXAGE  maximum total age";\n'
+    root = make_repo(files)
+    sc = Scanner(root)
+    before = sc.scan()
+    edit(root, "src/config.rs", '"_ZO_MAXAGE"', '"_ZO_MAX_AGE"')
+    assert by_check(sc.scan(before=before.index), "env-undefined") == []
+
+
+def test_plain_scan_does_not_know_underscore_variables(make_repo):
+    files = dict(ZO)
+    files["README.md"] = ZO["README.md"] + "        - `_ZO_GONE`: read by nothing.\n"
+    root = make_repo(files)
+    assert Scanner(root).scan(checks="all").findings == []
+
+
+CLICKAPP = {
+    "pyproject.toml": """
+        [project]
+        name = "chat"
+        version = "0.1.0"
+
+        [project.scripts]
+        chat = "chat.cli:main"
+        """,
+    "chat/__init__.py": "",
+    "chat/cli.py": """
+        import os
+
+        import click
+
+
+        def setting(name):
+            return os.environ.get(name.upper())
+
+
+        @click.command()
+        @click.option("--tools-debug", is_flag=True, envvar="CHAT_TOOLS_DEBUG", help="show tool calls")
+        @click.option("--key", envvar=["CHAT_KEY", "CHAT_API_KEY"], help="the API key")
+        def main(tools_debug, key):
+            click.echo(str(tools_debug) + str(key))
+        """,
+    "README.md": """
+        # chat
+
+        Add `--tools-debug` to see the tool calls. You can also set the `CHAT_TOOLS_DEBUG`
+        environment variable to `1`.
+
+        The key is read from `--key`, `CHAT_KEY` or `CHAT_API_KEY`.
+        """,
+}
+
+
+def test_removed_click_envvar_binding(make_repo):
+    root = make_repo(dict(CLICKAPP))
+    sc = Scanner(root)
+    before = sc.scan(checks="all")
+    assert before.findings == []
+    edit(root, "chat/cli.py", 'envvar="CHAT_TOOLS_DEBUG"', 'envvar="CHAT_DEBUG_TOOLS"')
+    found = by_check(sc.scan(before=before.index), "env-undefined")
+    assert [(f.name, f.doc_file, f.doc_line) for f in found] == [("CHAT_TOOLS_DEBUG", "README.md", 3)]
+    assert "before the edit an option was bound to `CHAT_TOOLS_DEBUG` with envvar= at chat/cli.py:11" in found[0].why
+
+
+def test_removed_name_from_a_click_envvar_list(make_repo):
+    root = make_repo(dict(CLICKAPP))
+    sc = Scanner(root)
+    before = sc.scan()
+    edit(root, "chat/cli.py", 'envvar=["CHAT_KEY", "CHAT_API_KEY"]', 'envvar="CHAT_KEY"')
+    found = by_check(sc.scan(before=before.index), "env-undefined")
+    assert [(f.name, f.doc_line) for f in found] == [("CHAT_API_KEY", 6)]
+
+
+def test_click_envvar_binding_changes_nothing_in_a_plain_scan(make_repo):
+    files = dict(CLICKAPP)
+    files["chat/cli.py"] = CLICKAPP["chat/cli.py"].replace('envvar="CHAT_TOOLS_DEBUG", ', "")
+    with_binding = Scanner(make_repo(dict(CLICKAPP))).scan(checks="all")
+    without = Scanner(make_repo(files)).scan(checks="all")
+    assert with_binding.findings == []
+    # The docs name a variable nothing binds any more. Without the code as it was before, a
+    # plain scan cannot tell that from a name the code builds (``setting()`` above): withheld.
+    assert without.findings == []
+    assert without.suppressed.get("env-maybe-derived-from-settings-field") == 1

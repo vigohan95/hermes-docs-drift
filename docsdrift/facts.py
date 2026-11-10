@@ -43,6 +43,19 @@ ENV_READ_ATTR = re.compile(
     r"(?:process|import\.meta)\.env\.([A-Z][A-Z0-9_]{2,})\b(?:\s*(?:\|\||\?\?)\s*"
     + r"(\"[^\"\n]*\"|'[^'\n]*'|`[^`\n$]*`|-?\d+(?:\.\d+)?|true|false))?"
 )
+# Seen only by the edit-aware path (what an edit removed), never by a plain scan:
+# a read of a variable whose name starts with an underscore (zoxide's ``_ZO_MAXAGE``),
+# and a variable click or typer binds to an option with ``envvar=``.
+_UNDER = r"(_[A-Z][A-Z0-9_]{2,})"
+UNDER_ENV_TOKEN = re.compile(r"(?<![A-Za-z0-9_])_[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)*(?![A-Za-z0-9_])")
+UNDER_ENV_READ = re.compile(
+    r"(?:os\.environ\.get|os\.getenv|environ\.get|getenv|os\.Getenv|os\.LookupEnv|env::var(?:_os)?|"
+    r"System\.getenv|ENV\.fetch|Deno\.env\.get|env\.get)\s*\(\s*[\"']" + _UNDER + r"[\"']"
+    r"|(?:os\.environ|environ|\$_SERVER|process\.env\b|(?:\$_)?ENV)\s*\[\s*[\"']" + _UNDER + r"[\"']\s*\]"
+    r"|(?:process|import\.meta)\.env\." + _UNDER + r"\b"
+)
+ENVVAR_BINDING = re.compile(r"\benvvar\s*=\s*(\[[^\]\n]*\]|\([^)\n]*\)|\"[^\"\n]*\"|'[^'\n]*')")
+_ENVVAR_NAME = re.compile(r"[\"']([A-Z_][A-Z0-9_]{2,})[\"']")
 DYN_PREFIX = re.compile(r"[\"'`]([A-Z][A-Z0-9]*(?:_[A-Z0-9]+)*_)(?:[\"'`]|\{|\$\{|%s|%\()")
 ENV_PREFIX_DECL = re.compile(
     r"(?i)(?:env_?prefix|SetEnvPrefix|envPrefix|env_nested_delimiter|prefix)\s*[=:(]\s*[\"']([A-Za-z][A-Za-z0-9_]*)[\"']"
@@ -75,7 +88,7 @@ def is_support_path(rel: str) -> bool:
 
 @dataclass
 class Fact:
-    kind: str                 # "flag" | "env"
+    kind: str                 # "flag" | "env" | "env-edit" (used only to tell what an edit removed)
     name: str                 # "--dry-run" | "APP_PORT"
     file: str
     line: int
@@ -88,6 +101,7 @@ class Fact:
 @dataclass
 class FileFacts:
     env_tokens: Set[str] = field(default_factory=set)
+    under_tokens: Set[str] = field(default_factory=set)      # _NAMES written in the file
     flag_literals: Set[str] = field(default_factory=set)
     facts: List[Fact] = field(default_factory=list)
     dyn_prefixes: Set[str] = field(default_factory=set)
@@ -319,8 +333,19 @@ def extract_file(rel: str, text: str) -> FileFacts:
                 lit = m.group(2) if rx is not ENV_READ_INDEX and m.lastindex and m.lastindex >= 2 else None
                 out.facts.append(Fact("env", name, rel, line, _unquote(lit), lit is not None, "env"))
         out.auto_env = bool(AUTO_ENV.search(text))
+        if "envvar" in text:
+            for m in ENVVAR_BINDING.finditer(text):
+                line = _line_of(text, m.start())
+                for name in _ENVVAR_NAME.findall(m.group(1)):
+                    out.facts.append(Fact("env-edit", name, rel, line, None, False, "envvar"))
     else:
         out.auto_env = bool(_AUTO_ENV_NO_ENV_WORD.search(text))
+    if '"_' in text or "'_" in text or "._" in text:
+        out.under_tokens = set(UNDER_ENV_TOKEN.findall(text))
+        if out.under_tokens:
+            for m in UNDER_ENV_READ.finditer(text):
+                name = m.group(1) or m.group(2) or m.group(3)
+                out.facts.append(Fact("env-edit", name, rel, _line_of(text, m.start()), None, False, "env"))
     if '_"' in text or "_'" in text or "_`" in text or "_{" in text or "_$" in text or "_%" in text:
         out.dyn_prefixes = set(DYN_PREFIX.findall(text))
     if "refix" in text or "REFIX" in text:

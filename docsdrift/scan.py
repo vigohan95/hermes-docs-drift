@@ -152,6 +152,7 @@ class Scanner:
             return result
 
         env_tokens: Set[str] = set()
+        under_tokens: Set[str] = set()
         flag_literals: Set[str] = set()
         product_flag_literals: Set[str] = set()
         facts: List[Fact] = []
@@ -171,6 +172,7 @@ class Scanner:
                 continue
             keys[rel] = self._facts[rel][0]
             env_tokens |= ff.env_tokens
+            under_tokens |= ff.under_tokens
             flag_literals |= ff.flag_literals
             facts.extend(ff.facts)
             if not is_support_path(rel):
@@ -199,12 +201,12 @@ class Scanner:
         ctx = Context(
             repo=repo, docs=docs, project=project, env_tokens=env_tokens, flag_literals=flag_literals,
             facts=facts, dyn_prefixes=dyn_prefixes, auto_env=auto_env, loose=loose, doc_mentions=doc_mentions,
-            before=before, keys=keys,
+            before=before, keys=keys, under_tokens=under_tokens,
         )
         result.index = Index(
             flag_literals=frozenset(flag_literals), product_flag_literals=frozenset(product_flag_literals),
             flag_facts=ctx.flag_facts, env_tokens=frozenset(env_tokens),
-            env_facts=ctx.env_facts, npm_scripts=dict(project.npm_scripts), make_targets=dict(project.make_targets),
+            env_facts=ctx.env_facts, env_edit_facts=ctx.env_edit_facts, npm_scripts=dict(project.npm_scripts), make_targets=dict(project.make_targets),
             files=frozenset(repo.files), keys=keys,
         )
         floor = CONFIDENCE_ORDER.get(min_confidence, 1)

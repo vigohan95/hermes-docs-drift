@@ -124,6 +124,7 @@ class Context:
         doc_mentions: Callable[[], Tuple[Set[str], Set[str]]],
         before: Optional[Index] = None,
         keys: Optional[Dict[str, Any]] = None,
+        under_tokens: Optional[Set[str]] = None,
     ):
         self.repo = repo
         self.docs = docs
@@ -142,10 +143,14 @@ class Context:
         self._env_lines: Dict[str, Dict[str, int]] = {}
         self._by_path: Dict[str, Doc] = {d.path: d for d in docs}
         self.env_facts: Dict[str, List[Fact]] = {}
+        self.env_edit_facts: Dict[str, List[Fact]] = {}       # only _diff reads these
+        self.under_tokens: Set[str] = under_tokens or set()
         self.flag_facts: Dict[str, List[Fact]] = {}
         for f in facts:
             if f.kind == "env":
                 self.env_facts.setdefault(f.name, []).append(f)
+            elif f.kind == "env-edit":
+                self.env_edit_facts.setdefault(f.name, []).append(f)
             else:
                 self.flag_facts.setdefault(norm_flag(f.name), []).append(f)
         self.name_keys: Set[str] = set()
@@ -191,6 +196,13 @@ class Context:
             if fact is None or name in self.env_facts:
                 continue
             if name in self.env_tokens:
+                continue                  # still written somewhere in the code
+            self.removed_envs[name] = fact
+        for name, facts in before.env_edit_facts.items():
+            fact = product(facts)
+            if fact is None or name in self.removed_envs or name in self.env_facts or name in self.env_edit_facts:
+                continue
+            if name in self.env_tokens or name in self.under_tokens:
                 continue                  # still written somewhere in the code
             self.removed_envs[name] = fact
         for name, facts in self.env_facts.items():
@@ -737,7 +749,8 @@ def _removed_env_findings(ctx: Context) -> List[Finding]:
                 check="env-undefined", name=name, doc_file=doc.path, doc_line=lines[0],
                 doc_quote=_clip(doc.line_text(lines[0])), doc_lines=lines,
                 message=f"`{name}` is no longer read by the code after the edit, but the docs still name it.",
-                why=[f"before the edit the code read `{name}` at {old.file}:{old.line}",
+                why=[(f"before the edit an option was bound to `{name}` with envvar= at {old.file}:{old.line}"
+                      if old.framework == "envvar" else f"before the edit the code read `{name}` at {old.file}:{old.line}"),
                      "after the edit no non-doc file contains that name",
                      f"files that changed: {ctx.changed_note()}" if ctx.changed_files else "files were removed"],
             )
