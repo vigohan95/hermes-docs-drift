@@ -57,6 +57,12 @@ WRAPPER_PREFIXES = [
 ]
 PASSTHROUGH_WORDS = {"run", "exec", "x", "dlx", "shell", "wrap", "with", "spawn", "ssh", "sh", "watch", "do"}
 IGNORED_FLAGS = {"help", "version", "h", "v"}
+# a program named after our own command: what follows are that program's flags (`llm python -m pip install --pre`)
+FOREIGN_TOOLS = {
+    "python", "python3", "pip", "pip3", "pipx", "uv", "poetry", "npm", "npx", "pnpm", "yarn", "node", "deno", "bun",
+    "docker", "podman", "kubectl", "git", "cargo", "go", "make", "bash", "zsh", "sudo", "curl", "wget", "brew", "apt",
+    "apt-get", "ssh", "env", "xargs", "time",
+}
 
 CONTRIBUTOR_DOC = re.compile(
     r"(readme|contributing|development|developing|developers?|hacking|building|build|install\w*|"
@@ -352,16 +358,52 @@ def _flags_in(tokens: List[str]) -> List[str]:
             break
         bare = tok.strip("[](),").rstrip(".")
         if not bare.startswith("--"):
-            if not bare.startswith("-") and bare.lower() in PASSTHROUGH_WORDS:
+            if not bare.startswith("-") and (bare.lower() in PASSTHROUGH_WORDS or bare in FOREIGN_TOOLS):
                 break
             continue
         name = bare[2:].split("=", 1)[0]
         if not re.match(r"^[a-zA-Z][\w-]*$", name):
             continue
+        if name.isupper():
+            continue    # `--NAME` is a placeholder
         if any(c in tok for c in "<>{}|…") and "=" not in tok:
             continue
         out.append(name)
     return out
+
+
+ITEM_LEAD = re.compile(r"^\s*(?:(?:[-*+]|\d+[.)]|#{1,6})\s+|<(?:td|tr|li|dt)\b[^>]*>\s*)+")
+LISTING_LINE = re.compile(r"^\s*(?:-[A-Za-z0-9],?\s+)?--[a-zA-Z]")
+FLAG_TOKEN = re.compile(r"(?<![\w-])--([a-zA-Z][\w-]*)")
+
+
+def _leads_item(text: str, flag_text: str) -> bool:
+    """True when ``flag_text`` opens its list item, heading or table cell.
+
+    ``* `--pre`: allow pre-releases`` documents an option; ``* ... installed with pip's `--pre` flag``
+    only mentions one.
+    """
+    stripped = text.strip()
+    if stripped.startswith("|") or " | " in stripped:
+        cell = next((c for c in stripped.split("|") if flag_text in c), stripped)
+        before = cell[: cell.find(flag_text)]
+    else:
+        body = ITEM_LEAD.sub("", text, count=1)
+        pos = body.find(flag_text)
+        if pos < 0:
+            return True
+        before = body[:pos]
+    before = re.sub(r"`\s*-[^`]*`", "", before)            # other flags listed first: `-o`, `--out`
+    before = re.sub(r"<[^>]+>|\bor\b|[\s`*_,/()\[\]:]", "", before)
+    return before == ""
+
+
+def _listing_flags(line: str) -> List[str]:
+    """Flags that open a line of an option listing (pasted --help output): ``  -o, --out DIR   where``."""
+    if not LISTING_LINE.match(line):
+        return []
+    head = re.split(r"\s{2,}", line.strip(), maxsplit=1)[0]
+    return FLAG_TOKEN.findall(head)
 
 
 def _closest_flag(ctx: Context, key: str) -> Optional[Fact]:
@@ -410,9 +452,22 @@ def check_cli_flags(ctx: Context) -> List[Finding]:
                     info["lines"].append(sp.line)
             if not LIST_OR_TABLE_LINE.match(doc.line_text(sp.line)):
                 continue
-            if doc.stale_context(sp.line):
+            if doc.stale_context(sp.line) or m.group(1).isupper():
+                continue
+            if not _leads_item(doc.line_text(sp.line), sp.text):
                 continue
             mentions.setdefault(norm_flag(m.group(1)), []).append(sp.line)
+        if ctx.removed_flags:
+            for idx, text in enumerate(doc.lines):
+                if not (doc.in_block[idx] or text.startswith(("  ", "\t"))) or "--" not in text:
+                    continue
+                for raw in _listing_flags(text):
+                    rkey = norm_flag(raw)
+                    if ctx.removed_flags.get(rkey) is None or doc.stale_context(idx + 1, edit=True):
+                        continue
+                    info = claims.setdefault((doc.path, rkey), {"lines": [], "label": "", "raw": rkey, "src": "span"})
+                    if idx + 1 not in info["lines"]:
+                        info["lines"].append(idx + 1)
         mentions = {k: v for k, v in mentions.items() if k not in IGNORED_FLAGS}
         if mentions:
             known = [k for k in mentions if _flag_strict(ctx, k)]
@@ -433,7 +488,6 @@ def check_cli_flags(ctx: Context) -> List[Finding]:
     unresolved = sorted(all_keys - strict)
     loose_known = ctx.loose(unresolved) if unresolved else set()
     structured = {k for k, v in ctx.flag_facts.items() if any(not is_support_path(f.file) for f in v)}
-    literal_convention = len(strict) >= 5 and len(strict) >= 0.8 * len(all_keys)
     findings: List[Finding] = []
     for (doc_path, key), info in sorted(claims.items()):
         if key in strict:
@@ -456,18 +510,15 @@ def check_cli_flags(ctx: Context) -> List[Finding]:
                 ctx.skip("cli-not-understood")
                 continue
         if key in loose_known:
-            if not literal_convention:
-                ctx.skip("flag-has-loose-trace")
-                continue
-            confidence = "medium"
-        else:
-            confidence = "high"
+            # the name survives as an identifier or string; only an edit that removed the flag is evidence
+            ctx.skip("flag-has-loose-trace")
+            continue
+        confidence = "high"
         line = min(info["lines"])
         near = _closest_flag(ctx, key)
         why = [
             f"no literal --{key} (or --{key.replace('-', '_')}) in any non-doc file",
-            "no identifier or string for it either" if confidence == "high" else
-            "a similarly named identifier exists, but this project defines its flags as literal strings",
+            "no identifier or string for it either",
         ]
         if info["src"] == "command":
             why.append(f"the doc line runs this project's own command `{info['label']}`")
@@ -570,8 +621,12 @@ def check_flags_undocumented(ctx: Context) -> List[Finding]:
             if len(documented) < len(flags):
                 ctx.skip("flag-siblings-not-listed-in-one-doc")
             continue
+        documented_at = {flags[k].line for k in documented}
         for key, fact in sorted(flags.items()):
             if mentioned(key) or key in IGNORED_FLAGS or HIDDEN_NAME.search(key):
+                continue
+            if fact.line in documented_at:
+                ctx.skip("alias-of-documented-flag")
                 continue
             if getattr(fact, "hidden", False):
                 continue
