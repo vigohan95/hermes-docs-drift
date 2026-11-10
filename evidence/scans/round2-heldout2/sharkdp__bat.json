@@ -1,0 +1,43 @@
+{
+ "repo": "sharkdp/bat",
+ "sha": "8cf33bdde9a6e4c11d0f866415b1fc867df0cd40",
+ "cold_scan_s": 7.38,
+ "warm_rescan_s": 0.11,
+ "doc_files": 5,
+ "code_files": 767,
+ "incomplete": false,
+ "notes": [
+  "make-target-missing limited: a Makefile computes target names or includes generated files."
+ ],
+ "not_reported": {},
+ "default_checks": [
+  "path-missing",
+  "cli-flag-undefined",
+  "env-undefined",
+  "default-mismatch",
+  "npm-script-missing",
+  "make-target-missing"
+ ],
+ "findings": [
+  {
+   "id": "DD-9a9e96c1",
+   "check": "env-undocumented",
+   "confidence": "medium",
+   "doc": "README.md:762",
+   "doc_quote": "Alternatively, you can use `BAT_CONFIG_PATH` or `BAT_CONFIG_DIR` environment variables to point `bat`",
+   "problem": "The code reads `BAT_ASSETS_GEN_DIR` (build/application.rs:30) but no doc mentions it; 3 other BAT_ variables are documented in README.md.",
+   "code": "build/application.rs:30",
+   "code_quote": "let Some(out_dir) = env::var_os(\"BAT_ASSETS_GEN_DIR\")",
+   "suggestion": "Document `BAT_ASSETS_GEN_DIR` next to the other BAT_ variables in README.md (around line 762).",
+   "name": "BAT_ASSETS_GEN_DIR",
+   "why": [
+    "5 of 6 BAT_ variables read by the code appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code reads an environment variable that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    762
+   ]
+  }
+ ]
+}

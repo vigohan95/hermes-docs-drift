@@ -1,0 +1,61 @@
+{
+ "repo": "casey/just",
+ "sha": "7b7b51bec9359a5b4a76321018db65d07978fecc",
+ "cold_scan_s": 3.72,
+ "warm_rescan_s": 0.06,
+ "doc_files": 6,
+ "code_files": 317,
+ "incomplete": false,
+ "notes": [],
+ "not_reported": {
+  "stale-context": 1
+ },
+ "default_checks": [
+  "path-missing",
+  "cli-flag-undefined",
+  "env-undefined",
+  "default-mismatch",
+  "npm-script-missing",
+  "make-target-missing"
+ ],
+ "findings": [
+  {
+   "id": "DD-9663af90",
+   "check": "cli-flag-undefined",
+   "confidence": "medium",
+   "doc": "README.md:1136",
+   "doc_quote": "$ just backup --file FAQ.md --file GRAMMAR.md",
+   "problem": "`--file` is used with `just` in the docs, but the code does not define that flag.",
+   "suggestion": "Remove the flag from the docs, or restore it in the code.",
+   "name": "--file",
+   "why": [
+    "no literal --file (or --file) in any non-doc file",
+    "a similarly named identifier exists, but this project defines its flags as literal strings",
+    "the doc line runs this project's own command `just`"
+   ],
+   "what_this_check_means": "Docs show a command-line flag that the code no longer defines.",
+   "doc_lines": [
+    1136
+   ]
+  },
+  {
+   "id": "DD-3153cd53",
+   "check": "cli-flag-undefined",
+   "confidence": "medium",
+   "doc": "README.md:4807",
+   "doc_quote": "| `[arg(ARG, long=\"LONG\")]`<sup>1.46.0</sup> | recipe | Require values of argument `ARG` to be passed as `--LONG` option. If the parameter is variadic, the option is repeatable<...",
+   "problem": "`--long` is documented as an option, but the code does not define that flag.",
+   "suggestion": "Remove the flag from the docs, or restore it in the code.",
+   "name": "--long",
+   "why": [
+    "no literal --long (or --long) in any non-doc file",
+    "a similarly named identifier exists, but this project defines its flags as literal strings",
+    "it sits in an option list where at least 70% of the other flags are defined in the code"
+   ],
+   "what_this_check_means": "Docs show a command-line flag that the code no longer defines.",
+   "doc_lines": [
+    4807
+   ]
+  }
+ ]
+}

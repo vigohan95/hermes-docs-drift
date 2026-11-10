@@ -1,0 +1,24 @@
+# 2026-11-10T11:20:28Z  hermes plugins validate, run on the working tree that was committed right after 2071824
+# (that tree is this commit, except that this file then held the output of the previous run)
+# hermes: Hermes Agent vgit.b7db40d (2026.9.24) · stable · local b7db40d82568
+$ hermes plugins validate plugin --install-deps
+
+✓ manifest — plugin.yaml parses
+✓ manifest fields — name, version, description present
+✓ requires_hermes — spec '>=0.21.6' parses
+✓ config schema — shape valid
+✓ requires_env — all entries UPPER_SNAKE
+✓ oauth — not declared
+✓ loadable — entry: __init__.py
+✓ python dependencies — none declared
+✓ capability probe — register() ran in isolation
+✓ declared tools — matches registrations
+✓ declared hooks — matches registrations
+✓ declared middleware — matches registrations
+✓ built-in tool collisions — no collisions
+✓ security scan — safe
+✓ no core override — no runtime rebinds of Hermes core
+◆ Isolation — runs in the plugin host (plugins.isolation: host)
+
+Validation passed.
+exit status: 0

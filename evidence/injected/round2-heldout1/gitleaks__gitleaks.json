@@ -1,0 +1,301 @@
+{
+ "candidates_available": {
+  "flag": 21,
+  "env": 2,
+  "npm": 0,
+  "make": 2,
+  "path": 0
+ },
+ "baseline_findings": 0,
+ "rows": [
+  {
+   "kind": "flag/literal",
+   "name": "--diagnostics",
+   "where": "cmd/root.go:96",
+   "files_changed": 1,
+   "detected": null,
+   "note": "mutation left a definition of the flag in place"
+  },
+  {
+   "kind": "flag/refactor",
+   "name": "--diagnostics",
+   "where": "cmd/root.go:96",
+   "files_changed": 3,
+   "detected_scan": false,
+   "scan_s": 0.02,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "README.md:142 [high]"
+  },
+  {
+   "kind": "flag/literal",
+   "name": "--diagnostics-dir",
+   "where": "cmd/root.go:97",
+   "files_changed": 1,
+   "detected": null,
+   "note": "mutation left a definition of the flag in place"
+  },
+  {
+   "kind": "flag/refactor",
+   "name": "--diagnostics-dir",
+   "where": "cmd/root.go:97",
+   "files_changed": 3,
+   "detected_scan": false,
+   "scan_s": 0.03,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "README.md:143 [high]"
+  },
+  {
+   "kind": "flag/literal",
+   "name": "--exit-code",
+   "where": "cmd/root.go:76",
+   "files_changed": 2,
+   "detected": null,
+   "note": "mutation left a definition of the flag in place"
+  },
+  {
+   "kind": "flag/refactor",
+   "name": "--exit-code",
+   "where": "cmd/root.go:76",
+   "files_changed": 9,
+   "detected_scan": false,
+   "scan_s": 0.03,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "README.md:145 [high]"
+  },
+  {
+   "kind": "flag/literal",
+   "name": "--log-level",
+   "where": "cmd/root.go:81",
+   "files_changed": 0,
+   "detected": null,
+   "note": "mutation changed nothing"
+  },
+  {
+   "kind": "flag/refactor",
+   "name": "--log-level",
+   "where": "cmd/root.go:81",
+   "files_changed": 1,
+   "detected_scan": false,
+   "scan_s": 0.05,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "README.md:149 [high]"
+  },
+  {
+   "kind": "flag/literal",
+   "name": "--log-opts",
+   "where": "cmd/detect.go:39",
+   "files_changed": 2,
+   "detected": null,
+   "note": "mutation left a definition of the flag in place"
+  },
+  {
+   "kind": "flag/refactor",
+   "name": "--log-opts",
+   "where": "cmd/detect.go:39",
+   "files_changed": 6,
+   "detected_scan": false,
+   "scan_s": 0.03,
+   "detected": false,
+   "new_findings": 0,
+   "other_new_findings": []
+  },
+  {
+   "kind": "flag/literal",
+   "name": "--max-archive-depth",
+   "where": "cmd/root.go:92",
+   "files_changed": 0,
+   "detected": null,
+   "note": "mutation changed nothing"
+  },
+  {
+   "kind": "flag/refactor",
+   "name": "--max-archive-depth",
+   "where": "cmd/root.go:92",
+   "files_changed": 2,
+   "detected_scan": false,
+   "scan_s": 0.03,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "README.md:150 [high]"
+  },
+  {
+   "kind": "flag/literal",
+   "name": "--max-decode-depth",
+   "where": "cmd/root.go:91",
+   "files_changed": 1,
+   "detected": null,
+   "note": "mutation left a definition of the flag in place"
+  },
+  {
+   "kind": "flag/refactor",
+   "name": "--max-decode-depth",
+   "where": "cmd/root.go:91",
+   "files_changed": 3,
+   "detected_scan": false,
+   "scan_s": 0.05,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "README.md:151 [high]"
+  },
+  {
+   "kind": "flag/literal",
+   "name": "--max-target-megabytes",
+   "where": "cmd/root.go:84",
+   "files_changed": 0,
+   "detected": null,
+   "note": "mutation changed nothing"
+  },
+  {
+   "kind": "flag/refactor",
+   "name": "--max-target-megabytes",
+   "where": "cmd/root.go:84",
+   "files_changed": 1,
+   "detected_scan": false,
+   "scan_s": 0.03,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "README.md:152 [high]"
+  },
+  {
+   "kind": "flag/literal",
+   "name": "--no-banner",
+   "where": "cmd/root.go:88",
+   "files_changed": 0,
+   "detected": null,
+   "note": "mutation changed nothing"
+  },
+  {
+   "kind": "flag/refactor",
+   "name": "--no-banner",
+   "where": "cmd/root.go:88",
+   "files_changed": 1,
+   "detected_scan": false,
+   "scan_s": 0.06,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "README.md:153 [high]"
+  },
+  {
+   "kind": "flag/literal",
+   "name": "--redact",
+   "where": "cmd/root.go:86",
+   "files_changed": 2,
+   "detected": null,
+   "note": "mutation left a definition of the flag in place"
+  },
+  {
+   "kind": "flag/refactor",
+   "name": "--redact",
+   "where": "cmd/root.go:86",
+   "files_changed": 7,
+   "detected_scan": false,
+   "scan_s": 0.03,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "README.md:155 [high]"
+  },
+  {
+   "kind": "flag/literal",
+   "name": "--report-template",
+   "where": "cmd/root.go:79",
+   "files_changed": 1,
+   "detected": null,
+   "note": "mutation left a definition of the flag in place"
+  },
+  {
+   "kind": "flag/refactor",
+   "name": "--report-template",
+   "where": "cmd/root.go:79",
+   "files_changed": 1,
+   "detected_scan": false,
+   "scan_s": 0.02,
+   "detected": true,
+   "new_findings": 2,
+   "other_new_findings": [],
+   "finding": "README.md:573 [high]"
+  },
+  {
+   "kind": "flag/literal",
+   "name": "--timeout",
+   "where": "cmd/root.go:93",
+   "files_changed": 0,
+   "detected": null,
+   "note": "mutation changed nothing"
+  },
+  {
+   "kind": "flag/refactor",
+   "name": "--timeout",
+   "where": "cmd/root.go:93",
+   "files_changed": 1,
+   "detected_scan": false,
+   "scan_s": 0.08,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "README.md:159 [high]"
+  },
+  {
+   "kind": "env",
+   "name": "GITLEAKS_CONFIG",
+   "where": "cmd/root.go:152",
+   "files_changed": 1,
+   "detected_scan": true,
+   "scan_s": 0.02,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "README.md:138 [high]"
+  },
+  {
+   "kind": "env",
+   "name": "GITLEAKS_CONFIG_TOML",
+   "where": "cmd/root.go:156",
+   "files_changed": 1,
+   "detected_scan": true,
+   "scan_s": 0.02,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "README.md:139 [high]"
+  },
+  {
+   "kind": "make",
+   "name": "build",
+   "where": "Makefile:1",
+   "files_changed": 1,
+   "detected_scan": false,
+   "scan_s": 0.03,
+   "detected": false,
+   "new_findings": 0,
+   "other_new_findings": []
+  },
+  {
+   "kind": "make",
+   "name": "config/gitleaks.toml",
+   "where": "Makefile:36",
+   "files_changed": 1,
+   "detected_scan": false,
+   "scan_s": 0.03,
+   "detected": false,
+   "new_findings": 0,
+   "other_new_findings": []
+  }
+ ],
+ "repo": "gitleaks/gitleaks",
+ "sha": "5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c",
+ "per_kind_limit": 12,
+ "seed": 20261110
+}

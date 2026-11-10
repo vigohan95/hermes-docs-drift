@@ -1,0 +1,40 @@
+{
+ "candidates_available": {
+  "flag": 0,
+  "env": 2,
+  "npm": 0,
+  "make": 0,
+  "path": 0
+ },
+ "baseline_findings": 0,
+ "rows": [
+  {
+   "kind": "env",
+   "name": "NODE_HTTP_SERVER_SSL_PASSPHRASE",
+   "where": "bin/http-server:101",
+   "files_changed": 3,
+   "detected_scan": false,
+   "scan_s": 0.0,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "README.md:142 [high]"
+  },
+  {
+   "kind": "env",
+   "name": "PORT",
+   "where": "bin/http-server:96",
+   "files_changed": 3,
+   "detected_scan": false,
+   "scan_s": 0.0,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "README.md:63 [high]"
+  }
+ ],
+ "repo": "http-party/http-server",
+ "sha": "0d3b7bb5b6e8a59fd450ae2dca65870009cfcd8b",
+ "per_kind_limit": 12,
+ "seed": 20261110
+}

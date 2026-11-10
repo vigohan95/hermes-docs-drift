@@ -1,0 +1,316 @@
+{
+ "candidates_available": {
+  "flag": 45,
+  "env": 0,
+  "npm": 0,
+  "make": 4,
+  "path": 1
+ },
+ "baseline_findings": 0,
+ "rows": [
+  {
+   "kind": "flag/literal",
+   "name": "--input-format",
+   "where": "cmd/root.go:110",
+   "files_changed": 1,
+   "detected": null,
+   "note": "mutation left a definition of the flag in place"
+  },
+  {
+   "kind": "flag/refactor",
+   "name": "--input-format",
+   "where": "cmd/root.go:110",
+   "files_changed": 7,
+   "detected_scan": false,
+   "scan_s": 0.06,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "README.md:425 [high]"
+  },
+  {
+   "kind": "flag/literal",
+   "name": "--lua-suffix",
+   "where": "cmd/root.go:152",
+   "files_changed": 0,
+   "detected": null,
+   "note": "mutation changed nothing"
+  },
+  {
+   "kind": "flag/refactor",
+   "name": "--lua-suffix",
+   "where": "cmd/root.go:152",
+   "files_changed": 2,
+   "detected_scan": false,
+   "scan_s": 0.08,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "README.md:428 [high]"
+  },
+  {
+   "kind": "flag/literal",
+   "name": "--null-input",
+   "where": "cmd/root.go:174",
+   "files_changed": 0,
+   "detected": null,
+   "note": "mutation changed nothing"
+  },
+  {
+   "kind": "flag/refactor",
+   "name": "--null-input",
+   "where": "cmd/root.go:174",
+   "files_changed": 9,
+   "detected_scan": false,
+   "scan_s": 0.06,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "README.md:433 [high]"
+  },
+  {
+   "kind": "flag/literal",
+   "name": "--output-format",
+   "where": "cmd/root.go:101",
+   "files_changed": 1,
+   "detected": null,
+   "note": "mutation left a definition of the flag in place"
+  },
+  {
+   "kind": "flag/refactor",
+   "name": "--output-format",
+   "where": "cmd/root.go:101",
+   "files_changed": 10,
+   "detected_scan": false,
+   "scan_s": 0.05,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "README.md:434 [high]"
+  },
+  {
+   "kind": "flag/literal",
+   "name": "--properties-separator",
+   "where": "cmd/root.go:162",
+   "files_changed": 1,
+   "detected": null,
+   "note": "mutation left a definition of the flag in place"
+  },
+  {
+   "kind": "flag/refactor",
+   "name": "--properties-separator",
+   "where": "cmd/root.go:162",
+   "files_changed": 3,
+   "detected_scan": false,
+   "scan_s": 0.11,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "README.md:437 [high]"
+  },
+  {
+   "kind": "flag/literal",
+   "name": "--split-exp-file",
+   "where": "cmd/root.go:208",
+   "files_changed": 1,
+   "detected": null,
+   "note": "mutation left a definition of the flag in place"
+  },
+  {
+   "kind": "flag/refactor",
+   "name": "--split-exp-file",
+   "where": "cmd/root.go:208",
+   "files_changed": 2,
+   "detected_scan": false,
+   "scan_s": 0.08,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "README.md:443 [high]"
+  },
+  {
+   "kind": "flag/literal",
+   "name": "--xml-attribute-prefix",
+   "where": "cmd/root.go:121",
+   "files_changed": 1,
+   "detected": null,
+   "note": "mutation left a definition of the flag in place"
+  },
+  {
+   "kind": "flag/refactor",
+   "name": "--xml-attribute-prefix",
+   "where": "cmd/root.go:121",
+   "files_changed": 3,
+   "detected_scan": true,
+   "scan_s": 0.05,
+   "detected": true,
+   "new_findings": 5,
+   "other_new_findings": [],
+   "finding": "README.md:449 [high]"
+  },
+  {
+   "kind": "flag/literal",
+   "name": "--xml-content-name",
+   "where": "cmd/root.go:125",
+   "files_changed": 1,
+   "detected": null,
+   "note": "mutation left a definition of the flag in place"
+  },
+  {
+   "kind": "flag/refactor",
+   "name": "--xml-content-name",
+   "where": "cmd/root.go:125",
+   "files_changed": 3,
+   "detected_scan": true,
+   "scan_s": 0.05,
+   "detected": true,
+   "new_findings": 3,
+   "other_new_findings": [],
+   "finding": "README.md:450 [high]"
+  },
+  {
+   "kind": "flag/literal",
+   "name": "--xml-keep-namespace",
+   "where": "cmd/root.go:130",
+   "files_changed": 1,
+   "detected": null,
+   "note": "mutation left a definition of the flag in place"
+  },
+  {
+   "kind": "flag/refactor",
+   "name": "--xml-keep-namespace",
+   "where": "cmd/root.go:130",
+   "files_changed": 2,
+   "detected_scan": true,
+   "scan_s": 0.05,
+   "detected": true,
+   "new_findings": 3,
+   "other_new_findings": [],
+   "finding": "README.md:452 [high]"
+  },
+  {
+   "kind": "flag/literal",
+   "name": "--xml-skip-directives",
+   "where": "cmd/root.go:141",
+   "files_changed": 1,
+   "detected": null,
+   "note": "mutation left a definition of the flag in place"
+  },
+  {
+   "kind": "flag/refactor",
+   "name": "--xml-skip-directives",
+   "where": "cmd/root.go:141",
+   "files_changed": 2,
+   "detected_scan": false,
+   "scan_s": 0.03,
+   "detected": true,
+   "new_findings": 3,
+   "other_new_findings": [],
+   "finding": "README.md:455 [high]"
+  },
+  {
+   "kind": "flag/literal",
+   "name": "--xml-skip-proc-inst",
+   "where": "cmd/root.go:140",
+   "files_changed": 0,
+   "detected": null,
+   "note": "mutation changed nothing"
+  },
+  {
+   "kind": "flag/refactor",
+   "name": "--xml-skip-proc-inst",
+   "where": "cmd/root.go:140",
+   "files_changed": 1,
+   "detected_scan": true,
+   "scan_s": 0.05,
+   "detected": true,
+   "new_findings": 3,
+   "other_new_findings": [],
+   "finding": "README.md:456 [high]"
+  },
+  {
+   "kind": "flag/literal",
+   "name": "--xml-strict-mode",
+   "where": "cmd/root.go:129",
+   "files_changed": 2,
+   "detected": null,
+   "note": "mutation left a definition of the flag in place"
+  },
+  {
+   "kind": "flag/refactor",
+   "name": "--xml-strict-mode",
+   "where": "cmd/root.go:129",
+   "files_changed": 3,
+   "detected_scan": true,
+   "scan_s": 0.03,
+   "detected": true,
+   "new_findings": 3,
+   "other_new_findings": [],
+   "finding": "README.md:457 [high]"
+  },
+  {
+   "kind": "make",
+   "name": "check",
+   "where": "Makefile:96",
+   "files_changed": 1,
+   "detected_scan": true,
+   "scan_s": 0.05,
+   "detected": true,
+   "new_findings": 2,
+   "other_new_findings": [],
+   "finding": "AGENTS.md:63 [high]"
+  },
+  {
+   "kind": "make",
+   "name": "local",
+   "where": "Makefile:36",
+   "files_changed": 1,
+   "detected_scan": true,
+   "scan_s": 0.05,
+   "detected": true,
+   "new_findings": 2,
+   "other_new_findings": [],
+   "finding": "AGENTS.md:31 [high]"
+  },
+  {
+   "kind": "make",
+   "name": "test",
+   "where": "Makefile:102",
+   "files_changed": 1,
+   "detected_scan": true,
+   "scan_s": 0.03,
+   "detected": true,
+   "new_findings": 2,
+   "other_new_findings": [],
+   "finding": "AGENTS.md:31 [high]"
+  },
+  {
+   "kind": "make",
+   "name": "vendor",
+   "where": "Makefile:75",
+   "files_changed": 1,
+   "detected_scan": true,
+   "scan_s": 0.03,
+   "detected": true,
+   "new_findings": 2,
+   "other_new_findings": [],
+   "finding": "AGENTS.md:60 [high]"
+  },
+  {
+   "kind": "path",
+   "name": "examples/library/main.go",
+   "where": "README.md",
+   "files_changed": 1,
+   "detected_scan": true,
+   "scan_s": 0.05,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "README.md:256 [high]"
+  }
+ ],
+ "repo": "mikefarah/yq",
+ "sha": "f2944b823f84906a127dbd29e4c2a3e60c4e550e",
+ "per_kind_limit": 12,
+ "seed": 20261110
+}

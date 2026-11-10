@@ -1,0 +1,24 @@
+{
+ "repo": "sharkdp/fd",
+ "sha": "24d90b28d25438af2a8f2e7f7e46d03d6828da94",
+ "cold_scan_s": 0.14,
+ "warm_rescan_s": 0.03,
+ "doc_files": 2,
+ "code_files": 51,
+ "incomplete": false,
+ "notes": [
+  "make-target-missing limited: a Makefile computes target names or includes generated files."
+ ],
+ "not_reported": {
+  "stale-context": 11
+ },
+ "default_checks": [
+  "path-missing",
+  "cli-flag-undefined",
+  "env-undefined",
+  "default-mismatch",
+  "npm-script-missing",
+  "make-target-missing"
+ ],
+ "findings": []
+}

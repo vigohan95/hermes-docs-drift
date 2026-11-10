@@ -1,0 +1,24 @@
+{
+ "repo": "commitizen-tools/commitizen",
+ "sha": "33c248e4d21fa67d312991d96b038ab71be3039b",
+ "cold_scan_s": 0.3,
+ "warm_rescan_s": 0.06,
+ "doc_files": 47,
+ "code_files": 185,
+ "incomplete": false,
+ "notes": [],
+ "not_reported": {
+  "path-ref-about-readers-project": 1,
+  "stale-context": 14,
+  "env-built-dynamically": 16
+ },
+ "default_checks": [
+  "path-missing",
+  "cli-flag-undefined",
+  "env-undefined",
+  "default-mismatch",
+  "npm-script-missing",
+  "make-target-missing"
+ ],
+ "findings": []
+}

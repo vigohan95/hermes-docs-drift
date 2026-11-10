@@ -1,0 +1,22 @@
+{
+ "repo": "pypa/pipx",
+ "sha": "e7fa855353cc8c15f199b746d5e4d93b69f3c889",
+ "cold_scan_s": 2.41,
+ "warm_rescan_s": 0.03,
+ "doc_files": 2,
+ "code_files": 174,
+ "incomplete": false,
+ "notes": [],
+ "not_reported": {
+  "flag-siblings-not-listed-in-one-doc": 1
+ },
+ "default_checks": [
+  "path-missing",
+  "cli-flag-undefined",
+  "env-undefined",
+  "default-mismatch",
+  "npm-script-missing",
+  "make-target-missing"
+ ],
+ "findings": []
+}

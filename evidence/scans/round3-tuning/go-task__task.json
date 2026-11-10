@@ -1,0 +1,23 @@
+{
+ "repo": "go-task/task",
+ "sha": "20d91b943e01234f23929d09200db1342548ead6",
+ "cold_scan_s": 0.53,
+ "warm_rescan_s": 0.11,
+ "doc_files": 101,
+ "code_files": 803,
+ "incomplete": false,
+ "notes": [],
+ "not_reported": {
+  "stale-context": 4,
+  "env-built-dynamically": 122
+ },
+ "default_checks": [
+  "path-missing",
+  "cli-flag-undefined",
+  "env-undefined",
+  "default-mismatch",
+  "npm-script-missing",
+  "make-target-missing"
+ ],
+ "findings": []
+}

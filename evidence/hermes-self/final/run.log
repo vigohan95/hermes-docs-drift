@@ -1,0 +1,3 @@
+code: b7ba05d661710de24ab81a2f1700e6552cddd709 started 2026-11-10T11:10:21Z
+hermes-agent: 171 findings {'path-missing': 8, 'path-ref-missing': 102, 'cli-flag-undocumented': 27, 'cli-flag-undefined': 9, 'default-mismatch': 8, 'npm-script-missing': 6, 'env-undocumented': 9, 'env-undefined': 2} docs=1180 code=21805 cold=52.2s warm=3.9s
+finished 2026-11-10T11:11:18Z

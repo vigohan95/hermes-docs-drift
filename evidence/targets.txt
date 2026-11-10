@@ -1,0 +1,26 @@
+# set        repository                     commit (the clone is a checkout of exactly this commit)
+tuning       Aider-AI/aider                 5dc9490bb35f9729ef2c95d00a19ccd30c26339c
+tuning       encode/uvicorn                 a99c1b76ee9caea67ff98e2ccc457bd372db193f
+tuning       go-task/task                   20d91b943e01234f23929d09200db1342548ead6
+tuning       mkdocs/mkdocs                  2862536793b3c67d9d83c33e0dd6d50a791928f8
+tuning       nvm-sh/nvm                     4e8758a801eea9479b32a904f31093e410ddaba4
+tuning       psf/black                      b4f1fcae48826790b6f93ca9226d20003bce0eaa
+tuning       sharkdp/fd                     24d90b28d25438af2a8f2e7f7e46d03d6828da94
+tuning       vitejs/vite                    b8c8270f3f01a9dbf02c336e7468bf6f1df0f5ad
+heldout1     casey/just                     7b7b51bec9359a5b4a76321018db65d07978fecc
+heldout1     gitleaks/gitleaks              5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c
+heldout1     httpie/cli                     5b604c37c6c67e18e7c3e9aee6c88a8c22b98345
+heldout1     nektos/act                     2540ba6c49dfbafe167d655e4044921cd2ed19e7
+heldout1     prettier/prettier              21fd5d769c36707c51ae94f7c84a4bf678febce4
+heldout1     pypa/pipx                      e7fa855353cc8c15f199b746d5e4d93b69f3c889
+heldout1     simonw/llm                     39d325492b6d0939d9bcb1cd1c9d81e260154ab4
+heldout1     yt-dlp/yt-dlp                  412e7f0a4b0588fe884a02b344ac66a06538475b
+heldout2     BurntSushi/ripgrep             178cc027e283fd965cb72d0a7395b219eada170c
+heldout2     junegunn/fzf                   c7bf2b8eea25952dd257a466c0afa72faae206fb
+heldout2     sharkdp/bat                    8cf33bdde9a6e4c11d0f866415b1fc867df0cd40
+heldout2     ajeetdsouza/zoxide             1bb062057bef85aecb44e2e5c2a7983be4ebb710
+heldout2     commitizen-tools/commitizen    33c248e4d21fa67d312991d96b038ab71be3039b
+heldout2     pdm-project/pdm                0f6ea802663d1081dedf8e39245e70123d1724c8
+heldout2     http-party/http-server         0d3b7bb5b6e8a59fd450ae2dca65870009cfcd8b
+heldout2     mikefarah/yq                   f2944b823f84906a127dbd29e4c2a3e60c4e550e
+hermes-self  NousResearch/hermes-agent      b7db40d82568ea68ce321ac1ead3bfea354c7f56

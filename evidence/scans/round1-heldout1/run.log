@@ -1,0 +1,8 @@
+casey__just: 2 findings {'cli-flag-undefined': 2} docs=6 code=317 cold=3.7s warm=0.1s
+gitleaks__gitleaks: 0 findings {} docs=4 code=429 cold=4.1s warm=0.1s
+httpie__cli: 0 findings {} docs=16 code=232 cold=2.7s warm=0.0s
+nektos__act: 0 findings {} docs=4 code=443 cold=4.2s warm=0.1s
+prettier__prettier: 0 findings {} docs=118 code=9218 cold=89.7s warm=0.7s
+pypa__pipx: 0 findings {} docs=2 code=174 cold=2.4s warm=0.0s
+simonw__llm: 1 findings {'cli-flag-undefined': 1} docs=29 code=92 cold=1.8s warm=0.1s
+yt-dlp__yt-dlp: 5 findings {'cli-flag-undefined': 1, 'cli-flag-undocumented': 4} docs=7 code=1197 cold=14.8s warm=0.1s

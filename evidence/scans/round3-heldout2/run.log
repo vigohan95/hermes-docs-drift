@@ -1,0 +1,26 @@
+code: 8ff4f2c9f16c4d97d2a29a4bb632b059e3b4f11d started 2026-11-10T10:52:30Z sets: A=tuning B=first held-out C=second held-out
+Aider-AI__aider: 2 findings {'path-ref-missing': 2} docs=116 code=367 cold=0.8s warm=0.1s
+encode__uvicorn: 0 findings {} docs=16 code=109 cold=0.2s warm=0.0s
+go-task__task: 0 findings {} docs=101 code=803 cold=0.5s warm=0.1s
+mkdocs__mkdocs: 2 findings {'path-ref-missing': 2} docs=19 code=194 cold=0.5s warm=0.0s
+nvm-sh__nvm: 0 findings {} docs=5 code=504 cold=0.3s warm=0.1s
+psf__black: 1 findings {'cli-flag-undocumented': 1} docs=27 code=516 cold=0.7s warm=0.1s
+sharkdp__fd: 0 findings {} docs=2 code=51 cold=0.1s warm=0.0s
+vitejs__vite: 0 findings {} docs=54 code=2723 cold=1.3s warm=0.2s
+casey__just: 0 findings {} docs=6 code=317 cold=0.3s warm=0.1s
+gitleaks__gitleaks: 0 findings {} docs=4 code=429 cold=0.3s warm=0.1s
+httpie__cli: 0 findings {} docs=16 code=232 cold=0.3s warm=0.1s
+nektos__act: 0 findings {} docs=4 code=443 cold=0.4s warm=0.1s
+prettier__prettier: 0 findings {} docs=118 code=9218 cold=3.5s warm=0.7s
+pypa__pipx: 0 findings {} docs=2 code=174 cold=0.6s warm=0.0s
+simonw__llm: 0 findings {} docs=29 code=92 cold=0.6s warm=0.1s
+yt-dlp__yt-dlp: 0 findings {} docs=7 code=1197 cold=1.7s warm=0.1s
+BurntSushi__ripgrep: 0 findings {} docs=20 code=197 cold=0.5s warm=0.1s
+junegunn__fzf: 1 findings {'env-undefined': 1} docs=5 code=152 cold=0.4s warm=0.0s
+sharkdp__bat: 1 findings {'env-undocumented': 1} docs=5 code=767 cold=1.0s warm=0.1s
+ajeetdsouza__zoxide: 0 findings {} docs=2 code=59 cold=0.1s warm=0.0s
+commitizen-tools__commitizen: 0 findings {} docs=47 code=185 cold=0.3s warm=0.1s
+pdm-project__pdm: 7 findings {'env-undocumented': 6, 'cli-flag-undocumented': 1} docs=25 code=349 cold=0.7s warm=0.1s
+http-party__http-server: 0 findings {} docs=2 code=111 cold=0.1s warm=0.0s
+mikefarah__yq: 1 findings {'cli-flag-undocumented': 1} docs=163 code=392 cold=0.4s warm=0.1s
+finished 2026-11-10T10:52:49Z

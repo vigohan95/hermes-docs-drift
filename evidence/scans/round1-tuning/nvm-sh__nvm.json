@@ -1,0 +1,25 @@
+{
+ "repo": "nvm-sh/nvm",
+ "sha": "4e8758a801eea9479b32a904f31093e410ddaba4",
+ "cold_scan_s": 3.84,
+ "warm_rescan_s": 0.06,
+ "doc_files": 5,
+ "code_files": 504,
+ "incomplete": false,
+ "notes": [
+  "make-target-missing limited: a Makefile computes target names or includes generated files."
+ ],
+ "not_reported": {
+  "option-list-not-ours": 0,
+  "env-next-to-external-link": 1
+ },
+ "default_checks": [
+  "path-missing",
+  "cli-flag-undefined",
+  "env-undefined",
+  "default-mismatch",
+  "npm-script-missing",
+  "make-target-missing"
+ ],
+ "findings": []
+}

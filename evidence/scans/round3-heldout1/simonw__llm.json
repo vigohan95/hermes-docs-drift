@@ -1,0 +1,22 @@
+{
+ "repo": "simonw/llm",
+ "sha": "39d325492b6d0939d9bcb1cd1c9d81e260154ab4",
+ "cold_scan_s": 0.58,
+ "warm_rescan_s": 0.09,
+ "doc_files": 29,
+ "code_files": 92,
+ "incomplete": false,
+ "notes": [],
+ "not_reported": {
+  "stale-context": 21
+ },
+ "default_checks": [
+  "path-missing",
+  "cli-flag-undefined",
+  "env-undefined",
+  "default-mismatch",
+  "npm-script-missing",
+  "make-target-missing"
+ ],
+ "findings": []
+}

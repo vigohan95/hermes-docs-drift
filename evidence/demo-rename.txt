@@ -1,0 +1,379 @@
+docs-drift demo "rename"   2026-11-10T11:19:12Z
+hermes:  Hermes Agent vgit.b7db40d (2026.9.24) · stable · local b7db40d82568
+plugin:  docs-drift, source commit 2071824
+model:   demo/scripted_model.py on 127.0.0.1:62593. A fixed script, not a language model:
+         it sends the next scripted tool call or message whatever it is told. The agent loop,
+         the patch tool, plugin loading and the hooks are the unmodified Hermes ones.
+project: a fresh copy of examples/notesync with one commit
+prompt:  Rename the --output-dir flag of notesync to --dest.
+
+--- 1. what Hermes did (the events it prints with --format stream-json) ---
+$ python -m hermes_cli.main chat -q "Rename the --output-dir flag of notesync to --dest." --provider custom --base-url http://127.0.0.1:62593/v1 --api-key not-a-real-key -m scripted-demo --yolo --format stream-json --max-turns 12
+[11:19:19Z] tool call    patch {"mode": "replace", "path": "notesync/cli.py", "old_string": "\"--output-dir\"", "new_string": "\"--dest\""}
+[11:19:22Z] tool result  patch (3328 ms)
+             (fields from Hermes' own tool, not shown: diff, files_modified, lint, resolved_path, success)
+             "docs_drift": {
+               "note": "This edit left 2 place(s) where the docs no longer match the code. Update the docs (or the code) before finishing; docs_drift_explain <id> shows both sides.",
+               "new": [
+                 {
+                   "id": "DD-5fb3c36f",
+                   "check": "cli-flag-undefined",
+                   "confidence": "high",
+                   "doc": "README.md:8",
+                   "doc_quote": "notesync ./notes --output-dir ./backup",
+                   "problem": "`--output-dir` was removed from the code by the edit, but the docs still use it.",
+                   "code": "notesync/cli.py:12",
+                   "code_quote": "parser.add_argument(\"--dest\", default=\"./out\", help=\"where the copies go\")",
+                   "suggestion": "The same edit added `--dest` (notesync/cli.py:12). If this is a rename, replace `--output-dir` with `--dest` in the docs.",
+                   "also_at_lines": [
+                     16
+                   ]
+                 },
+                 {
+                   "id": "DD-6d2fee65",
+                   "check": "cli-flag-undefined",
+                   "confidence": "high",
+                   "doc": "docs/configuration.md:7",
+                   "doc_quote": "To write the copies somewhere else, pass `--output-dir`:",
+                   "problem": "`--output-dir` was removed from the code by the edit, but the docs still use it.",
+                   "code": "notesync/cli.py:12",
+                   "code_quote": "parser.add_argument(\"--dest\", default=\"./out\", help=\"where the copies go\")",
+                   "suggestion": "The same edit added `--dest` (notesync/cli.py:12). If this is a rename, replace `--output-dir` with `--dest` in the docs.",
+                   "also_at_lines": [
+                     10
+                   ]
+                 }
+               ],
+               "still_open": 2
+             }
+[11:19:22Z] tool call    docs_drift_explain {"finding_id": "DD-5fb3c36f"}
+[11:19:22Z] tool result  docs_drift_explain (37 ms)
+             {
+               "id": "DD-5fb3c36f",
+               "check": "cli-flag-undefined",
+               "confidence": "high",
+               "doc": "README.md:8",
+               "doc_quote": "notesync ./notes --output-dir ./backup",
+               "problem": "`--output-dir` was removed from the code by the edit, but the docs still use it.",
+               "code": "notesync/cli.py:12",
+               "code_quote": "parser.add_argument(\"--dest\", default=\"./out\", help=\"where the copies go\")",
+               "suggestion": "The same edit added `--dest` (notesync/cli.py:12). If this is a rename, replace `--output-dir` with `--dest` in the docs.",
+               "also_at_lines": [
+                 16
+               ],
+               "name": "--output-dir",
+               "why": [
+                 "before the edit `--output-dir` was defined at notesync/cli.py:12",
+                 "after the edit no non-doc file contains it",
+                 "files that changed: notesync/cli.py",
+                 "the doc line runs this project's own command `notesync`"
+               ],
+               "what_this_check_means": "Docs show a command-line flag that the code no longer defines.",
+               "doc_context": [
+                 "      6 | ",
+                 "      7 | ```sh",
+                 ">     8 | notesync ./notes --output-dir ./backup",
+                 "      9 | notesync ./notes --dry-run",
+                 "     10 | ```"
+               ],
+               "code_context": [
+                 "     10 |     parser = argparse.ArgumentParser(prog=\"notesync\")",
+                 "     11 |     parser.add_argument(\"source\", help=\"folder with .md notes\")",
+                 ">    12 |     parser.add_argument(\"--dest\", default=\"./out\", help=\"where the copies go\")",
+                 "     13 |     parser.add_argument(\"--timeout\", type=int, default=30, help=\"seconds to wait for a locked file\")",
+                 "     14 |     parser.add_argument(\"--dry-run\", action=\"store_true\", help=\"print what would be copied\")"
+               ],
+               "how_to_silence": "If the docs are right as written, add the name to `ignore_names` or the doc path to `ignore_paths` in this plugin's settings."
+             }
+[11:19:22Z] tool call    patch {"mode": "replace", "path": "README.md", "old_string": "--output-dir", "new_string": "--dest", "replace_all": true}
+[11:19:25Z] tool result  patch (2939 ms)
+             (fields from Hermes' own tool, not shown: diff, files_modified, lint, resolved_path, success)
+             "docs_drift": {
+               "resolved": [
+                 "DD-5fb3c36f"
+               ],
+               "still_open": 1,
+               "note": "1 docs-drift finding(s) resolved by this edit; 1 still open."
+             }
+[11:19:25Z] tool call    patch {"mode": "replace", "path": "docs/configuration.md", "old_string": "--output-dir", "new_string": "--dest", "replace_all": true}
+[11:19:28Z] tool result  patch (3067 ms)
+             (fields from Hermes' own tool, not shown: diff, files_modified, lint, resolved_path, success)
+             "docs_drift": {
+               "resolved": [
+                 "DD-6d2fee65"
+               ],
+               "still_open": 0,
+               "note": "1 docs-drift finding(s) resolved by this edit; 0 still open."
+             }
+[11:19:28Z] tool call    docs_drift_scan {"changed_only": true}
+[11:19:28Z] tool result  docs_drift_scan (193 ms)
+             {
+               "root": "%TEMP%\\docs-drift-demo-jwkwr5ad\\notesync",
+               "summary": {
+                 "findings": 0,
+                 "by_check": {},
+                 "doc_files_checked": 2,
+                 "code_files_read": 4,
+                 "elapsed_ms": 183
+               },
+               "findings": [],
+               "notes": [
+                 "Compared with HEAD: 3 changed file(s), 0 finding(s) already present before the change are not shown."
+               ],
+               "checks_run": [
+                 "path-missing",
+                 "cli-flag-undefined",
+                 "env-undefined",
+                 "default-mismatch",
+                 "npm-script-missing",
+                 "make-target-missing"
+               ],
+               "compared_with": "git HEAD",
+               "resolved_by_changes": []
+             }
+[11:19:28Z] assistant    Renamed --output-dir to --dest in notesync/cli.py and updated README.md and docs/configuration.md, which still used the old name. docs_drift_scan is clean.
+[11:19:28Z] end of turn  exit_code 0, 10838 ms
+
+--- 2. what the model stub was sent and what it answered (its log, unedited) ---
+[2026-11-10T11:19:19Z] Hermes -> model, user message:
+Rename the --output-dir flag of notesync to --dest.
+[2026-11-10T11:19:19Z] tools Hermes offered to the model: browser_exec, delegate_task, execute_code, manage_connections, memory, patch, read_file, search_files, skill_manage, skill_view, skills_list, terminal, text_to_speech, tool_call, tool_describe, tool_search, web_extract, web_search, write_file
+[2026-11-10T11:19:19Z] listed under tool_search: docs_drift tools (2):
+[2026-11-10T11:19:19Z] listed under tool_search: - docs_drift_explain: Explain one docs-drift finding: the quoted docs lines, the quoted code lines…
+[2026-11-10T11:19:19Z] listed under tool_search: - docs_drift_scan: Check that README and Markdown docs still match the code in a repository…
+[2026-11-10T11:19:19Z] model -> Hermes (script step 1/6):
+{
+  "tool": "patch",
+  "args": {
+    "mode": "replace",
+    "path": "notesync/cli.py",
+    "old_string": "\"--output-dir\"",
+    "new_string": "\"--dest\""
+  }
+}
+
+[2026-11-10T11:19:22Z] Hermes -> model, tool result:
+{
+  "success": true,
+  "diff": "--- a/%TEMP%\\docs-drift-demo-jwkwr5ad\\notesync\\notesync\\cli.py\n+++ b/%TEMP%\\docs-drift-demo-jwkwr5ad\\notesync\\notesync\\cli.py\n@@ -9,7 +9,7 @@\n def build_parser() -> argparse.ArgumentParser:\n     parser = argparse.ArgumentParser(prog=\"notesync\")\n     parser.add_argument(\"source\", help=\"folder with .md notes\")\n-    parser.add_argument(\"--output-dir\", default=\"./out\", help=\"where the copies go\")\n+    parser.add_argument(\"--dest\", default=\"./out\", help=\"where the copies go\")\n     parser.add_argument(\"--timeout\", type=int, default=30, help=\"seconds to wait for a locked file\")\n     parser.add_argument(\"--dry-run\", action=\"store_true\", help=\"print what would be copied\")\n     return parser\n",
+  "files_modified": [
+    "%TEMP%\\docs-drift-demo-jwkwr5ad\\notesync\\notesync\\cli.py"
+  ],
+  "lint": {
+    "status": "ok",
+    "output": ""
+  },
+  "resolved_path": "%TEMP%\\docs-drift-demo-jwkwr5ad\\notesync\\notesync\\cli.py",
+  "docs_drift": {
+    "note": "This edit left 2 place(s) where the docs no longer match the code. Update the docs (or the code) before finishing; docs_drift_explain <id> shows both sides.",
+    "new": [
+      {
+        "id": "DD-5fb3c36f",
+        "check": "cli-flag-undefined",
+        "confidence": "high",
+        "doc": "README.md:8",
+        "doc_quote": "notesync ./notes --output-dir ./backup",
+        "problem": "`--output-dir` was removed from the code by the edit, but the docs still use it.",
+        "code": "notesync/cli.py:12",
+        "code_quote": "parser.add_argument(\"--dest\", default=\"./out\", help=\"where the copies go\")",
+        "suggestion": "The same edit added `--dest` (notesync/cli.py:12). If this is a rename, replace `--output-dir` with `--dest` in the docs.",
+        "also_at_lines": [
+          16
+        ]
+      },
+      {
+        "id": "DD-6d2fee65",
+        "check": "cli-flag-undefined",
+        "confidence": "high",
+        "doc": "docs/configuration.md:7",
+        "doc_quote": "To write the copies somewhere else, pass `--output-dir`:",
+        "problem": "`--output-dir` was removed from the code by the edit, but the docs still use it.",
+        "code": "notesync/cli.py:12",
+        "code_quote": "parser.add_argument(\"--dest\", default=\"./out\", help=\"where the copies go\")",
+        "suggestion": "The same edit added `--dest` (notesync/cli.py:12). If this is a rename, replace `--output-dir` with `--dest` in the docs.",
+        "also_at_lines": [
+          10
+        ]
+      }
+    ],
+    "still_open": 2
+  }
+}
+[2026-11-10T11:19:22Z] model -> Hermes (script step 2/6):
+{
+  "tool": "tool_call",
+  "args": {
+    "calls": [
+      {
+        "name": "docs_drift_explain",
+        "arguments": {
+          "finding_id": "DD-5fb3c36f"
+        }
+      }
+    ]
+  }
+}
+
+[2026-11-10T11:19:22Z] Hermes -> model, tool result:
+{
+  "id": "DD-5fb3c36f",
+  "check": "cli-flag-undefined",
+  "confidence": "high",
+  "doc": "README.md:8",
+  "doc_quote": "notesync ./notes --output-dir ./backup",
+  "problem": "`--output-dir` was removed from the code by the edit, but the docs still use it.",
+  "code": "notesync/cli.py:12",
+  "code_quote": "parser.add_argument(\"--dest\", default=\"./out\", help=\"where the copies go\")",
+  "suggestion": "The same edit added `--dest` (notesync/cli.py:12). If this is a rename, replace `--output-dir` with `--dest` in the docs.",
+  "also_at_lines": [
+    16
+  ],
+  "name": "--output-dir",
+  "why": [
+    "before the edit `--output-dir` was defined at notesync/cli.py:12",
+    "after the edit no non-doc file contains it",
+    "files that changed: notesync/cli.py",
+    "the doc line runs this project's own command `notesync`"
+  ],
+  "what_this_check_means": "Docs show a command-line flag that the code no longer defines.",
+  "doc_context": [
+    "      6 | ",
+    "      7 | ```sh",
+    ">     8 | notesync ./notes --output-dir ./backup",
+    "      9 | notesync ./notes --dry-run",
+    "     10 | ```"
+  ],
+  "code_context": [
+    "     10 |     parser = argparse.ArgumentParser(prog=\"notesync\")",
+    "     11 |     parser.add_argument(\"source\", help=\"folder with .md notes\")",
+    ">    12 |     parser.add_argument(\"--dest\", default=\"./out\", help=\"where the copies go\")",
+    "     13 |     parser.add_argument(\"--timeout\", type=int, default=30, help=\"seconds to wait for a locked file\")",
+    "     14 |     parser.add_argument(\"--dry-run\", action=\"store_true\", help=\"print what would be copied\")"
+  ],
+  "how_to_silence": "If the docs are right as written, add the name to `ignore_names` or the doc path to `ignore_paths` in this plugin's settings."
+}
+[2026-11-10T11:19:22Z] model -> Hermes (script step 3/6):
+{
+  "tool": "patch",
+  "args": {
+    "mode": "replace",
+    "path": "README.md",
+    "old_string": "--output-dir",
+    "new_string": "--dest",
+    "replace_all": true
+  }
+}
+
+[2026-11-10T11:19:25Z] Hermes -> model, tool result:
+{
+  "success": true,
+  "diff": "--- a/%TEMP%\\docs-drift-demo-jwkwr5ad\\notesync\\README.md\n+++ b/%TEMP%\\docs-drift-demo-jwkwr5ad\\notesync\\README.md\n@@ -5,7 +5,7 @@\n ## Usage\n \n ```sh\n-notesync ./notes --output-dir ./backup\n+notesync ./notes --dest ./backup\n notesync ./notes --dry-run\n ```\n \n@@ -13,7 +13,7 @@\n \n | Option | Default | Meaning |\n | --- | --- | --- |\n-| `--output-dir` | `./out` | where the copies go |\n+| `--dest` | `./out` | where the copies go |\n | `--timeout` | `30` | seconds to wait for a locked file |\n | `--dry-run` | off | print what would be copied |\n \n",
+  "files_modified": [
+    "%TEMP%\\docs-drift-demo-jwkwr5ad\\notesync\\README.md"
+  ],
+  "lint": {
+    "status": "skipped",
+    "message": "No linter for .md files"
+  },
+  "resolved_path": "%TEMP%\\docs-drift-demo-jwkwr5ad\\notesync\\README.md",
+  "docs_drift": {
+    "resolved": [
+      "DD-5fb3c36f"
+    ],
+    "still_open": 1,
+    "note": "1 docs-drift finding(s) resolved by this edit; 1 still open."
+  }
+}
+[2026-11-10T11:19:25Z] model -> Hermes (script step 4/6):
+{
+  "tool": "patch",
+  "args": {
+    "mode": "replace",
+    "path": "docs/configuration.md",
+    "old_string": "--output-dir",
+    "new_string": "--dest",
+    "replace_all": true
+  }
+}
+
+[2026-11-10T11:19:28Z] Hermes -> model, tool result:
+{
+  "success": true,
+  "diff": "--- a/%TEMP%\\docs-drift-demo-jwkwr5ad\\notesync\\docs\\configuration.md\n+++ b/%TEMP%\\docs-drift-demo-jwkwr5ad\\notesync\\docs\\configuration.md\n@@ -4,8 +4,8 @@\n \n - `NOTESYNC_TOKEN`: token for the remote upload. Without it nothing is uploaded.\n \n-To write the copies somewhere else, pass `--output-dir`:\n+To write the copies somewhere else, pass `--dest`:\n \n ```sh\n-notesync ./notes --output-dir /mnt/backup/notes\n+notesync ./notes --dest /mnt/backup/notes\n ```\n",
+  "files_modified": [
+    "%TEMP%\\docs-drift-demo-jwkwr5ad\\notesync\\docs\\configuration.md"
+  ],
+  "lint": {
+    "status": "skipped",
+    "message": "No linter for .md files"
+  },
+  "resolved_path": "%TEMP%\\docs-drift-demo-jwkwr5ad\\notesync\\docs\\configuration.md",
+  "docs_drift": {
+    "resolved": [
+      "DD-6d2fee65"
+    ],
+    "still_open": 0,
+    "note": "1 docs-drift finding(s) resolved by this edit; 0 still open."
+  }
+}
+[2026-11-10T11:19:28Z] model -> Hermes (script step 5/6):
+{
+  "tool": "tool_call",
+  "args": {
+    "calls": [
+      {
+        "name": "docs_drift_scan",
+        "arguments": {
+          "changed_only": true
+        }
+      }
+    ]
+  }
+}
+
+[2026-11-10T11:19:28Z] Hermes -> model, tool result:
+{
+  "root": "%TEMP%\\docs-drift-demo-jwkwr5ad\\notesync",
+  "summary": {
+    "findings": 0,
+    "by_check": {},
+    "doc_files_checked": 2,
+    "code_files_read": 4,
+    "elapsed_ms": 183
+  },
+  "findings": [],
+  "notes": [
+    "Compared with HEAD: 3 changed file(s), 0 finding(s) already present before the change are not shown."
+  ],
+  "checks_run": [
+    "path-missing",
+    "cli-flag-undefined",
+    "env-undefined",
+    "default-mismatch",
+    "npm-script-missing",
+    "make-target-missing"
+  ],
+  "compared_with": "git HEAD",
+  "resolved_by_changes": []
+}
+[2026-11-10T11:19:28Z] model -> Hermes (script step 6/6):
+{
+  "text": "Renamed --output-dir to --dest in notesync/cli.py and updated README.md and docs/configuration.md, which still used the old name. docs_drift_scan is clean."
+}
+
+--- 3. checks ---
+ok    the result of the first edit carried a docs_drift block with 2 new findings (got 2)
+ok    the findings point at README.md and docs/configuration.md
+ok    after the doc edits the hook reported 0 findings still open (sequence: [1, 0])
+ok    docs_drift_scan (changed_only) returned 0 findings
+ok    docs_drift_explain returned the finding the hook reported
+ok    Hermes finished the turn with exit_code 0
+
+$ git status --short        (in the project)
+ M README.md
+ M docs/configuration.md
+ M notesync/cli.py
+$ python -m docsdrift .     (the same scanner, run outside Hermes)
+docs-drift: 0 findings (2 doc files checked against 4 code files, 31 ms)
+
+RESULT: ok

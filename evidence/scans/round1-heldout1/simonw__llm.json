@@ -1,0 +1,42 @@
+{
+ "repo": "simonw/llm",
+ "sha": "39d325492b6d0939d9bcb1cd1c9d81e260154ab4",
+ "cold_scan_s": 1.84,
+ "warm_rescan_s": 0.14,
+ "doc_files": 29,
+ "code_files": 92,
+ "incomplete": false,
+ "notes": [],
+ "not_reported": {
+  "stale-context": 21
+ },
+ "default_checks": [
+  "path-missing",
+  "cli-flag-undefined",
+  "env-undefined",
+  "default-mismatch",
+  "npm-script-missing",
+  "make-target-missing"
+ ],
+ "findings": [
+  {
+   "id": "DD-1a6f8769",
+   "check": "cli-flag-undefined",
+   "confidence": "high",
+   "doc": "docs/setup.md:78",
+   "doc_quote": "llm python -m pip install \\",
+   "problem": "`--index-url` is used with `llm` in the docs, but the code does not define that flag.",
+   "suggestion": "Remove the flag from the docs, or restore it in the code.",
+   "name": "--index-url",
+   "why": [
+    "no literal --index-url (or --index_url) in any non-doc file",
+    "no identifier or string for it either",
+    "the doc line runs this project's own command `llm`"
+   ],
+   "what_this_check_means": "Docs show a command-line flag that the code no longer defines.",
+   "doc_lines": [
+    78
+   ]
+  }
+ ]
+}

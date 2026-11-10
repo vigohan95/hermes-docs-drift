@@ -1,0 +1,9 @@
+code: 806d448941e7add1be43f8577890eea740ad7ae9 started 2026-11-10T10:38:18Z
+BurntSushi__ripgrep: 0 findings {} docs=20 code=197 cold=2.3s warm=0.0s
+junegunn__fzf: 1 findings {'env-undefined': 1} docs=5 code=152 cold=2.0s warm=0.0s
+sharkdp__bat: 1 findings {'env-undocumented': 1} docs=5 code=767 cold=7.4s warm=0.1s
+ajeetdsouza__zoxide: 0 findings {} docs=2 code=59 cold=0.7s warm=0.0s
+commitizen-tools__commitizen: 0 findings {} docs=47 code=185 cold=2.8s warm=0.1s
+pdm-project__pdm: 10 findings {'env-undocumented': 6, 'path-missing': 3, 'cli-flag-undocumented': 1} docs=25 code=349 cold=4.9s warm=1.3s
+http-party__http-server: 0 findings {} docs=2 code=111 cold=1.4s warm=0.0s
+mikefarah__yq: 2 findings {'cli-flag-undocumented': 1, 'default-mismatch': 1} docs=163 code=392 cold=5.2s warm=0.1s

@@ -1,0 +1,45 @@
+{
+ "repo": "psf/black",
+ "sha": "b4f1fcae48826790b6f93ca9226d20003bce0eaa",
+ "cold_scan_s": 0.61,
+ "warm_rescan_s": 0.08,
+ "doc_files": 27,
+ "code_files": 516,
+ "incomplete": false,
+ "notes": [],
+ "not_reported": {
+  "site-route-link": 34,
+  "path-ref-about-readers-project": 1,
+  "stale-context": 3
+ },
+ "default_checks": [
+  "path-missing",
+  "cli-flag-undefined",
+  "env-undefined",
+  "default-mismatch",
+  "npm-script-missing",
+  "make-target-missing"
+ ],
+ "findings": [
+  {
+   "id": "DD-8509cb2c",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "docs/usage_and_configuration/black_as_a_server.md:63",
+   "doc_quote": "`UTF-8`. Request bodies are limited to 5 MiB by default; use `--max-body-size` to change",
+   "problem": "`--bind-host` is defined in src/blackd/__init__.py but no doc mentions it; 3 of the other 3 flags from that file are documented in docs/usage_and_configuration/black_as_a_server.md.",
+   "code": "src/blackd/__init__.py:72",
+   "code_quote": "@click.option(",
+   "suggestion": "Document `--bind-host` next to its siblings in docs/usage_and_configuration/black_as_a_server.md (around line 63).",
+   "name": "--bind-host",
+   "why": [
+    "3 of 4 flags defined in src/blackd/__init__.py appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    63
+   ]
+  }
+ ]
+}

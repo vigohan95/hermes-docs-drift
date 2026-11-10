@@ -1,0 +1,142 @@
+{
+  "about": "Hand labels for the default-check findings of the scan of NousResearch/hermes-agent at b7db40d82568ea68ce321ac1ead3bfea354c7f56 with scanner code b7ba05d (EVIDENCE/hermes-self/final/hermes-agent.json). Same rule as labels.json: 'true' means a reader following the doc line is misled about the code in this repository; anything arguable or not decidable from this repository is labelled false. The 138 findings of the opt-in checks in that scan were not labelled.",
+  "labelled_on": "2026-11-10",
+  "default_findings": 33,
+  "true": 5,
+  "false": 28,
+  "opt_in_findings_not_labelled": 138,
+  "labels": {
+    "hermes-agent|path-missing|docs/shared-bundle-builds.md|apps/desktop/BUILDING.md:149": {
+      "true": true,
+      "reason": "The link goes to ../../docs/, and the repository has no docs/ directory at its root. The page exists as website/docs/developer-guide/shared-bundle-builds.md."
+    },
+    "hermes-agent|path-missing|docs/macos-bundle-updates.md|apps/desktop/BUILDING.md:353": {
+      "true": true,
+      "reason": "The link goes to ../../docs/, and the repository has no docs/ directory at its root. The page exists as website/docs/developer-guide/macos-bundle-updates.md."
+    },
+    "hermes-agent|path-missing|docs/stable-releases.md|apps/desktop/BUILDING.md:394": {
+      "true": true,
+      "reason": "The link goes to ../../docs/, and the repository has no docs/ directory at its root. The page exists as website/docs/developer-guide/stable-releases.md."
+    },
+    "hermes-agent|path-missing|docs/pm-audit-status.md|apps/desktop/BUILDING.md:399": {
+      "true": true,
+      "reason": "The link goes to ../../docs/, and the repository has no docs/ directory at its root. The page exists as website/docs/developer-guide/pm-audit-status.md."
+    },
+    "hermes-agent|cli-flag-undefined|--rocm-version|optional-skills/creative/comfyui/references/official-cli.md:61": {
+      "true": false,
+      "reason": "The page documents comfy-cli, a tool that is not in this repository. The scanner matched the option table to the wrong program."
+    },
+    "hermes-agent|cli-flag-undefined|--fast-deps|optional-skills/creative/comfyui/references/official-cli.md:62": {
+      "true": false,
+      "reason": "The page documents comfy-cli, a tool that is not in this repository. The scanner matched the option table to the wrong program."
+    },
+    "hermes-agent|cli-flag-undefined|--skip-manager|optional-skills/creative/comfyui/references/official-cli.md:63": {
+      "true": false,
+      "reason": "The page documents comfy-cli, a tool that is not in this repository. The scanner matched the option table to the wrong program."
+    },
+    "hermes-agent|cli-flag-undefined|--skip-torch-or-directml|optional-skills/creative/comfyui/references/official-cli.md:64": {
+      "true": false,
+      "reason": "The page documents comfy-cli, a tool that is not in this repository. The scanner matched the option table to the wrong program."
+    },
+    "hermes-agent|cli-flag-undefined|--uv-compile|optional-skills/creative/comfyui/references/official-cli.md:161": {
+      "true": false,
+      "reason": "The page documents comfy-cli, a tool that is not in this repository. The scanner matched the option table to the wrong program."
+    },
+    "hermes-agent|default-mismatch|--fps|optional-skills/creative/hyperframes/references/cli.md:101": {
+      "true": false,
+      "reason": "The page documents the hyperframes CLI, which is not in this repository."
+    },
+    "hermes-agent|default-mismatch|--num-iterations|optional-skills/research/darwinian-evolver/SKILL.md:149": {
+      "true": false,
+      "reason": "The table documents the options of the darwinian-evolver package, which is not in this repository; the defaults found in code belong to a different script."
+    },
+    "hermes-agent|default-mismatch|--mutator-concurrency|optional-skills/research/darwinian-evolver/SKILL.md:151": {
+      "true": false,
+      "reason": "The table documents the options of the darwinian-evolver package, which is not in this repository; the defaults found in code belong to a different script."
+    },
+    "hermes-agent|default-mismatch|--evaluator-concurrency|optional-skills/research/darwinian-evolver/SKILL.md:152": {
+      "true": false,
+      "reason": "The table documents the options of the darwinian-evolver package, which is not in this repository; the defaults found in code belong to a different script."
+    },
+    "hermes-agent|path-missing|optional-skills/research/research-paper-writing/references/references/writing-guide.md|optional-skills/research/research-paper-writing/references/phase5-paper-drafting.md:63": {
+      "true": false,
+      "reason": "The link is written relative to the skill's root directory, where references/ and templates/ exist. Followed from the file's own directory it is broken, so this is arguable; labelled false."
+    },
+    "hermes-agent|path-missing|optional-skills/research/research-paper-writing/references/references/sources.md|optional-skills/research/research-paper-writing/references/phase5-paper-drafting.md:64": {
+      "true": false,
+      "reason": "The link is written relative to the skill's root directory, where references/ and templates/ exist. Followed from the file's own directory it is broken, so this is arguable; labelled false."
+    },
+    "hermes-agent|path-missing|optional-skills/research/research-paper-writing/references/templates/README.md|optional-skills/research/research-paper-writing/references/phase5-paper-drafting.md:464": {
+      "true": false,
+      "reason": "The link is written relative to the skill's root directory, where references/ and templates/ exist. Followed from the file's own directory it is broken, so this is arguable; labelled false."
+    },
+    "hermes-agent|npm-script-missing|dev:demo|optional-skills/web-development/page-agent/SKILL.md:133": {
+      "true": false,
+      "reason": "The commands are for a checkout of the page-agent project, which is not in this repository."
+    },
+    "hermes-agent|npm-script-missing|dev:ext|optional-skills/web-development/page-agent/SKILL.md:134": {
+      "true": false,
+      "reason": "The commands are for a checkout of the page-agent project, which is not in this repository."
+    },
+    "hermes-agent|npm-script-missing|build:ext|optional-skills/web-development/page-agent/SKILL.md:135": {
+      "true": false,
+      "reason": "The commands are for a checkout of the page-agent project, which is not in this repository."
+    },
+    "hermes-agent|path-missing|docs/shared-bundle-builds.md|scripts/build/README.md:5": {
+      "true": true,
+      "reason": "The link goes to ../../docs/, and the repository has no docs/ directory at its root. The page exists as website/docs/developer-guide/shared-bundle-builds.md."
+    },
+    "hermes-agent|env-undefined|BUZZ_ACP_RELAY_OBSERVER|website/docs/integrations/buzz.md:35": {
+      "true": false,
+      "reason": "No code in the repository reads it. The docs present it as a setting of the Buzz relay, a separate program, so this cannot be decided from this repository; labelled false."
+    },
+    "hermes-agent|cli-flag-undefined|--skill-conflict|website/docs/reference/cli-commands.md:1898": {
+      "true": false,
+      "reason": "Listed as an option of `hermes import-agent openclaw`, which the docs say is provided by the agent-importers plugin from the plugin catalog. That plugin is not in this repository, so the claim cannot be checked here; labelled false."
+    },
+    "hermes-agent|default-mismatch|--toolsets|website/docs/reference/tools-reference.md:306": {
+      "true": false,
+      "reason": "The sentence shows how to add one toolset, not the default of --toolsets. The scanner also knew only one of several definitions of the option."
+    },
+    "hermes-agent|env-undefined|BUZZ_ACP_RELAY_OBSERVER|website/docs/user-guide/features/acp.md:200": {
+      "true": false,
+      "reason": "No code in the repository reads it. The docs present it as a setting of the Buzz relay, a separate program, so this cannot be decided from this repository; labelled false."
+    },
+    "hermes-agent|cli-flag-undefined|--oss-llm|website/docs/user-guide/features/memory-providers.md:421": {
+      "true": false,
+      "reason": "Options of `hermes memory setup mem0`. The mem0 provider is no longer in the core repository (hermes_cli/memory_provider_migration.py lists it as moved out), so the claim cannot be checked here; labelled false."
+    },
+    "hermes-agent|cli-flag-undefined|--oss-llm-key|website/docs/user-guide/features/memory-providers.md:421": {
+      "true": false,
+      "reason": "Options of `hermes memory setup mem0`. The mem0 provider is no longer in the core repository (hermes_cli/memory_provider_migration.py lists it as moved out), so the claim cannot be checked here; labelled false."
+    },
+    "hermes-agent|cli-flag-undefined|--oss-vector|website/docs/user-guide/features/memory-providers.md:421": {
+      "true": false,
+      "reason": "Options of `hermes memory setup mem0`. The mem0 provider is no longer in the core repository (hermes_cli/memory_provider_migration.py lists it as moved out), so the claim cannot be checked here; labelled false."
+    },
+    "hermes-agent|default-mismatch|--num-iterations|website/docs/user-guide/skills/optional/research/research-darwinian-evolver.md:167": {
+      "true": false,
+      "reason": "The table documents the options of the darwinian-evolver package, which is not in this repository; the defaults found in code belong to a different script."
+    },
+    "hermes-agent|default-mismatch|--mutator-concurrency|website/docs/user-guide/skills/optional/research/research-darwinian-evolver.md:169": {
+      "true": false,
+      "reason": "The table documents the options of the darwinian-evolver package, which is not in this repository; the defaults found in code belong to a different script."
+    },
+    "hermes-agent|default-mismatch|--evaluator-concurrency|website/docs/user-guide/skills/optional/research/research-darwinian-evolver.md:170": {
+      "true": false,
+      "reason": "The table documents the options of the darwinian-evolver package, which is not in this repository; the defaults found in code belong to a different script."
+    },
+    "hermes-agent|npm-script-missing|dev:demo|website/docs/user-guide/skills/optional/web-development/web-development-page-agent.md:150": {
+      "true": false,
+      "reason": "The commands are for a checkout of the page-agent project, which is not in this repository."
+    },
+    "hermes-agent|npm-script-missing|dev:ext|website/docs/user-guide/skills/optional/web-development/web-development-page-agent.md:151": {
+      "true": false,
+      "reason": "The commands are for a checkout of the page-agent project, which is not in this repository."
+    },
+    "hermes-agent|npm-script-missing|build:ext|website/docs/user-guide/skills/optional/web-development/web-development-page-agent.md:152": {
+      "true": false,
+      "reason": "The commands are for a checkout of the page-agent project, which is not in this repository."
+    }
+  }
+}

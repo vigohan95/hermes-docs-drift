@@ -1,0 +1,10 @@
+code: b7ba05d661710de24ab81a2f1700e6552cddd709 started 2026-11-10T11:07:29Z sets: A=tuning B=first held-out C=second held-out
+Aider-AI__aider: 2 findings {'path-ref-missing': 2} docs=116 code=367 cold=0.8s warm=0.1s
+encode__uvicorn: 0 findings {} docs=16 code=109 cold=0.2s warm=0.0s
+go-task__task: 0 findings {} docs=101 code=803 cold=0.6s warm=0.1s
+mkdocs__mkdocs: 2 findings {'path-ref-missing': 2} docs=19 code=194 cold=0.5s warm=0.1s
+nvm-sh__nvm: 0 findings {} docs=5 code=504 cold=0.3s warm=0.1s
+psf__black: 1 findings {'cli-flag-undocumented': 1} docs=27 code=516 cold=0.6s warm=0.1s
+sharkdp__fd: 0 findings {} docs=2 code=51 cold=0.2s warm=0.0s
+vitejs__vite: 0 findings {} docs=54 code=2723 cold=1.3s warm=0.3s
+finished 2026-11-10T11:07:34Z exit 0

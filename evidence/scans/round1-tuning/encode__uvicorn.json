@@ -1,0 +1,25 @@
+{
+ "repo": "encode/uvicorn",
+ "sha": "a99c1b76ee9caea67ff98e2ccc457bd372db193f",
+ "cold_scan_s": 1.3,
+ "warm_rescan_s": 0.05,
+ "doc_files": 16,
+ "code_files": 109,
+ "incomplete": false,
+ "notes": [],
+ "not_reported": {
+  "stale-context": 1,
+  "option-list-not-ours": 0,
+  "env-maybe-derived-from-settings-field": 3,
+  "default-types-not-comparable": 2
+ },
+ "default_checks": [
+  "path-missing",
+  "cli-flag-undefined",
+  "env-undefined",
+  "default-mismatch",
+  "npm-script-missing",
+  "make-target-missing"
+ ],
+ "findings": []
+}

@@ -1,0 +1,3405 @@
+{
+ "repo": "hermes-agent",
+ "sha": "b7db40d82568ea68ce321ac1ead3bfea354c7f56",
+ "cold_scan_s": 52.16,
+ "warm_rescan_s": 3.92,
+ "doc_files": 1180,
+ "code_files": 21805,
+ "incomplete": false,
+ "notes": [],
+ "not_reported": {
+  "links-of-page-from-another-tree": 109,
+  "placeholder-link": 1,
+  "path-ref-parent-dir-missing": 13,
+  "path-ref-generated-or-stale": 14,
+  "path-ref-about-readers-project": 16,
+  "stale-context": 892,
+  "option-list-not-ours": 197,
+  "script-forwards-arguments": 2,
+  "flag-has-loose-trace": 11,
+  "flag-siblings-not-listed-in-one-doc": 12,
+  "env-built-dynamically": 22,
+  "env-maybe-derived-from-settings-field": 30,
+  "default-defined-in-several-places": 8,
+  "default-types-not-comparable": 5,
+  "make-doc-not-about-this-project": 16
+ },
+ "default_checks": [
+  "path-missing",
+  "cli-flag-undefined",
+  "env-undefined",
+  "default-mismatch",
+  "npm-script-missing",
+  "make-target-missing"
+ ],
+ "findings": [
+  {
+   "id": "DD-c87479b7",
+   "check": "path-missing",
+   "confidence": "high",
+   "doc": "apps/desktop/BUILDING.md:149",
+   "doc_quote": "See [shared bundle builds](../../docs/shared-bundle-builds.md) for Termux reuse.",
+   "problem": "Link target `../../docs/shared-bundle-builds.md` resolves to `docs/shared-bundle-builds.md`, which is not in the repository.",
+   "code": "website/docs/developer-guide/shared-bundle-builds.md",
+   "suggestion": "A file with the same name exists at `website/docs/developer-guide/shared-bundle-builds.md`; if it moved, update the link.",
+   "also_at_lines": [
+    174
+   ],
+   "name": "docs/shared-bundle-builds.md",
+   "why": [
+    "the link is relative and stays inside the repository",
+    "the target is neither tracked, untracked-on-disk, git-ignored nor inside a submodule"
+   ],
+   "what_this_check_means": "A Markdown link or image points at a file that is not in the repository.",
+   "doc_lines": [
+    149,
+    174
+   ]
+  },
+  {
+   "id": "DD-c0f7ea87",
+   "check": "path-missing",
+   "confidence": "high",
+   "doc": "apps/desktop/BUILDING.md:353",
+   "doc_quote": "See [macOS bundle updates](../../docs/macos-bundle-updates.md) for feed validation",
+   "problem": "Link target `../../docs/macos-bundle-updates.md` resolves to `docs/macos-bundle-updates.md`, which is not in the repository.",
+   "code": "website/docs/developer-guide/macos-bundle-updates.md",
+   "suggestion": "A file with the same name exists at `website/docs/developer-guide/macos-bundle-updates.md`; if it moved, update the link.",
+   "name": "docs/macos-bundle-updates.md",
+   "why": [
+    "the link is relative and stays inside the repository",
+    "the target is neither tracked, untracked-on-disk, git-ignored nor inside a submodule"
+   ],
+   "what_this_check_means": "A Markdown link or image points at a file that is not in the repository.",
+   "doc_lines": [
+    353
+   ]
+  },
+  {
+   "id": "DD-f1659003",
+   "check": "path-missing",
+   "confidence": "high",
+   "doc": "apps/desktop/BUILDING.md:394",
+   "doc_quote": "[Stable release admission](../../docs/stable-releases.md) requires the full",
+   "problem": "Link target `../../docs/stable-releases.md` resolves to `docs/stable-releases.md`, which is not in the repository.",
+   "code": "website/docs/developer-guide/stable-releases.md",
+   "suggestion": "A file with the same name exists at `website/docs/developer-guide/stable-releases.md`; if it moved, update the link.",
+   "name": "docs/stable-releases.md",
+   "why": [
+    "the link is relative and stays inside the repository",
+    "the target is neither tracked, untracked-on-disk, git-ignored nor inside a submodule"
+   ],
+   "what_this_check_means": "A Markdown link or image points at a file that is not in the repository.",
+   "doc_lines": [
+    394
+   ]
+  },
+  {
+   "id": "DD-531d7d24",
+   "check": "path-missing",
+   "confidence": "high",
+   "doc": "apps/desktop/BUILDING.md:399",
+   "doc_quote": "separate in [PM audit status](../../docs/pm-audit-status.md).",
+   "problem": "Link target `../../docs/pm-audit-status.md` resolves to `docs/pm-audit-status.md`, which is not in the repository.",
+   "code": "website/docs/developer-guide/pm-audit-status.md",
+   "suggestion": "A file with the same name exists at `website/docs/developer-guide/pm-audit-status.md`; if it moved, update the link.",
+   "name": "docs/pm-audit-status.md",
+   "why": [
+    "the link is relative and stays inside the repository",
+    "the target is neither tracked, untracked-on-disk, git-ignored nor inside a submodule"
+   ],
+   "what_this_check_means": "A Markdown link or image points at a file that is not in the repository.",
+   "doc_lines": [
+    399
+   ]
+  },
+  {
+   "id": "DD-a0728403",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "apps/desktop/scripts/profile-typing-lag.md:159",
+   "doc_quote": "streaming. `scripts/measure-submit.mjs` measures",
+   "problem": "Docs refer to `scripts/measure-submit.mjs`; the directory `scripts/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "name": "scripts/measure-submit.mjs",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    159
+   ]
+  },
+  {
+   "id": "DD-b7b6f9dc",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "apps/desktop/scripts/profile-typing-lag.md:182",
+   "doc_quote": "- **`scripts/measure-synthetic-stream.mjs`** — drives `__PERF_DRIVE__`,",
+   "problem": "Docs refer to `scripts/measure-synthetic-stream.mjs`; the directory `scripts/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "name": "scripts/measure-synthetic-stream.mjs",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    182
+   ]
+  },
+  {
+   "id": "DD-e4981342",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "apps/desktop/scripts/profile-typing-lag.md:186",
+   "doc_quote": "- **`scripts/profile-synth-stream.mjs`** — CPU profile during a synthetic",
+   "problem": "Docs refer to `scripts/profile-synth-stream.mjs`; the directory `scripts/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "name": "scripts/profile-synth-stream.mjs",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    186
+   ]
+  },
+  {
+   "id": "DD-920e9baf",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "apps/desktop/scripts/profile-typing-lag.md:189",
+   "doc_quote": "- **`scripts/measure-real-stream.mjs`** — same harness as the synthetic but",
+   "problem": "Docs refer to `scripts/measure-real-stream.mjs`; the directory `scripts/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "name": "scripts/measure-real-stream.mjs",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    189
+   ]
+  },
+  {
+   "id": "DD-b84d3330",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "apps/desktop/scripts/profile-typing-lag.md:192",
+   "doc_quote": "- **`scripts/profile-real-stream.mjs`** — CPU profile over the duration of",
+   "problem": "Docs refer to `scripts/profile-real-stream.mjs`; the directory `scripts/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "name": "scripts/profile-real-stream.mjs",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    192
+   ]
+  },
+  {
+   "id": "DD-4a071d00",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "apps/desktop/scripts/profile-typing-lag.md:195",
+   "doc_quote": "Helpers: `scripts/eval.mjs` (one-shot CDP eval), `scripts/reload.mjs`",
+   "problem": "Docs refer to `scripts/eval.mjs`; the directory `scripts/` exists but that file does not.",
+   "code": "apps/desktop/scripts/eval.mjs",
+   "suggestion": "A file named `eval.mjs` exists at `apps/desktop/scripts/eval.mjs`; if it moved, update the reference.",
+   "name": "scripts/eval.mjs",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    195
+   ]
+  },
+  {
+   "id": "DD-d574bfa3",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "apps/desktop/scripts/profile-typing-lag.md:195",
+   "doc_quote": "Helpers: `scripts/eval.mjs` (one-shot CDP eval), `scripts/reload.mjs`",
+   "problem": "Docs refer to `scripts/reload.mjs`; the directory `scripts/` exists but that file does not.",
+   "code": "apps/desktop/scripts/reload.mjs",
+   "suggestion": "A file named `reload.mjs` exists at `apps/desktop/scripts/reload.mjs`; if it moved, update the reference.",
+   "name": "scripts/reload.mjs",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    195
+   ]
+  },
+  {
+   "id": "DD-4368ccd1",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "evals/botmode-dm-delivery/README.md:64",
+   "doc_quote": "Retired with the deferred `hermes chat` pending lane (`cron/bot_chat_delivery.py`): cron",
+   "problem": "Docs refer to `cron/bot_chat_delivery.py`; the directory `cron/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "name": "cron/bot_chat_delivery.py",
+   "why": [
+    "`cron/` is a top-level directory of the repository and `cron/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    64
+   ]
+  },
+  {
+   "id": "DD-006472f9",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "evals/compaction/README.md:126",
+   "doc_quote": "- `--also-uncompacted` adds a control arm that answers from the full",
+   "problem": "`--cap-tokens` is defined in evals/compaction/runner.py but no doc mentions it; 5 of the other 5 flags from that file are documented in evals/compaction/README.md.",
+   "code": "evals/compaction/runner.py:414",
+   "code_quote": "ap.add_argument(\"--cap-tokens\", type=int, default=500_000)",
+   "suggestion": "Document `--cap-tokens` next to its siblings in evals/compaction/README.md (around line 126).",
+   "name": "--cap-tokens",
+   "why": [
+    "5 of 6 flags defined in evals/compaction/runner.py appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    126
+   ]
+  },
+  {
+   "id": "DD-981125f9",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "evals/desktop_bug_campaign/thread-scroll/README.md:9",
+   "doc_quote": "`apps/desktop/src/scroll-campaign-probe.tsx` and `fixture.html` to",
+   "problem": "Docs refer to `apps/desktop/src/scroll-campaign-probe.tsx`; the directory `apps/desktop/src/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "name": "apps/desktop/src/scroll-campaign-probe.tsx",
+   "why": [
+    "`apps/` is a top-level directory of the repository and `apps/desktop/src/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    9
+   ]
+  },
+  {
+   "id": "DD-3908375c",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "evals/desktop_bug_campaign/thread-scroll/README.md:10",
+   "doc_quote": "`apps/desktop/scroll-campaign-probe.html`. Both are temporary files, not production",
+   "problem": "Docs refer to `apps/desktop/scroll-campaign-probe.html`; the directory `apps/desktop/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "name": "apps/desktop/scroll-campaign-probe.html",
+   "why": [
+    "`apps/` is a top-level directory of the repository and `apps/desktop/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    10
+   ]
+  },
+  {
+   "id": "DD-9ed00e7f",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "evals/postmortem/README.md:114",
+   "doc_quote": "`agent/nous_wire.py::GMI_NATIVE_WIRE_CLEARED`. `--ttl 1h` reproduces the 2× write price",
+   "problem": "`--settle` is defined in evals/postmortem/live_ab/cache_concurrency_probe.py but no doc mentions it; 8 of the other 10 flags from that file are documented in evals/postmortem/README.md.",
+   "code": "evals/postmortem/live_ab/cache_concurrency_probe.py:56",
+   "code_quote": "ap.add_argument(\"--settle\", type=float, default=0.0, help=\"seconds to sleep before every request\")",
+   "suggestion": "Document `--settle` next to its siblings in evals/postmortem/README.md (around line 114).",
+   "name": "--settle",
+   "why": [
+    "10 of 11 flags defined in evals/postmortem/live_ab/cache_concurrency_probe.py appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    114
+   ]
+  },
+  {
+   "id": "DD-4475e5c7",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "evals/shared_gateway/README.md:25",
+   "doc_quote": "python3 evals/shared_gateway/normal_boot.py --repo /path/to/checkout --python /path/to/project/.venv/bin/python --output /private/path/boot-before.json",
+   "problem": "`--deadline` is defined in evals/shared_gateway/normal_boot.py but no doc mentions it; 3 of the other 3 flags from that file are documented in evals/shared_gateway/README.md.",
+   "code": "evals/shared_gateway/normal_boot.py:42",
+   "code_quote": "parser.add_argument('--deadline', type=float, default=30)",
+   "suggestion": "Document `--deadline` next to its siblings in evals/shared_gateway/README.md (around line 25).",
+   "name": "--deadline",
+   "why": [
+    "3 of 4 flags defined in evals/shared_gateway/normal_boot.py appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    25
+   ]
+  },
+  {
+   "id": "DD-ad0b5d3c",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "optional-skills/creative/anatomy/references/kit.md:110",
+   "doc_quote": "| `lineSvg(d, { tone = \"lo\", dotted, dashed, flow, className, free })` | `flow` animates dashes; use it for things moving along a path. `free: true` (or `\"start\"`, `\"end\"`) writ...",
+   "problem": "Docs refer to `scripts/lines.mjs`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/creative/anatomy/scripts/lines.mjs",
+   "suggestion": "A file named `lines.mjs` exists at `optional-skills/creative/anatomy/scripts/lines.mjs`; if it moved, update the reference.",
+   "also_at_lines": [
+    280,
+    375
+   ],
+   "name": "scripts/lines.mjs",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    110,
+    280,
+    375
+   ]
+  },
+  {
+   "id": "DD-515d69a3",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "optional-skills/creative/anatomy/references/kit.md:125",
+   "doc_quote": "| `glScript()` | From `scripts/inline-kit.mjs`. The source of `kit/gl.mjs` (`GLSL_ISO`, `glCamera`, `glLayer`, `smooth`, `burst`, `settle`), to inline after `kitScript()` on a p...",
+   "problem": "Docs refer to `scripts/inline-kit.mjs`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/creative/anatomy/scripts/inline-kit.mjs",
+   "suggestion": "A file named `inline-kit.mjs` exists at `optional-skills/creative/anatomy/scripts/inline-kit.mjs`; if it moved, update the reference.",
+   "also_at_lines": [
+    126,
+    376
+   ],
+   "name": "scripts/inline-kit.mjs",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    125,
+    126,
+    376
+   ]
+  },
+  {
+   "id": "DD-614d9de5",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "optional-skills/creative/anatomy/references/kit.md:373",
+   "doc_quote": "| `scripts/capture.mjs` | One-shot screenshots: desktop, phone, hover, keys, timed shots, 4× zooms, reduced motion, console check. Chrome starts with WebGL on (SwiftShader allow...",
+   "problem": "Docs refer to `scripts/capture.mjs`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/creative/anatomy/scripts/capture.mjs",
+   "suggestion": "A file named `capture.mjs` exists at `optional-skills/creative/anatomy/scripts/capture.mjs`; if it moved, update the reference.",
+   "name": "scripts/capture.mjs",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    373
+   ]
+  },
+  {
+   "id": "DD-aaa4c2f6",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "optional-skills/creative/anatomy/references/kit.md:374",
+   "doc_quote": "| `scripts/drive.mjs` | Scripted sessions in headless Chrome with WebGL on: scroll, move, click, key, slow, until, eval, shots and contact sheets. `--no-webgl` checks the SVG fa...",
+   "problem": "Docs refer to `scripts/drive.mjs`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/creative/anatomy/scripts/drive.mjs",
+   "suggestion": "A file named `drive.mjs` exists at `optional-skills/creative/anatomy/scripts/drive.mjs`; if it moved, update the reference.",
+   "also_at_lines": [
+    377,
+    378
+   ],
+   "name": "scripts/drive.mjs",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    374,
+    377,
+    378
+   ]
+  },
+  {
+   "id": "DD-7ff0a646",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "optional-skills/creative/anatomy/references/kit.md:379",
+   "doc_quote": "| `scripts/turn-check.mjs` | 3D figures. `build.mjs --fidelity` (Node: prisms, rounds, lathes and tubes against the kit builders at P′(θ)); `page.html --order` (needs a `--verif...",
+   "problem": "Docs refer to `scripts/turn-check.mjs`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/creative/anatomy/scripts/turn-check.mjs",
+   "suggestion": "A file named `turn-check.mjs` exists at `optional-skills/creative/anatomy/scripts/turn-check.mjs`; if it moved, update the reference.",
+   "name": "scripts/turn-check.mjs",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    379
+   ]
+  },
+  {
+   "id": "DD-2edf5a68",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "optional-skills/creative/anatomy/references/kit.md:380",
+   "doc_quote": "| `scripts/turn-bench.mjs` | 3D figures: `emit` and `order` CPU time in Node over 360 angles, per part kind (median of 7). |",
+   "problem": "Docs refer to `scripts/turn-bench.mjs`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/creative/anatomy/scripts/turn-bench.mjs",
+   "suggestion": "A file named `turn-bench.mjs` exists at `optional-skills/creative/anatomy/scripts/turn-bench.mjs`; if it moved, update the reference.",
+   "name": "scripts/turn-bench.mjs",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    380
+   ]
+  },
+  {
+   "id": "DD-bcd97f4c",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "optional-skills/creative/anatomy/references/verify.md:6",
+   "doc_quote": "`scripts/capture.mjs` starts its own headless Chrome (set `CHROME_PATH` if it can't find one), loads a file or URL, and clips to `.iso-plate` by default. It also prints the read...",
+   "problem": "Docs refer to `scripts/capture.mjs`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/creative/anatomy/scripts/capture.mjs",
+   "suggestion": "A file named `capture.mjs` exists at `optional-skills/creative/anatomy/scripts/capture.mjs`; if it moved, update the reference.",
+   "name": "scripts/capture.mjs",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    6
+   ]
+  },
+  {
+   "id": "DD-293f8622",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "optional-skills/creative/anatomy/references/verify.md:23",
+   "doc_quote": "`scripts/drive.mjs` runs a scripted session in headless Chrome with WebGL on. Use it for sequences: hover, then click, then type, then wait for a phase. Use it also for slowed-d...",
+   "problem": "Docs refer to `scripts/drive.mjs`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/creative/anatomy/scripts/drive.mjs",
+   "suggestion": "A file named `drive.mjs` exists at `optional-skills/creative/anatomy/scripts/drive.mjs`; if it moved, update the reference.",
+   "name": "scripts/drive.mjs",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    23
+   ]
+  },
+  {
+   "id": "DD-2c0dc27e",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "optional-skills/creative/anatomy/references/verify.md:64",
+   "doc_quote": "The audit sees recorded shapes, never line markup, so it can't see a seam, rule, rib or tick that stops in the middle of a face. `scripts/lines.mjs` checks the drawing itself, i...",
+   "problem": "Docs refer to `scripts/lines.mjs`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/creative/anatomy/scripts/lines.mjs",
+   "suggestion": "A file named `lines.mjs` exists at `optional-skills/creative/anatomy/scripts/lines.mjs`; if it moved, update the reference.",
+   "also_at_lines": [
+    346
+   ],
+   "name": "scripts/lines.mjs",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    64,
+    346
+   ]
+  },
+  {
+   "id": "DD-456066e2",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "optional-skills/creative/anatomy/references/webgl.md:452",
+   "doc_quote": "Use `scripts/drive.mjs` for anything that moves; `capture.mjs` also has WebGL now, so it is fine for still shots of a shader page. `references/verify.md` has the usage. On top o...",
+   "problem": "Docs refer to `scripts/drive.mjs`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/creative/anatomy/scripts/drive.mjs",
+   "suggestion": "A file named `drive.mjs` exists at `optional-skills/creative/anatomy/scripts/drive.mjs`; if it moved, update the reference.",
+   "name": "scripts/drive.mjs",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    452
+   ]
+  },
+  {
+   "id": "DD-82051d74",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "optional-skills/creative/archify/SKILL.md:43",
+   "doc_quote": "- Upstream's \"Update awareness\" step runs `scripts/check-update.mjs`, which",
+   "problem": "Docs refer to `scripts/check-update.mjs`; the directory `scripts/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "name": "scripts/check-update.mjs",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    43
+   ]
+  },
+  {
+   "id": "DD-43b779c8",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "optional-skills/creative/auteur/references/assets.md:34",
+   "doc_quote": "quality. `scripts/source.mjs` fetches them and writes a licence ledger for every file.",
+   "problem": "Docs refer to `scripts/source.mjs`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/creative/auteur/scripts/source.mjs",
+   "suggestion": "A file named `source.mjs` exists at `optional-skills/creative/auteur/scripts/source.mjs`; if it moved, update the reference.",
+   "name": "scripts/source.mjs",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    34
+   ]
+  },
+  {
+   "id": "DD-763e59e5",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "optional-skills/creative/auteur/references/assets.md:246",
+   "doc_quote": "This complete `tools/build_dolly.py` builds a lit scene, moves `PathCamera` along a Bezier curve while tracking an Empty, bakes the camera transform, exports glTF 2.0 with camer...",
+   "problem": "Docs refer to `tools/build_dolly.py`; the directory `tools/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "name": "tools/build_dolly.py",
+   "why": [
+    "`tools/` is a top-level directory of the repository and `tools/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    246
+   ]
+  },
+  {
+   "id": "DD-86c8468e",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "optional-skills/creative/brag/SKILL.md:53",
+   "doc_quote": "- `uv` runs `scripts/analyze_music_cues.py` when a custom track needs beat-sync",
+   "problem": "Docs refer to `scripts/analyze_music_cues.py`; the directory `scripts/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "name": "scripts/analyze_music_cues.py",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    53
+   ]
+  },
+  {
+   "id": "DD-7bf9b353",
+   "check": "cli-flag-undefined",
+   "confidence": "high",
+   "doc": "optional-skills/creative/comfyui/references/official-cli.md:61",
+   "doc_quote": "| `--rocm-version` | 6.1, 6.2, 6.3, 7.0, 7.1 |",
+   "problem": "`--rocm-version` is documented as an option, but the code does not define that flag.",
+   "code": "acp_adapter/entry.py:96",
+   "code_quote": "parser.add_argument(\"--version\", action=\"store_true\", help=\"Print Hermes version and exit\")",
+   "suggestion": "Closest flag defined in code: `--version` (acp_adapter/entry.py:96). If it was renamed, update the docs to `--version`; otherwise remove the flag from the docs.",
+   "name": "--rocm-version",
+   "why": [
+    "no literal --rocm-version (or --rocm_version) in any non-doc file",
+    "no identifier or string for it either",
+    "it sits in an option list where at least 70% of the other flags are defined in the code"
+   ],
+   "what_this_check_means": "Docs show a command-line flag that the code no longer defines.",
+   "doc_lines": [
+    61
+   ]
+  },
+  {
+   "id": "DD-5e4bc6de",
+   "check": "cli-flag-undefined",
+   "confidence": "high",
+   "doc": "optional-skills/creative/comfyui/references/official-cli.md:62",
+   "doc_quote": "| `--fast-deps` | uv-based dependency resolution |",
+   "problem": "`--fast-deps` is documented as an option, but the code does not define that flag.",
+   "code": "evals/reasoning_replay/harness.py:931",
+   "code_quote": "r.add_argument(\"--steps\", default=\"text,opaque\")",
+   "suggestion": "Closest flag defined in code: `--steps` (evals/reasoning_replay/harness.py:931). If it was renamed, update the docs to `--steps`; otherwise remove the flag from the docs.",
+   "also_at_lines": [
+    160
+   ],
+   "name": "--fast-deps",
+   "why": [
+    "no literal --fast-deps (or --fast_deps) in any non-doc file",
+    "no identifier or string for it either",
+    "it sits in an option list where at least 70% of the other flags are defined in the code"
+   ],
+   "what_this_check_means": "Docs show a command-line flag that the code no longer defines.",
+   "doc_lines": [
+    62,
+    160
+   ]
+  },
+  {
+   "id": "DD-ef0d3652",
+   "check": "cli-flag-undefined",
+   "confidence": "high",
+   "doc": "optional-skills/creative/comfyui/references/official-cli.md:63",
+   "doc_quote": "| `--skip-manager` | Don't install ComfyUI-Manager |",
+   "problem": "`--skip-manager` is documented as an option, but the code does not define that flag.",
+   "code": "pm/cli.py:1034",
+   "code_quote": "p.add_argument(\"--skip-target\", action=\"append\", default=[], choices=ALL_TARGETS, metavar=\"TARGET\",",
+   "suggestion": "Closest flag defined in code: `--skip-target` (pm/cli.py:1034). If it was renamed, update the docs to `--skip-target`; otherwise remove the flag from the docs.",
+   "name": "--skip-manager",
+   "why": [
+    "no literal --skip-manager (or --skip_manager) in any non-doc file",
+    "no identifier or string for it either",
+    "it sits in an option list where at least 70% of the other flags are defined in the code"
+   ],
+   "what_this_check_means": "Docs show a command-line flag that the code no longer defines.",
+   "doc_lines": [
+    63
+   ]
+  },
+  {
+   "id": "DD-905833fe",
+   "check": "cli-flag-undefined",
+   "confidence": "high",
+   "doc": "optional-skills/creative/comfyui/references/official-cli.md:64",
+   "doc_quote": "| `--skip-torch-or-directml` | Skip PyTorch install |",
+   "problem": "`--skip-torch-or-directml` is documented as an option, but the code does not define that flag.",
+   "code": "pm/cli.py:1034",
+   "code_quote": "p.add_argument(\"--skip-target\", action=\"append\", default=[], choices=ALL_TARGETS, metavar=\"TARGET\",",
+   "suggestion": "Closest flag defined in code: `--skip-target` (pm/cli.py:1034). If it was renamed, update the docs to `--skip-target`; otherwise remove the flag from the docs.",
+   "name": "--skip-torch-or-directml",
+   "why": [
+    "no literal --skip-torch-or-directml (or --skip_torch_or_directml) in any non-doc file",
+    "no identifier or string for it either",
+    "it sits in an option list where at least 70% of the other flags are defined in the code"
+   ],
+   "what_this_check_means": "Docs show a command-line flag that the code no longer defines.",
+   "doc_lines": [
+    64
+   ]
+  },
+  {
+   "id": "DD-1938a633",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "optional-skills/creative/comfyui/references/official-cli.md:95",
+   "doc_quote": "`scripts/run_workflow.py` instead.",
+   "problem": "Docs refer to `scripts/run_workflow.py`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/creative/comfyui/scripts/run_workflow.py",
+   "suggestion": "A file named `run_workflow.py` exists at `optional-skills/creative/comfyui/scripts/run_workflow.py`; if it moved, update the reference.",
+   "name": "scripts/run_workflow.py",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    95
+   ]
+  },
+  {
+   "id": "DD-977a4b6a",
+   "check": "cli-flag-undefined",
+   "confidence": "high",
+   "doc": "optional-skills/creative/comfyui/references/official-cli.md:161",
+   "doc_quote": "| `--uv-compile` | ComfyUI-Manager v4.1+ unified resolver (recommended) |",
+   "problem": "`--uv-compile` is documented as an option, but the code does not define that flag.",
+   "code": "evals/fanout_resource_bench.py:124",
+   "code_quote": "ap.add_argument(\"--compare\", nargs=2)",
+   "suggestion": "Closest flag defined in code: `--compare` (evals/fanout_resource_bench.py:124). If it was renamed, update the docs to `--compare`; otherwise remove the flag from the docs.",
+   "name": "--uv-compile",
+   "why": [
+    "no literal --uv-compile (or --uv_compile) in any non-doc file",
+    "no identifier or string for it either",
+    "it sits in an option list where at least 70% of the other flags are defined in the code"
+   ],
+   "what_this_check_means": "Docs show a command-line flag that the code no longer defines.",
+   "doc_lines": [
+    161
+   ]
+  },
+  {
+   "id": "DD-8e6218aa",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "optional-skills/creative/comfyui/references/workflow-format.md:65",
+   "doc_quote": "The full catalog lives in `scripts/_common.py` (`PARAM_PATTERNS` and",
+   "problem": "Docs refer to `scripts/_common.py`; the directory `scripts/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "name": "scripts/_common.py",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    65
+   ]
+  },
+  {
+   "id": "DD-39f8b7f8",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "optional-skills/creative/comfyui/references/workflow-format.md:177",
+   "doc_quote": "`scripts/extract_schema.py` automates discovering which node IDs/fields",
+   "problem": "Docs refer to `scripts/extract_schema.py`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/creative/comfyui/scripts/extract_schema.py",
+   "suggestion": "A file named `extract_schema.py` exists at `optional-skills/creative/comfyui/scripts/extract_schema.py`; if it moved, update the reference.",
+   "name": "scripts/extract_schema.py",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    177
+   ]
+  },
+  {
+   "id": "DD-0476db02",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "optional-skills/creative/comfyui/workflows/README.md:4",
+   "doc_quote": "ready to run with `scripts/run_workflow.py` once you've installed (or have",
+   "problem": "Docs refer to `scripts/run_workflow.py`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/creative/comfyui/scripts/run_workflow.py",
+   "suggestion": "A file named `run_workflow.py` exists at `optional-skills/creative/comfyui/scripts/run_workflow.py`; if it moved, update the reference.",
+   "name": "scripts/run_workflow.py",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    4
+   ]
+  },
+  {
+   "id": "DD-b2c387d1",
+   "check": "default-mismatch",
+   "confidence": "high",
+   "doc": "optional-skills/creative/hyperframes/references/cli.md:101",
+   "doc_quote": "| `--fps` | 24, 30, 60 | 30 | 60fps doubles render time |",
+   "problem": "Docs say the default of `--fps` is 30, the code says 12.",
+   "code": "hermes_cli/journey.py:350",
+   "code_quote": "parent.add_argument(\"--fps\", type=int, default=12, help=\"Animation frames per second for --play (default 12).\")",
+   "suggestion": "Change the documented default to 12, or change the code if the docs are right.",
+   "name": "--fps",
+   "why": [
+    "the doc line names exactly one option and states one default",
+    "the code defines one static default for it (hermes_cli/journey.py:350)"
+   ],
+   "what_this_check_means": "Docs state a default value that differs from the default in the code.",
+   "doc_lines": [
+    101
+   ]
+  },
+  {
+   "id": "DD-616f737c",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "optional-skills/creative/kanban-video-orchestrator/references/kanban-setup.md:8",
+   "doc_quote": "`scripts/bootstrap_pipeline.py` automates most of it from a structured input",
+   "problem": "Docs refer to `scripts/bootstrap_pipeline.py`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/creative/kanban-video-orchestrator/scripts/bootstrap_pipeline.py",
+   "suggestion": "A file named `bootstrap_pipeline.py` exists at `optional-skills/creative/kanban-video-orchestrator/scripts/bootstrap_pipeline.py`; if it moved, update the reference.",
+   "name": "scripts/bootstrap_pipeline.py",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    8
+   ]
+  },
+  {
+   "id": "DD-13a5b03e",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "optional-skills/creative/kanban-video-orchestrator/references/monitoring.md:35",
+   "doc_quote": "The companion `scripts/monitor.py` polls the kanban via the CLI and surfaces",
+   "problem": "Docs refer to `scripts/monitor.py`; the directory `scripts/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "also_at_lines": [
+    152
+   ],
+   "name": "scripts/monitor.py",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    35,
+    152
+   ]
+  },
+  {
+   "id": "DD-7daa8d42",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "optional-skills/creative/pixel-art/ATTRIBUTION.md:16",
+   "doc_quote": "`scripts/pixelart.py` of pixel-art-studio.",
+   "problem": "Docs refer to `scripts/pixelart.py`; the directory `scripts/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "name": "scripts/pixelart.py",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    16
+   ]
+  },
+  {
+   "id": "DD-d23b4b4f",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "optional-skills/creative/pixel-art/ATTRIBUTION.md:21",
+   "doc_quote": "and the `SCENES` → layer mapping. Ported from `scripts/pixelart_video.py`",
+   "problem": "Docs refer to `scripts/pixelart_video.py`; the directory `scripts/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "name": "scripts/pixelart_video.py",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    21
+   ]
+  },
+  {
+   "id": "DD-15dbd250",
+   "check": "default-mismatch",
+   "confidence": "high",
+   "doc": "optional-skills/research/darwinian-evolver/SKILL.md:149",
+   "doc_quote": "| `--num_iterations` | 5 | bump to 10–20 once you trust the evaluator |",
+   "problem": "Docs say the default of `--num-iterations` is 5, the code says 3.",
+   "code": "optional-skills/research/darwinian-evolver/templates/custom_problem_template.py:204",
+   "code_quote": "ap.add_argument(\"--num_iterations\", type=int, default=3)",
+   "suggestion": "Change the documented default to 3, or change the code if the docs are right.",
+   "name": "--num-iterations",
+   "why": [
+    "the doc line names exactly one option and states one default",
+    "the code defines one static default for it (optional-skills/research/darwinian-evolver/templates/custom_problem_template.py:204)"
+   ],
+   "what_this_check_means": "Docs state a default value that differs from the default in the code.",
+   "doc_lines": [
+    149
+   ]
+  },
+  {
+   "id": "DD-fa8f1715",
+   "check": "default-mismatch",
+   "confidence": "high",
+   "doc": "optional-skills/research/darwinian-evolver/SKILL.md:151",
+   "doc_quote": "| `--mutator_concurrency` | 10 | drop to 2–4 to avoid rate limits |",
+   "problem": "Docs say the default of `--mutator-concurrency` is 10, the code says 2.",
+   "code": "optional-skills/research/darwinian-evolver/templates/custom_problem_template.py:205",
+   "code_quote": "ap.add_argument(\"--mutator_concurrency\", type=int, default=2)",
+   "suggestion": "Change the documented default to 2, or change the code if the docs are right.",
+   "name": "--mutator-concurrency",
+   "why": [
+    "the doc line names exactly one option and states one default",
+    "the code defines one static default for it (optional-skills/research/darwinian-evolver/templates/custom_problem_template.py:205)"
+   ],
+   "what_this_check_means": "Docs state a default value that differs from the default in the code.",
+   "doc_lines": [
+    151
+   ]
+  },
+  {
+   "id": "DD-871c9837",
+   "check": "default-mismatch",
+   "confidence": "high",
+   "doc": "optional-skills/research/darwinian-evolver/SKILL.md:152",
+   "doc_quote": "| `--evaluator_concurrency` | 10 | same; evaluator hits the LLM too |",
+   "problem": "Docs say the default of `--evaluator-concurrency` is 10, the code says 2.",
+   "code": "optional-skills/research/darwinian-evolver/templates/custom_problem_template.py:206",
+   "code_quote": "ap.add_argument(\"--evaluator_concurrency\", type=int, default=2)",
+   "suggestion": "Change the documented default to 2, or change the code if the docs are right.",
+   "name": "--evaluator-concurrency",
+   "why": [
+    "the doc line names exactly one option and states one default",
+    "the code defines one static default for it (optional-skills/research/darwinian-evolver/templates/custom_problem_template.py:206)"
+   ],
+   "what_this_check_means": "Docs state a default value that differs from the default in the code.",
+   "doc_lines": [
+    152
+   ]
+  },
+  {
+   "id": "DD-a67571d2",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "optional-skills/research/osint-investigation/references/sources/courtlistener.md:64",
+   "doc_quote": "Path: `scripts/fetch_courtlistener.py`",
+   "problem": "Docs refer to `scripts/fetch_courtlistener.py`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/research/osint-investigation/scripts/fetch_courtlistener.py",
+   "suggestion": "A file named `fetch_courtlistener.py` exists at `optional-skills/research/osint-investigation/scripts/fetch_courtlistener.py`; if it moved, update the reference.",
+   "name": "scripts/fetch_courtlistener.py",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    64
+   ]
+  },
+  {
+   "id": "DD-4b6e46e7",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "optional-skills/research/osint-investigation/references/sources/gdelt.md:69",
+   "doc_quote": "Path: `scripts/fetch_gdelt.py`",
+   "problem": "Docs refer to `scripts/fetch_gdelt.py`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/research/osint-investigation/scripts/fetch_gdelt.py",
+   "suggestion": "A file named `fetch_gdelt.py` exists at `optional-skills/research/osint-investigation/scripts/fetch_gdelt.py`; if it moved, update the reference.",
+   "name": "scripts/fetch_gdelt.py",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    69
+   ]
+  },
+  {
+   "id": "DD-783366db",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "optional-skills/research/osint-investigation/references/sources/icij-offshore.md:67",
+   "doc_quote": "Path: `scripts/fetch_icij_offshore.py`",
+   "problem": "Docs refer to `scripts/fetch_icij_offshore.py`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/research/osint-investigation/scripts/fetch_icij_offshore.py",
+   "suggestion": "A file named `fetch_icij_offshore.py` exists at `optional-skills/research/osint-investigation/scripts/fetch_icij_offshore.py`; if it moved, update the reference.",
+   "name": "scripts/fetch_icij_offshore.py",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    67
+   ]
+  },
+  {
+   "id": "DD-89b655af",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "optional-skills/research/osint-investigation/references/sources/nyc-acris.md:62",
+   "doc_quote": "Path: `scripts/fetch_nyc_acris.py`",
+   "problem": "Docs refer to `scripts/fetch_nyc_acris.py`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/research/osint-investigation/scripts/fetch_nyc_acris.py",
+   "suggestion": "A file named `fetch_nyc_acris.py` exists at `optional-skills/research/osint-investigation/scripts/fetch_nyc_acris.py`; if it moved, update the reference.",
+   "name": "scripts/fetch_nyc_acris.py",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    62
+   ]
+  },
+  {
+   "id": "DD-3e0d3bc4",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "optional-skills/research/osint-investigation/references/sources/ofac-sdn.md:65",
+   "doc_quote": "Path: `scripts/fetch_ofac_sdn.py`",
+   "problem": "Docs refer to `scripts/fetch_ofac_sdn.py`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/research/osint-investigation/scripts/fetch_ofac_sdn.py",
+   "suggestion": "A file named `fetch_ofac_sdn.py` exists at `optional-skills/research/osint-investigation/scripts/fetch_ofac_sdn.py`; if it moved, update the reference.",
+   "name": "scripts/fetch_ofac_sdn.py",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    65
+   ]
+  },
+  {
+   "id": "DD-65c843e3",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "optional-skills/research/osint-investigation/references/sources/opencorporates.md:71",
+   "doc_quote": "Path: `scripts/fetch_opencorporates.py`",
+   "problem": "Docs refer to `scripts/fetch_opencorporates.py`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/research/osint-investigation/scripts/fetch_opencorporates.py",
+   "suggestion": "A file named `fetch_opencorporates.py` exists at `optional-skills/research/osint-investigation/scripts/fetch_opencorporates.py`; if it moved, update the reference.",
+   "name": "scripts/fetch_opencorporates.py",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    71
+   ]
+  },
+  {
+   "id": "DD-793a9dda",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "optional-skills/research/osint-investigation/references/sources/sec-edgar.md:57",
+   "doc_quote": "Path: `scripts/fetch_sec_edgar.py`",
+   "problem": "Docs refer to `scripts/fetch_sec_edgar.py`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/research/osint-investigation/scripts/fetch_sec_edgar.py",
+   "suggestion": "A file named `fetch_sec_edgar.py` exists at `optional-skills/research/osint-investigation/scripts/fetch_sec_edgar.py`; if it moved, update the reference.",
+   "name": "scripts/fetch_sec_edgar.py",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    57
+   ]
+  },
+  {
+   "id": "DD-f5a9f365",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "optional-skills/research/osint-investigation/references/sources/senate-ld.md:64",
+   "doc_quote": "Path: `scripts/fetch_senate_ld.py`",
+   "problem": "Docs refer to `scripts/fetch_senate_ld.py`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/research/osint-investigation/scripts/fetch_senate_ld.py",
+   "suggestion": "A file named `fetch_senate_ld.py` exists at `optional-skills/research/osint-investigation/scripts/fetch_senate_ld.py`; if it moved, update the reference.",
+   "name": "scripts/fetch_senate_ld.py",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    64
+   ]
+  },
+  {
+   "id": "DD-7d66be2e",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "optional-skills/research/osint-investigation/references/sources/usaspending.md:69",
+   "doc_quote": "Path: `scripts/fetch_usaspending.py`",
+   "problem": "Docs refer to `scripts/fetch_usaspending.py`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/research/osint-investigation/scripts/fetch_usaspending.py",
+   "suggestion": "A file named `fetch_usaspending.py` exists at `optional-skills/research/osint-investigation/scripts/fetch_usaspending.py`; if it moved, update the reference.",
+   "name": "scripts/fetch_usaspending.py",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    69
+   ]
+  },
+  {
+   "id": "DD-902a8a94",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "optional-skills/research/osint-investigation/references/sources/wayback.md:59",
+   "doc_quote": "Path: `scripts/fetch_wayback.py`",
+   "problem": "Docs refer to `scripts/fetch_wayback.py`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/research/osint-investigation/scripts/fetch_wayback.py",
+   "suggestion": "A file named `fetch_wayback.py` exists at `optional-skills/research/osint-investigation/scripts/fetch_wayback.py`; if it moved, update the reference.",
+   "name": "scripts/fetch_wayback.py",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    59
+   ]
+  },
+  {
+   "id": "DD-f2bac73d",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "optional-skills/research/osint-investigation/references/sources/wikipedia.md:76",
+   "doc_quote": "Path: `scripts/fetch_wikipedia.py`",
+   "problem": "Docs refer to `scripts/fetch_wikipedia.py`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/research/osint-investigation/scripts/fetch_wikipedia.py",
+   "suggestion": "A file named `fetch_wikipedia.py` exists at `optional-skills/research/osint-investigation/scripts/fetch_wikipedia.py`; if it moved, update the reference.",
+   "name": "scripts/fetch_wikipedia.py",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    76
+   ]
+  },
+  {
+   "id": "DD-954efbac",
+   "check": "path-missing",
+   "confidence": "high",
+   "doc": "optional-skills/research/research-paper-writing/references/phase5-paper-drafting.md:63",
+   "doc_quote": "- [references/writing-guide.md](references/writing-guide.md) — Full explanations with examples",
+   "problem": "Link target `references/writing-guide.md` resolves to `optional-skills/research/research-paper-writing/references/references/writing-guide.md`, which is not in the repository.",
+   "code": "optional-skills/research/research-paper-writing/references/writing-guide.md",
+   "suggestion": "A file with the same name exists at `optional-skills/research/research-paper-writing/references/writing-guide.md`; if it moved, update the link.",
+   "also_at_lines": [
+    373
+   ],
+   "name": "optional-skills/research/research-paper-writing/references/references/writing-guide.md",
+   "why": [
+    "the link is relative and stays inside the repository",
+    "the target is neither tracked, untracked-on-disk, git-ignored nor inside a submodule"
+   ],
+   "what_this_check_means": "A Markdown link or image points at a file that is not in the repository.",
+   "doc_lines": [
+    63,
+    373
+   ]
+  },
+  {
+   "id": "DD-2fc84529",
+   "check": "path-missing",
+   "confidence": "high",
+   "doc": "optional-skills/research/research-paper-writing/references/phase5-paper-drafting.md:64",
+   "doc_quote": "- [references/sources.md](references/sources.md) — Complete bibliography",
+   "problem": "Link target `references/sources.md` resolves to `optional-skills/research/research-paper-writing/references/references/sources.md`, which is not in the repository.",
+   "code": "optional-skills/research/research-paper-writing/references/sources.md",
+   "suggestion": "A file with the same name exists at `optional-skills/research/research-paper-writing/references/sources.md`; if it moved, update the link.",
+   "name": "optional-skills/research/research-paper-writing/references/references/sources.md",
+   "why": [
+    "the link is relative and stays inside the repository",
+    "the target is neither tracked, untracked-on-disk, git-ignored nor inside a submodule"
+   ],
+   "what_this_check_means": "A Markdown link or image points at a file that is not in the repository.",
+   "doc_lines": [
+    64
+   ]
+  },
+  {
+   "id": "DD-7c73362d",
+   "check": "path-missing",
+   "confidence": "high",
+   "doc": "optional-skills/research/research-paper-writing/references/phase5-paper-drafting.md:464",
+   "doc_quote": "Templates in `templates/` directory. See [templates/README.md](templates/README.md) for compilation setup (VS Code, CLI, Overleaf, other IDEs).",
+   "problem": "Link target `templates/README.md` resolves to `optional-skills/research/research-paper-writing/references/templates/README.md`, which is not in the repository.",
+   "suggestion": "Fix or remove the link.",
+   "name": "optional-skills/research/research-paper-writing/references/templates/README.md",
+   "why": [
+    "the link is relative and stays inside the repository",
+    "the target is neither tracked, untracked-on-disk, git-ignored nor inside a submodule"
+   ],
+   "what_this_check_means": "A Markdown link or image points at a file that is not in the repository.",
+   "doc_lines": [
+    464
+   ]
+  },
+  {
+   "id": "DD-e66c30c2",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "optional-skills/security/oss-forensics/references/evidence-types.md:36",
+   "doc_quote": "| `WORKFLOW_FILE` | A suspicious CI/CD workflow file | `.github/workflows/release.yml` |",
+   "problem": "Docs refer to `.github/workflows/release.yml`; the directory `.github/workflows/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "name": ".github/workflows/release.yml",
+   "why": [
+    "`.github/` is a top-level directory of the repository and `.github/workflows/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    36
+   ]
+  },
+  {
+   "id": "DD-db2131eb",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "optional-skills/security/unbroker/references/state-machine.md:4",
+   "doc_quote": "appends it to `audit.jsonl`. Authoritative definition lives in `scripts/ledger.py`.",
+   "problem": "Docs refer to `scripts/ledger.py`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/security/unbroker/scripts/ledger.py",
+   "suggestion": "A file named `ledger.py` exists at `optional-skills/security/unbroker/scripts/ledger.py`; if it moved, update the reference.",
+   "name": "scripts/ledger.py",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    4
+   ]
+  },
+  {
+   "id": "DD-dad89aa8",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "optional-skills/software-development/pr-lens/SKILL.md:105",
+   "doc_quote": "| `npx @coldtea/pr-lens-cli@latest validate .pr-lens/graph.json` | validate the document (also validates `.github/pr-lens.yml`) |",
+   "problem": "Docs refer to `.github/pr-lens.yml`; the directory `.github/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "also_at_lines": [
+    127
+   ],
+   "name": ".github/pr-lens.yml",
+   "why": [
+    "`.github/` is a top-level directory of the repository and `.github/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    105,
+    127
+   ]
+  },
+  {
+   "id": "DD-de6df811",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "optional-skills/software-development/pr-lens/references/config.md:3",
+   "doc_quote": "# Correcting the map: `.github/pr-lens.yml`",
+   "problem": "Docs refer to `.github/pr-lens.yml`; the directory `.github/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "name": ".github/pr-lens.yml",
+   "why": [
+    "`.github/` is a top-level directory of the repository and `.github/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    3
+   ]
+  },
+  {
+   "id": "DD-45b02381",
+   "check": "npm-script-missing",
+   "confidence": "high",
+   "doc": "optional-skills/web-development/page-agent/SKILL.md:133",
+   "doc_quote": "npm run dev:demo # serve IIFE bundle at http://localhost:5174/page-agent.demo.js",
+   "problem": "Docs run the script `dev:demo`, but no package.json in the repository defines it.",
+   "code": "apps/desktop/package.json",
+   "suggestion": "Closest script: `dev:mock` (apps/desktop/package.json). Update the docs or add the script.",
+   "also_at_lines": [
+    144,
+    172
+   ],
+   "name": "dev:demo",
+   "why": [
+    "96 scripts are defined across the repository's package.json files; `dev:demo` is not one of them",
+    "the doc does not define that script in a JSON snippet"
+   ],
+   "what_this_check_means": "Docs tell the reader to run a package.json script that does not exist.",
+   "doc_lines": [
+    133,
+    144,
+    172
+   ]
+  },
+  {
+   "id": "DD-e6baa167",
+   "check": "npm-script-missing",
+   "confidence": "high",
+   "doc": "optional-skills/web-development/page-agent/SKILL.md:134",
+   "doc_quote": "npm run dev:ext # develop the browser extension (WXT + React)",
+   "problem": "Docs run the script `dev:ext`, but no package.json in the repository defines it.",
+   "code": "apps/desktop/package.json",
+   "suggestion": "Closest script: `dev:electron` (apps/desktop/package.json). Update the docs or add the script.",
+   "name": "dev:ext",
+   "why": [
+    "96 scripts are defined across the repository's package.json files; `dev:ext` is not one of them",
+    "the doc does not define that script in a JSON snippet"
+   ],
+   "what_this_check_means": "Docs tell the reader to run a package.json script that does not exist.",
+   "doc_lines": [
+    134
+   ]
+  },
+  {
+   "id": "DD-c2ff39af",
+   "check": "npm-script-missing",
+   "confidence": "high",
+   "doc": "optional-skills/web-development/page-agent/SKILL.md:135",
+   "doc_quote": "npm run build:ext # build the extension",
+   "problem": "Docs run the script `build:ext`, but no package.json in the repository defines it.",
+   "code": "apps/desktop/package.json",
+   "suggestion": "Closest script: `builder` (apps/desktop/package.json). Update the docs or add the script.",
+   "name": "build:ext",
+   "why": [
+    "96 scripts are defined across the repository's package.json files; `build:ext` is not one of them",
+    "the doc does not define that script in a JSON snippet"
+   ],
+   "what_this_check_means": "Docs tell the reader to run a package.json script that does not exist.",
+   "doc_lines": [
+    135
+   ]
+  },
+  {
+   "id": "DD-5ef81a2e",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "optional-skills/web-development/scrollcraft/references/assets.md:4",
+   "doc_quote": "`scripts/kie.mjs` and `scripts/encode.sh`.",
+   "problem": "Docs refer to `scripts/encode.sh`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/web-development/scrollcraft/scripts/encode.sh",
+   "suggestion": "A file named `encode.sh` exists at `optional-skills/web-development/scrollcraft/scripts/encode.sh`; if it moved, update the reference.",
+   "name": "scripts/encode.sh",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    4
+   ]
+  },
+  {
+   "id": "DD-268ad872",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "optional-skills/web-development/scrollcraft/references/assets.md:4",
+   "doc_quote": "`scripts/kie.mjs` and `scripts/encode.sh`.",
+   "problem": "Docs refer to `scripts/kie.mjs`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/web-development/scrollcraft/scripts/kie.mjs",
+   "suggestion": "A file named `kie.mjs` exists at `optional-skills/web-development/scrollcraft/scripts/kie.mjs`; if it moved, update the reference.",
+   "name": "scripts/kie.mjs",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    4
+   ]
+  },
+  {
+   "id": "DD-dc3be735",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "optional-skills/web-development/scrollcraft/references/worldflight.md:339",
+   "doc_quote": "`scripts/worldflight-assert.mjs` and run against **any** worldflight page, not a",
+   "problem": "Docs refer to `scripts/worldflight-assert.mjs`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/web-development/scrollcraft/scripts/worldflight-assert.mjs",
+   "suggestion": "A file named `worldflight-assert.mjs` exists at `optional-skills/web-development/scrollcraft/scripts/worldflight-assert.mjs`; if it moved, update the reference.",
+   "name": "scripts/worldflight-assert.mjs",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    339
+   ]
+  },
+  {
+   "id": "DD-70dc04fd",
+   "check": "env-undocumented",
+   "confidence": "medium",
+   "doc": "plugins/platforms/a2a/README.md:93",
+   "doc_quote": "| `A2A_PUSH_SECRET` | bearer token | HMAC secret for push signing. |",
+   "problem": "The code reads `A2A_PROVIDER_ORG` (plugins/platforms/a2a/protocol.py:71) but no doc mentions it; 7 other A2A_ variables are documented in plugins/platforms/a2a/README.md.",
+   "code": "plugins/platforms/a2a/protocol.py:71",
+   "code_quote": "\"provider\": {\"organization\": os.getenv(\"A2A_PROVIDER_ORG\", \"Hermes Agent\"), \"url\": os.getenv(\"A2A_PROVIDER_URL\", \"\") or url},",
+   "suggestion": "Document `A2A_PROVIDER_ORG` next to the other A2A_ variables in plugins/platforms/a2a/README.md (around line 93).",
+   "name": "A2A_PROVIDER_ORG",
+   "why": [
+    "7 of 9 A2A_ variables read by the code appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code reads an environment variable that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    93
+   ]
+  },
+  {
+   "id": "DD-b19cefb8",
+   "check": "env-undocumented",
+   "confidence": "medium",
+   "doc": "plugins/platforms/a2a/README.md:93",
+   "doc_quote": "| `A2A_PUSH_SECRET` | bearer token | HMAC secret for push signing. |",
+   "problem": "The code reads `A2A_PROVIDER_URL` (plugins/platforms/a2a/protocol.py:71) but no doc mentions it; 7 other A2A_ variables are documented in plugins/platforms/a2a/README.md.",
+   "code": "plugins/platforms/a2a/protocol.py:71",
+   "code_quote": "\"provider\": {\"organization\": os.getenv(\"A2A_PROVIDER_ORG\", \"Hermes Agent\"), \"url\": os.getenv(\"A2A_PROVIDER_URL\", \"\") or url},",
+   "suggestion": "Document `A2A_PROVIDER_URL` next to the other A2A_ variables in plugins/platforms/a2a/README.md (around line 93).",
+   "name": "A2A_PROVIDER_URL",
+   "why": [
+    "7 of 9 A2A_ variables read by the code appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code reads an environment variable that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    93
+   ]
+  },
+  {
+   "id": "DD-a82aef4b",
+   "check": "path-missing",
+   "confidence": "high",
+   "doc": "scripts/build/README.md:5",
+   "doc_quote": "[Shared bundle builds](../../docs/shared-bundle-builds.md) describes the",
+   "problem": "Link target `../../docs/shared-bundle-builds.md` resolves to `docs/shared-bundle-builds.md`, which is not in the repository.",
+   "code": "website/docs/developer-guide/shared-bundle-builds.md",
+   "suggestion": "A file with the same name exists at `website/docs/developer-guide/shared-bundle-builds.md`; if it moved, update the link.",
+   "name": "docs/shared-bundle-builds.md",
+   "why": [
+    "the link is relative and stays inside the repository",
+    "the target is neither tracked, untracked-on-disk, git-ignored nor inside a submodule"
+   ],
+   "what_this_check_means": "A Markdown link or image points at a file that is not in the repository.",
+   "doc_lines": [
+    5
+   ]
+  },
+  {
+   "id": "DD-f6ccfca3",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "scripts/build/README.md:331",
+   "doc_quote": "uses `python -m pm.build_env --prune-cache --cache PATH`; add `--ci` only when the",
+   "problem": "`--exact-lock` is defined in pm/build_env.py but no doc mentions it; 17 of the other 25 flags from that file are documented in scripts/build/README.md.",
+   "code": "pm/build_env.py:55",
+   "code_quote": "operation.add_argument(\"--exact-lock\", action=\"store_true\",",
+   "suggestion": "Document `--exact-lock` next to its siblings in scripts/build/README.md (around line 331).",
+   "name": "--exact-lock",
+   "why": [
+    "19 of 26 flags defined in pm/build_env.py appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    331
+   ]
+  },
+  {
+   "id": "DD-15154c7d",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "scripts/build/README.md:331",
+   "doc_quote": "uses `python -m pm.build_env --prune-cache --cache PATH`; add `--ci` only when the",
+   "problem": "`--lock` is defined in pm/build_env.py but no doc mentions it; 17 of the other 25 flags from that file are documented in scripts/build/README.md.",
+   "code": "pm/build_env.py:70",
+   "code_quote": "parser.add_argument(\"--lock\", type=Path,",
+   "suggestion": "Document `--lock` next to its siblings in scripts/build/README.md (around line 331).",
+   "name": "--lock",
+   "why": [
+    "19 of 26 flags defined in pm/build_env.py appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    331
+   ]
+  },
+  {
+   "id": "DD-a078cbf1",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "scripts/build/README.md:331",
+   "doc_quote": "uses `python -m pm.build_env --prune-cache --cache PATH`; add `--ci` only when the",
+   "problem": "`--lock-only` is defined in pm/build_env.py but no doc mentions it; 17 of the other 25 flags from that file are documented in scripts/build/README.md.",
+   "code": "pm/build_env.py:51",
+   "code_quote": "operation.add_argument(\"--lock-only\", action=\"store_true\")",
+   "suggestion": "Document `--lock-only` next to its siblings in scripts/build/README.md (around line 331).",
+   "name": "--lock-only",
+   "why": [
+    "19 of 26 flags defined in pm/build_env.py appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    331
+   ]
+  },
+  {
+   "id": "DD-0be47239",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "scripts/build/README.md:331",
+   "doc_quote": "uses `python -m pm.build_env --prune-cache --cache PATH`; add `--ci` only when the",
+   "problem": "`--lock-source` is defined in pm/build_env.py but no doc mentions it; 17 of the other 25 flags from that file are documented in scripts/build/README.md.",
+   "code": "pm/build_env.py:58",
+   "code_quote": "parser.add_argument(\"--lock-source\", type=Path, default=None,",
+   "suggestion": "Document `--lock-source` next to its siblings in scripts/build/README.md (around line 331).",
+   "name": "--lock-source",
+   "why": [
+    "19 of 26 flags defined in pm/build_env.py appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    331
+   ]
+  },
+  {
+   "id": "DD-8b682de0",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "scripts/build/README.md:331",
+   "doc_quote": "uses `python -m pm.build_env --prune-cache --cache PATH`; add `--ci` only when the",
+   "problem": "`--record-selection` is defined in pm/build_env.py but no doc mentions it; 17 of the other 25 flags from that file are documented in scripts/build/README.md.",
+   "code": "pm/build_env.py:65",
+   "code_quote": "parser.add_argument(\"--record-selection\", action=\"store_true\",",
+   "suggestion": "Document `--record-selection` next to its siblings in scripts/build/README.md (around line 331).",
+   "name": "--record-selection",
+   "why": [
+    "19 of 26 flags defined in pm/build_env.py appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    331
+   ]
+  },
+  {
+   "id": "DD-507e9329",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "scripts/build/README.md:331",
+   "doc_quote": "uses `python -m pm.build_env --prune-cache --cache PATH`; add `--ci` only when the",
+   "problem": "`--wheelhouse` is defined in pm/build_env.py but no doc mentions it; 17 of the other 25 flags from that file are documented in scripts/build/README.md.",
+   "code": "pm/build_env.py:67",
+   "code_quote": "parser.add_argument(\"--wheelhouse\", type=Path)",
+   "suggestion": "Document `--wheelhouse` next to its siblings in scripts/build/README.md (around line 331).",
+   "name": "--wheelhouse",
+   "why": [
+    "19 of 26 flags defined in pm/build_env.py appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    331
+   ]
+  },
+  {
+   "id": "DD-f9e394a7",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "skills/creative/p5js/references/export-pipeline.md:158",
+   "doc_quote": "The bundled `scripts/export-frames.js` detects `window._p5Ready` and switches to deterministic mode automatically. Without it, falls back to timed capture (less precise).",
+   "problem": "Docs refer to `scripts/export-frames.js`; the directory `scripts/` exists but that file does not.",
+   "code": "skills/creative/p5js/scripts/export-frames.js",
+   "suggestion": "A file named `export-frames.js` exists at `skills/creative/p5js/scripts/export-frames.js`; if it moved, update the reference.",
+   "also_at_lines": [
+    277
+   ],
+   "name": "scripts/export-frames.js",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    158,
+    277
+   ]
+  },
+  {
+   "id": "DD-459ecbd9",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "skills/creative/p5js/references/export-pipeline.md:320",
+   "doc_quote": "See `scripts/render.sh` for the complete render script. Pipeline:",
+   "problem": "Docs refer to `scripts/render.sh`; the directory `scripts/` exists but that file does not.",
+   "code": "skills/creative/p5js/scripts/render.sh",
+   "suggestion": "A file named `render.sh` exists at `skills/creative/p5js/scripts/render.sh`; if it moved, update the reference.",
+   "also_at_lines": [
+    375
+   ],
+   "name": "scripts/render.sh",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    320,
+    375
+   ]
+  },
+  {
+   "id": "DD-12256bf2",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "skills/productivity/microsoft-office/references/restructuring.md:3",
+   "doc_quote": "`scripts/xlsx_restructure.py` performs one row/column insert or delete",
+   "problem": "Docs refer to `scripts/xlsx_restructure.py`; the directory `scripts/` exists but that file does not.",
+   "code": "skills/productivity/microsoft-office/scripts/xlsx_restructure.py",
+   "suggestion": "A file named `xlsx_restructure.py` exists at `skills/productivity/microsoft-office/scripts/xlsx_restructure.py`; if it moved, update the reference.",
+   "name": "scripts/xlsx_restructure.py",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    3
+   ]
+  },
+  {
+   "id": "DD-c8ff330b",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "skills/productivity/microsoft-office/references/word.md:71",
+   "doc_quote": "`scripts/docx_create.py`. The spec supports: `page` (size + margins in",
+   "problem": "Docs refer to `scripts/docx_create.py`; the directory `scripts/` exists but that file does not.",
+   "code": "skills/productivity/microsoft-office/scripts/docx_create.py",
+   "suggestion": "A file named `docx_create.py` exists at `skills/productivity/microsoft-office/scripts/docx_create.py`; if it moved, update the reference.",
+   "also_at_lines": [
+    80
+   ],
+   "name": "scripts/docx_create.py",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    71,
+    80
+   ]
+  },
+  {
+   "id": "DD-b71d8e94",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "skills/productivity/microsoft-office/references/word.md:81",
+   "doc_quote": "2. **Read.** Use `scripts/docx_read.py` with exactly one mode flag.",
+   "problem": "Docs refer to `scripts/docx_read.py`; the directory `scripts/` exists but that file does not.",
+   "code": "skills/productivity/microsoft-office/scripts/docx_read.py",
+   "suggestion": "A file named `docx_read.py` exists at `skills/productivity/microsoft-office/scripts/docx_read.py`; if it moved, update the reference.",
+   "name": "scripts/docx_read.py",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    81
+   ]
+  },
+  {
+   "id": "DD-c3163e3a",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "skills/productivity/microsoft-office/references/word.md:86",
+   "doc_quote": "3. **Edit.** Use `scripts/docx_edit.py`. `replace` walks body, tables",
+   "problem": "Docs refer to `scripts/docx_edit.py`; the directory `scripts/` exists but that file does not.",
+   "code": "skills/productivity/microsoft-office/scripts/docx_edit.py",
+   "suggestion": "A file named `docx_edit.py` exists at `skills/productivity/microsoft-office/scripts/docx_edit.py`; if it moved, update the reference.",
+   "name": "scripts/docx_edit.py",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    86
+   ]
+  },
+  {
+   "id": "DD-1ca87d19",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "skills/productivity/microsoft-office/references/word.md:106",
+   "doc_quote": "`scripts/docx_template.py` with a JSON object of values. Use",
+   "problem": "Docs refer to `scripts/docx_template.py`; the directory `scripts/` exists but that file does not.",
+   "code": "skills/productivity/microsoft-office/scripts/docx_template.py",
+   "suggestion": "A file named `docx_template.py` exists at `skills/productivity/microsoft-office/scripts/docx_template.py`; if it moved, update the reference.",
+   "name": "scripts/docx_template.py",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    106
+   ]
+  },
+  {
+   "id": "DD-30d5eb8d",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "website/docs/developer-guide/adding-platform-adapters.md:790",
+   "doc_quote": "| `website/docs/user-guide/messaging/newplat.md` | Full platform setup page |",
+   "problem": "Docs refer to `website/docs/user-guide/messaging/newplat.md`; the directory `website/docs/user-guide/messaging/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "name": "website/docs/user-guide/messaging/newplat.md",
+   "why": [
+    "`website/` is a top-level directory of the repository and `website/docs/user-guide/messaging/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    790
+   ]
+  },
+  {
+   "id": "DD-20316e8d",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "website/docs/developer-guide/browser-vault-plugin.md:69",
+   "doc_quote": "(`plugins/.install-metadata.json`, written by the installer), never from a file inside the plugin, so",
+   "problem": "Docs refer to `plugins/.install-metadata.json`; the directory `plugins/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "name": "plugins/.install-metadata.json",
+   "why": [
+    "`plugins/` is a top-level directory of the repository and `plugins/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    69
+   ]
+  },
+  {
+   "id": "DD-18b023e6",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "website/docs/developer-guide/desktop-plugin-sdk.md:1077",
+   "doc_quote": "guest shell (`/assets/webapp-guest.html`, its own policy, same opaque origin",
+   "problem": "Docs refer to `/assets/webapp-guest.html`; the directory `assets/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "name": "assets/webapp-guest.html",
+   "why": [
+    "`assets/` is a top-level directory of the repository and `assets/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    1077
+   ]
+  },
+  {
+   "id": "DD-1898cfca",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "website/docs/developer-guide/desktop-plugin-sdk.md:2062",
+   "doc_quote": "`locales/pl.yaml`, `pl.tui.yaml`, `pl.desktop.yaml`, and the gateway serves the",
+   "problem": "Docs refer to `locales/pl.yaml`; the directory `locales/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "name": "locales/pl.yaml",
+   "why": [
+    "`locales/` is a top-level directory of the repository and `locales/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    2062
+   ]
+  },
+  {
+   "id": "DD-49b896cb",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "website/docs/developer-guide/gateway-classic-cli.md:59",
+   "doc_quote": "`hermes_cli/gateway_chat.py`): `--model`, `--provider`, `--base-url`, `--api-key`",
+   "problem": "`--session-key` is defined in tui_gateway/slash_worker.py but no doc mentions it; 3 of the other 4 flags from that file are documented in website/docs/developer-guide/gateway-classic-cli.md.",
+   "code": "tui_gateway/slash_worker.py:158",
+   "code_quote": "p.add_argument(\"--session-key\", required=True)",
+   "suggestion": "Document `--session-key` next to its siblings in website/docs/developer-guide/gateway-classic-cli.md (around line 59).",
+   "name": "--session-key",
+   "why": [
+    "3 of 5 flags defined in tui_gateway/slash_worker.py appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    59
+   ]
+  },
+  {
+   "id": "DD-571dd4c5",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "website/docs/developer-guide/relay-shared-metrics.md:424",
+   "doc_quote": "`skills/.usage.json` state; local or agent-created skill names and exact counts",
+   "problem": "Docs refer to `skills/.usage.json`; the directory `skills/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "name": "skills/.usage.json",
+   "why": [
+    "`skills/` is a top-level directory of the repository and `skills/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    424
+   ]
+  },
+  {
+   "id": "DD-73f3b937",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "website/docs/getting-started/updating.md:492",
+   "doc_quote": "The parser retains `--force` and `--force-venv` for Windows compatibility. They",
+   "problem": "`--list-venv-holders` is defined in hermes_cli/subcommands/update.py but no doc mentions it; 13 of the other 15 flags from that file are documented in website/docs/getting-started/updating.md.",
+   "code": "hermes_cli/subcommands/update.py:27",
+   "code_quote": "update_parser.add_argument(",
+   "suggestion": "Document `--list-venv-holders` next to its siblings in website/docs/getting-started/updating.md (around line 492).",
+   "name": "--list-venv-holders",
+   "why": [
+    "15 of 16 flags defined in hermes_cli/subcommands/update.py appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    492
+   ]
+  },
+  {
+   "id": "DD-37695093",
+   "check": "env-undefined",
+   "confidence": "high",
+   "doc": "website/docs/integrations/buzz.md:35",
+   "doc_quote": "The spawned Hermes uses the same config, credentials, memory, and skills as `hermes` on that host. Key minting, channel discovery, owner-only telemetry (`BUZZ_ACP_RELAY_OBSERVER...",
+   "problem": "`BUZZ_ACP_RELAY_OBSERVER` is documented, but no non-doc file in the repository contains that name.",
+   "suggestion": "Remove `BUZZ_ACP_RELAY_OBSERVER` from the docs, or read it in the code.",
+   "name": "BUZZ_ACP_RELAY_OBSERVER",
+   "why": [
+    "the code reads 16 other variables starting with BUZZ_ (e.g. BUZZ_ALLOWED_USERS)",
+    "`BUZZ_ACP_RELAY_OBSERVER` does not occur in any code, config or script file",
+    "no code builds variable names from that prefix dynamically"
+   ],
+   "what_this_check_means": "Docs name an environment variable that nothing in the code reads.",
+   "doc_lines": [
+    35
+   ]
+  },
+  {
+   "id": "DD-90bc5dd5",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "website/docs/reference/cli-commands.md:146",
+   "doc_quote": "| `--safe-mode` | Troubleshooting mode: disable ALL customizations — user config, rules/memory injection, plugins, shell hooks, and MCP servers (implies `--ignore-user-config` a...",
+   "problem": "`--save-sample` is defined in agent/legacy_cli.py but no doc mentions it; 11 of the other 12 flags from that file are documented in website/docs/reference/cli-commands.md.",
+   "code": "agent/legacy_cli.py:52",
+   "code_quote": "parser.add_argument(\"--save-sample\", \"--save_sample\", dest=\"save_sample\", action=\"store_true\",",
+   "suggestion": "Document `--save-sample` next to its siblings in website/docs/reference/cli-commands.md (around line 146).",
+   "name": "--save-sample",
+   "why": [
+    "12 of 13 flags defined in agent/legacy_cli.py appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    146
+   ]
+  },
+  {
+   "id": "DD-eda97a06",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "website/docs/reference/cli-commands.md:493",
+   "doc_quote": "| `--long-description TEXT` | unset | Set `display_information.long_description` inline (175–4,000 characters). Incompatible with `--slashes-only`. |",
+   "problem": "`--no-assistant` is defined in hermes_cli/subcommands/slack.py but no doc mentions it; 6 of the other 7 flags from that file are documented in website/docs/reference/cli-commands.md.",
+   "code": "hermes_cli/subcommands/slack.py:42",
+   "code_quote": "slack_messaging.add_argument(",
+   "suggestion": "Document `--no-assistant` next to its siblings in website/docs/reference/cli-commands.md (around line 493).",
+   "name": "--no-assistant",
+   "why": [
+    "7 of 8 flags defined in hermes_cli/subcommands/slack.py appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    493
+   ]
+  },
+  {
+   "id": "DD-dfc3e042",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "website/docs/reference/cli-commands.md:626",
+   "doc_quote": "The `xai` and `relay` types diagnose and (optionally) rewrite the active `config.yaml` to replace references to retired models or deprecated settings. A timestamped backup of th...",
+   "problem": "`--no-validate` is defined in hermes_cli/subcommands/migrate.py but no doc mentions it; 9 of the other 10 flags from that file are documented in website/docs/reference/cli-commands.md.",
+   "code": "hermes_cli/subcommands/migrate.py:39",
+   "code_quote": "migrate_relay.add_argument(",
+   "suggestion": "Document `--no-validate` next to its siblings in website/docs/reference/cli-commands.md (around line 626).",
+   "name": "--no-validate",
+   "why": [
+    "10 of 11 flags defined in hermes_cli/subcommands/migrate.py appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    626
+   ]
+  },
+  {
+   "id": "DD-80b88621",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "website/docs/reference/cli-commands.md:1321",
+   "doc_quote": "hermes prompt-size [--platform <name>] [--json]",
+   "problem": "`--no-start-on-login` is defined in hermes_cli/subcommands/gateway.py but no doc mentions it; 13 of the other 16 flags from that file are documented in website/docs/reference/cli-commands.md.",
+   "code": "hermes_cli/subcommands/gateway.py:197",
+   "code_quote": "gateway_install.add_argument(\"--no-start-on-login\", dest=\"start_on_login\", action=\"store_false\",",
+   "suggestion": "Document `--no-start-on-login` next to its siblings in website/docs/reference/cli-commands.md (around line 1321).",
+   "name": "--no-start-on-login",
+   "why": [
+    "16 of 17 flags defined in hermes_cli/subcommands/gateway.py appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    1321
+   ]
+  },
+  {
+   "id": "DD-7f9175b3",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "website/docs/reference/cli-commands.md:1709",
+   "doc_quote": "pin status in the profile-local `plugins/.install-metadata.json` sidecar. It does",
+   "problem": "Docs refer to `plugins/.install-metadata.json`; the directory `plugins/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "name": "plugins/.install-metadata.json",
+   "why": [
+    "`plugins/` is a top-level directory of the repository and `plugins/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    1709
+   ]
+  },
+  {
+   "id": "DD-d0aff24e",
+   "check": "cli-flag-undefined",
+   "confidence": "high",
+   "doc": "website/docs/reference/cli-commands.md:1898",
+   "doc_quote": "| `--skill-conflict <mode>` | Handle skill name collisions: `skip` (default), `overwrite`, or `rename`. |",
+   "problem": "`--skill-conflict` is documented as an option, but the code does not define that flag.",
+   "code": "hermes_cli/bundles.py:151",
+   "code_quote": "p_create.add_argument(",
+   "suggestion": "Closest flag defined in code: `--skill` (hermes_cli/bundles.py:151). If it was renamed, update the docs to `--skill`; otherwise remove the flag from the docs.",
+   "name": "--skill-conflict",
+   "why": [
+    "no literal --skill-conflict (or --skill_conflict) in any non-doc file",
+    "no identifier or string for it either",
+    "it sits in an option list where at least 70% of the other flags are defined in the code"
+   ],
+   "what_this_check_means": "Docs show a command-line flag that the code no longer defines.",
+   "doc_lines": [
+    1898
+   ]
+  },
+  {
+   "id": "DD-40d0c6d6",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "website/docs/reference/cli-commands.md:1971",
+   "doc_quote": "| `--portal-url` | Override the Nous Portal base URL for registration (default: the portal you logged into). Also settable via `HERMES_DASHBOARD_PORTAL_URL`. |",
+   "problem": "`--inference-url` is defined in hermes_cli/subcommands/auth.py but no doc mentions it; 8 of the other 12 flags from that file are documented in website/docs/reference/cli-commands.md.",
+   "code": "hermes_cli/subcommands/auth.py:25",
+   "code_quote": "auth_add.add_argument(\"--inference-url\", help=\"Nous inference base URL\")",
+   "suggestion": "Document `--inference-url` next to its siblings in website/docs/reference/cli-commands.md (around line 1971).",
+   "name": "--inference-url",
+   "why": [
+    "12 of 13 flags defined in hermes_cli/subcommands/auth.py appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    1971
+   ]
+  },
+  {
+   "id": "DD-083ee3b3",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "website/docs/reference/cli-commands.md:1971",
+   "doc_quote": "| `--portal-url` | Override the Nous Portal base URL for registration (default: the portal you logged into). Also settable via `HERMES_DASHBOARD_PORTAL_URL`. |",
+   "problem": "`--ssh-owner-nonce` is defined in hermes_cli/subcommands/dashboard.py but no doc mentions it; 12 of the other 14 flags from that file are documented in website/docs/reference/cli-commands.md.",
+   "code": "hermes_cli/subcommands/dashboard.py:56",
+   "code_quote": "parser.add_argument(",
+   "suggestion": "Document `--ssh-owner-nonce` next to its siblings in website/docs/reference/cli-commands.md (around line 1971).",
+   "name": "--ssh-owner-nonce",
+   "why": [
+    "12 of 15 flags defined in hermes_cli/subcommands/dashboard.py appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    1971
+   ]
+  },
+  {
+   "id": "DD-685c8b29",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "website/docs/reference/cli-commands.md:1971",
+   "doc_quote": "| `--portal-url` | Override the Nous Portal base URL for registration (default: the portal you logged into). Also settable via `HERMES_DASHBOARD_PORTAL_URL`. |",
+   "problem": "`--ssh-session-token-file` is defined in hermes_cli/subcommands/dashboard.py but no doc mentions it; 12 of the other 14 flags from that file are documented in website/docs/reference/cli-commands.md.",
+   "code": "hermes_cli/subcommands/dashboard.py:53",
+   "code_quote": "parser.add_argument(",
+   "suggestion": "Document `--ssh-session-token-file` next to its siblings in website/docs/reference/cli-commands.md (around line 1971).",
+   "name": "--ssh-session-token-file",
+   "why": [
+    "12 of 15 flags defined in hermes_cli/subcommands/dashboard.py appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    1971
+   ]
+  },
+  {
+   "id": "DD-b035d8ed",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "website/docs/reference/cli-commands.md:2163",
+   "doc_quote": "| `hermes uninstall [--full] [--gui] [--data] [--dry-run] [--yes]` | Remove owned source-install files. `--gui` selects source-built desktop removal; `--full` also removes data....",
+   "problem": "`--gui-summary` is defined in hermes_cli/subcommands/uninstall.py but no doc mentions it; 4 of the other 5 flags from that file are documented in website/docs/reference/cli-commands.md.",
+   "code": "hermes_cli/subcommands/uninstall.py:29",
+   "code_quote": "uninstall_parser.add_argument(",
+   "suggestion": "Document `--gui-summary` next to its siblings in website/docs/reference/cli-commands.md (around line 2163).",
+   "name": "--gui-summary",
+   "why": [
+    "4 of 6 flags defined in hermes_cli/subcommands/uninstall.py appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    2163
+   ]
+  },
+  {
+   "id": "DD-eb5cdb9a",
+   "check": "env-undocumented",
+   "confidence": "medium",
+   "doc": "website/docs/reference/environment-variables.md:166",
+   "doc_quote": "| `BROWSER_INACTIVITY_TIMEOUT` | Browser session inactivity timeout in seconds |",
+   "problem": "The code reads `BROWSER` (hermes_cli/auth_device_flow.py:77) but no doc mentions it; 3 other BROWSER_ variables are documented in website/docs/reference/environment-variables.md.",
+   "code": "hermes_cli/auth_device_flow.py:77",
+   "code_quote": "browser_env = os.environ.get(\"BROWSER\", \"\")",
+   "suggestion": "Document `BROWSER` next to the other BROWSER_ variables in website/docs/reference/environment-variables.md (around line 166).",
+   "name": "BROWSER",
+   "why": [
+    "3 of 4 BROWSER_ variables read by the code appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code reads an environment variable that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    166
+   ]
+  },
+  {
+   "id": "DD-25afe9cc",
+   "check": "env-undocumented",
+   "confidence": "medium",
+   "doc": "website/docs/reference/environment-variables.md:279",
+   "doc_quote": "| `TERMINAL_CONTAINER_PERSISTENT` | Persist container filesystem across sessions (default: `true`) |",
+   "problem": "The code reads `TERMINAL_VERCEL_IMAGE` (hermes_cli/status.py:171) but no doc mentions it; 12 other TERMINAL_ variables are documented in website/docs/reference/environment-variables.md.",
+   "code": "hermes_cli/status.py:171",
+   "code_quote": "or os.getenv('TERMINAL_VERCEL_IMAGE') or terminal_cfg.get('vercel_image') or DEFAULT_VERCEL_IMAGE)",
+   "suggestion": "Document `TERMINAL_VERCEL_IMAGE` next to the other TERMINAL_ variables in website/docs/reference/environment-variables.md (around line 279).",
+   "name": "TERMINAL_VERCEL_IMAGE",
+   "why": [
+    "14 of 15 TERMINAL_ variables read by the code appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code reads an environment variable that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    279
+   ]
+  },
+  {
+   "id": "DD-2769e2e4",
+   "check": "env-undocumented",
+   "confidence": "medium",
+   "doc": "website/docs/reference/environment-variables.md:613",
+   "doc_quote": "| `MSGRAPH_WEBHOOK_ALLOWED_SOURCE_CIDRS` | Comma-separated CIDR ranges allowed to POST to the listener (e.g. `52.96.0.0/14,52.104.0.0/14`). Empty = allow all (default). Restrict...",
+   "problem": "The code reads `MSGRAPH_WEBHOOK_STORE_PATH` (plugins/teams_pipeline/store.py:30) but no doc mentions it; 5 other MSGRAPH_ variables are documented in website/docs/reference/environment-variables.md.",
+   "code": "plugins/teams_pipeline/store.py:30",
+   "code_quote": "env_path = os.getenv(\"MSGRAPH_WEBHOOK_STORE_PATH\", \"\").strip()",
+   "suggestion": "Document `MSGRAPH_WEBHOOK_STORE_PATH` next to the other MSGRAPH_ variables in website/docs/reference/environment-variables.md (around line 613).",
+   "name": "MSGRAPH_WEBHOOK_STORE_PATH",
+   "why": [
+    "5 of 6 MSGRAPH_ variables read by the code appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code reads an environment variable that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    613
+   ]
+  },
+  {
+   "id": "DD-393a2178",
+   "check": "env-undocumented",
+   "confidence": "medium",
+   "doc": "website/docs/reference/environment-variables.md:801",
+   "doc_quote": "| `GATEWAY_RELAY_ROUTE_KEYS` | Comma-separated relay route keys advertised to the connector. Mirrors `gateway.relay_route_keys`. |",
+   "problem": "The code reads `GATEWAY_HEALTH_TIMEOUT` (hermes_cli/web_server.py:639) but no doc mentions it; 9 other GATEWAY_ variables are documented in website/docs/reference/environment-variables.md.",
+   "code": "hermes_cli/web_server.py:639",
+   "code_quote": "_GATEWAY_HEALTH_TIMEOUT = float(os.getenv(\"GATEWAY_HEALTH_TIMEOUT\", \"1\"))",
+   "suggestion": "Document `GATEWAY_HEALTH_TIMEOUT` next to the other GATEWAY_ variables in website/docs/reference/environment-variables.md (around line 801).",
+   "name": "GATEWAY_HEALTH_TIMEOUT",
+   "why": [
+    "13 of 17 GATEWAY_ variables read by the code appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code reads an environment variable that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    801
+   ]
+  },
+  {
+   "id": "DD-bacbd92c",
+   "check": "env-undocumented",
+   "confidence": "medium",
+   "doc": "website/docs/reference/environment-variables.md:801",
+   "doc_quote": "| `GATEWAY_RELAY_ROUTE_KEYS` | Comma-separated relay route keys advertised to the connector. Mirrors `gateway.relay_route_keys`. |",
+   "problem": "The code reads `GATEWAY_HEALTH_URL` (hermes_cli/web_server.py:636) but no doc mentions it; 9 other GATEWAY_ variables are documented in website/docs/reference/environment-variables.md.",
+   "code": "hermes_cli/web_server.py:636",
+   "code_quote": "_GATEWAY_HEALTH_URL = os.getenv(\"GATEWAY_HEALTH_URL\")",
+   "suggestion": "Document `GATEWAY_HEALTH_URL` next to the other GATEWAY_ variables in website/docs/reference/environment-variables.md (around line 801).",
+   "name": "GATEWAY_HEALTH_URL",
+   "why": [
+    "13 of 17 GATEWAY_ variables read by the code appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code reads an environment variable that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    801
+   ]
+  },
+  {
+   "id": "DD-9d1361ab",
+   "check": "env-undocumented",
+   "confidence": "medium",
+   "doc": "website/docs/reference/environment-variables.md:801",
+   "doc_quote": "| `GATEWAY_RELAY_ROUTE_KEYS` | Comma-separated relay route keys advertised to the connector. Mirrors `gateway.relay_route_keys`. |",
+   "problem": "The code reads `GATEWAY_ON_ALL_ADAPTERS_DOWN` (gateway/config.py:79) but no doc mentions it; 9 other GATEWAY_ variables are documented in website/docs/reference/environment-variables.md.",
+   "code": "gateway/config.py:79",
+   "code_quote": "raw = os.getenv(\"GATEWAY_ON_ALL_ADAPTERS_DOWN\")",
+   "suggestion": "Document `GATEWAY_ON_ALL_ADAPTERS_DOWN` next to the other GATEWAY_ variables in website/docs/reference/environment-variables.md (around line 801).",
+   "name": "GATEWAY_ON_ALL_ADAPTERS_DOWN",
+   "why": [
+    "13 of 17 GATEWAY_ variables read by the code appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code reads an environment variable that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    801
+   ]
+  },
+  {
+   "id": "DD-dfeba439",
+   "check": "env-undocumented",
+   "confidence": "medium",
+   "doc": "website/docs/reference/environment-variables.md:801",
+   "doc_quote": "| `GATEWAY_RELAY_ROUTE_KEYS` | Comma-separated relay route keys advertised to the connector. Mirrors `gateway.relay_route_keys`. |",
+   "problem": "The code reads `GATEWAY_RELAY_DISPLAY_NAME` (gateway/relay/__init__.py:257) but no doc mentions it; 9 other GATEWAY_ variables are documented in website/docs/reference/environment-variables.md.",
+   "code": "gateway/relay/__init__.py:257",
+   "code_quote": "value = os.environ.get(\"GATEWAY_RELAY_DISPLAY_NAME\", \"\").strip()",
+   "suggestion": "Document `GATEWAY_RELAY_DISPLAY_NAME` next to the other GATEWAY_ variables in website/docs/reference/environment-variables.md (around line 801).",
+   "name": "GATEWAY_RELAY_DISPLAY_NAME",
+   "why": [
+    "13 of 17 GATEWAY_ variables read by the code appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code reads an environment variable that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    801
+   ]
+  },
+  {
+   "id": "DD-9355d414",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "website/docs/reference/package-management.md:649",
+   "doc_quote": "| `pm bundle --out DIR [--ref REF]` | Stage a source snapshot, native tools, facts, and Python dependencies. It does not produce a signed desktop installer. |",
+   "problem": "`--trust-recorded` is defined in pm/cli.py but no doc mentions it; 15 of the other 16 flags from that file are documented in website/docs/reference/package-management.md.",
+   "code": "pm/cli.py:982",
+   "code_quote": "p.add_argument(\"--trust-recorded\", action=\"store_true\",",
+   "suggestion": "Document `--trust-recorded` next to its siblings in website/docs/reference/package-management.md (around line 649).",
+   "name": "--trust-recorded",
+   "why": [
+    "16 of 17 flags defined in pm/cli.py appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    649
+   ]
+  },
+  {
+   "id": "DD-4e6f2f8b",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "website/docs/reference/tools-reference.md:81",
+   "doc_quote": "Scoped to the Feishu document-comment intelligent-reply handler (`gateway/platforms/feishu_comment.py`). Not exposed on `hermes-cli` or the regular Feishu chat adapter.",
+   "problem": "Docs refer to `gateway/platforms/feishu_comment.py`; the directory `gateway/platforms/` exists but that file does not.",
+   "code": "plugins/platforms/feishu/feishu_comment.py",
+   "suggestion": "A file named `feishu_comment.py` exists at `plugins/platforms/feishu/feishu_comment.py`; if it moved, update the reference.",
+   "name": "gateway/platforms/feishu_comment.py",
+   "why": [
+    "`gateway/` is a top-level directory of the repository and `gateway/platforms/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    81
+   ]
+  },
+  {
+   "id": "DD-daf85b1a",
+   "check": "default-mismatch",
+   "confidence": "high",
+   "doc": "website/docs/reference/tools-reference.md:306",
+   "doc_quote": "Opt-in toolset (not loaded in the default `hermes-cli` set). Add via `--toolsets video` or include `video` in your `toolsets:` config.",
+   "problem": "Docs say the default of `--toolsets` is `hermes-cli`, the code says 'file,terminal,search'.",
+   "code": "evals/readtool/runner.py:151",
+   "code_quote": "ap.add_argument(",
+   "suggestion": "Change the documented default to 'file,terminal,search', or change the code if the docs are right.",
+   "name": "--toolsets",
+   "why": [
+    "the doc line names exactly one option and states one default",
+    "the code defines one static default for it (evals/readtool/runner.py:151)"
+   ],
+   "what_this_check_means": "Docs state a default value that differs from the default in the code.",
+   "doc_lines": [
+    306
+   ]
+  },
+  {
+   "id": "DD-caf052fe",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "website/docs/user-guide/desktop.md:1071",
+   "doc_quote": "Use `--identity <name>` with the command to create/use a differently named",
+   "problem": "`--close-preview` is defined in hermes_cli/subcommands/gui.py but no doc mentions it; 11 of the other 12 flags from that file are documented in website/docs/user-guide/desktop.md.",
+   "code": "hermes_cli/subcommands/gui.py:62",
+   "code_quote": "gui_parser.add_argument(",
+   "suggestion": "Document `--close-preview` next to its siblings in website/docs/user-guide/desktop.md (around line 1071).",
+   "name": "--close-preview",
+   "why": [
+    "12 of 13 flags defined in hermes_cli/subcommands/gui.py appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    1071
+   ]
+  },
+  {
+   "id": "DD-c1d2acfe",
+   "check": "env-undefined",
+   "confidence": "high",
+   "doc": "website/docs/user-guide/features/acp.md:200",
+   "doc_quote": "export BUZZ_ACP_RELAY_OBSERVER=\"true\"",
+   "problem": "`BUZZ_ACP_RELAY_OBSERVER` is documented, but no non-doc file in the repository contains that name.",
+   "suggestion": "Remove `BUZZ_ACP_RELAY_OBSERVER` from the docs, or read it in the code.",
+   "name": "BUZZ_ACP_RELAY_OBSERVER",
+   "why": [
+    "the code reads 16 other variables starting with BUZZ_ (e.g. BUZZ_ALLOWED_USERS)",
+    "`BUZZ_ACP_RELAY_OBSERVER` does not occur in any code, config or script file",
+    "no code builds variable names from that prefix dynamically"
+   ],
+   "what_this_check_means": "Docs name an environment variable that nothing in the code reads.",
+   "doc_lines": [
+    200
+   ]
+  },
+  {
+   "id": "DD-206909a0",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "website/docs/user-guide/features/cron.md:1173",
+   "doc_quote": "hermes cron create \"0 7 * * 1-5\" \"Morning brief\" --catch-up off # a stale brief is useless: skip",
+   "problem": "`--monitor-script` is defined in hermes_cli/subcommands/cron.py but no doc mentions it; 25 of the other 30 flags from that file are documented in website/docs/user-guide/features/cron.md.",
+   "code": "hermes_cli/subcommands/cron.py:68",
+   "code_quote": "cron_create.add_argument(\"--monitor-script\", dest=\"monitor_script\",",
+   "suggestion": "Document `--monitor-script` next to its siblings in website/docs/user-guide/features/cron.md (around line 1173).",
+   "name": "--monitor-script",
+   "why": [
+    "28 of 31 flags defined in hermes_cli/subcommands/cron.py appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    1173
+   ]
+  },
+  {
+   "id": "DD-96a49a39",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "website/docs/user-guide/features/cron.md:1173",
+   "doc_quote": "hermes cron create \"0 7 * * 1-5\" \"Morning brief\" --catch-up off # a stale brief is useless: skip",
+   "problem": "`--monitor-url` is defined in hermes_cli/subcommands/cron.py but no doc mentions it; 25 of the other 30 flags from that file are documented in website/docs/user-guide/features/cron.md.",
+   "code": "hermes_cli/subcommands/cron.py:76",
+   "code_quote": "cron_create.add_argument(\"--monitor-url\", dest=\"monitor_url\",",
+   "suggestion": "Document `--monitor-url` next to its siblings in website/docs/user-guide/features/cron.md (around line 1173).",
+   "name": "--monitor-url",
+   "why": [
+    "28 of 31 flags defined in hermes_cli/subcommands/cron.py appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    1173
+   ]
+  },
+  {
+   "id": "DD-1e8c5d5d",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "website/docs/user-guide/features/cron.md:1173",
+   "doc_quote": "hermes cron create \"0 7 * * 1-5\" \"Morning brief\" --catch-up off # a stale brief is useless: skip",
+   "problem": "`--repeat` is defined in hermes_cli/subcommands/cron.py but no doc mentions it; 25 of the other 30 flags from that file are documented in website/docs/user-guide/features/cron.md.",
+   "code": "hermes_cli/subcommands/cron.py:54",
+   "code_quote": "cron_create.add_argument(\"--repeat\", type=int, help=\"Optional repeat count\")",
+   "suggestion": "Document `--repeat` next to its siblings in website/docs/user-guide/features/cron.md (around line 1173).",
+   "name": "--repeat",
+   "why": [
+    "28 of 31 flags defined in hermes_cli/subcommands/cron.py appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    1173
+   ]
+  },
+  {
+   "id": "DD-c1b418ac",
+   "check": "cli-flag-undefined",
+   "confidence": "high",
+   "doc": "website/docs/user-guide/features/memory-providers.md:421",
+   "doc_quote": "hermes memory setup mem0 --mode oss --oss-llm openai --oss-llm-key sk-... --oss-vector qdrant",
+   "problem": "`--oss-llm` is used with `hermes` in the docs, but the code does not define that flag.",
+   "code": "hermes_cli/bundles.py:151",
+   "code_quote": "p_create.add_argument(",
+   "suggestion": "Closest flag defined in code: `--skill` (hermes_cli/bundles.py:151). If it was renamed, update the docs to `--skill`; otherwise remove the flag from the docs.",
+   "name": "--oss-llm",
+   "why": [
+    "no literal --oss-llm (or --oss_llm) in any non-doc file",
+    "no identifier or string for it either",
+    "the doc line runs this project's own command `hermes`"
+   ],
+   "what_this_check_means": "Docs show a command-line flag that the code no longer defines.",
+   "doc_lines": [
+    421
+   ]
+  },
+  {
+   "id": "DD-44a06a2d",
+   "check": "cli-flag-undefined",
+   "confidence": "high",
+   "doc": "website/docs/user-guide/features/memory-providers.md:421",
+   "doc_quote": "hermes memory setup mem0 --mode oss --oss-llm openai --oss-llm-key sk-... --oss-vector qdrant",
+   "problem": "`--oss-llm-key` is used with `hermes` in the docs, but the code does not define that flag.",
+   "code": "tui_gateway/slash_worker.py:158",
+   "code_quote": "p.add_argument(\"--session-key\", required=True)",
+   "suggestion": "Closest flag defined in code: `--session-key` (tui_gateway/slash_worker.py:158). If it was renamed, update the docs to `--session-key`; otherwise remove the flag from the docs.",
+   "also_at_lines": [
+    426
+   ],
+   "name": "--oss-llm-key",
+   "why": [
+    "no literal --oss-llm-key (or --oss_llm_key) in any non-doc file",
+    "no identifier or string for it either",
+    "the doc line runs this project's own command `hermes`"
+   ],
+   "what_this_check_means": "Docs show a command-line flag that the code no longer defines.",
+   "doc_lines": [
+    421,
+    426
+   ]
+  },
+  {
+   "id": "DD-920e4ebb",
+   "check": "cli-flag-undefined",
+   "confidence": "high",
+   "doc": "website/docs/user-guide/features/memory-providers.md:421",
+   "doc_quote": "hermes memory setup mem0 --mode oss --oss-llm openai --oss-llm-key sk-... --oss-vector qdrant",
+   "problem": "`--oss-vector` is used with `hermes` in the docs, but the code does not define that flag.",
+   "code": "hermes_cli/journey.py:353",
+   "code_quote": "parent.add_argument(\"--no-color\", action=\"store_true\", help=\"Disable color output.\")",
+   "suggestion": "Closest flag defined in code: `--no-color` (hermes_cli/journey.py:353). If it was renamed, update the docs to `--no-color`; otherwise remove the flag from the docs.",
+   "name": "--oss-vector",
+   "why": [
+    "no literal --oss-vector (or --oss_vector) in any non-doc file",
+    "no identifier or string for it either",
+    "the doc line runs this project's own command `hermes`"
+   ],
+   "what_this_check_means": "Docs show a command-line flag that the code no longer defines.",
+   "doc_lines": [
+    421
+   ]
+  },
+  {
+   "id": "DD-bdb505e0",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "website/docs/user-guide/features/memory.md:267",
+   "doc_quote": "- **Classic CLI / standalone** — `hermes journey` (aliases: `hermes learning`, `hermes memory-graph`) renders the timeline in the terminal. Flags: `--play` animates the build-up...",
+   "problem": "`--reveal` is defined in hermes_cli/journey.py but no doc mentions it; 6 of the other 8 flags from that file are documented in website/docs/user-guide/features/memory.md.",
+   "code": "hermes_cli/journey.py:345",
+   "code_quote": "parent.add_argument(",
+   "suggestion": "Document `--reveal` next to its siblings in website/docs/user-guide/features/memory.md (around line 267).",
+   "name": "--reveal",
+   "why": [
+    "7 of 9 flags defined in hermes_cli/journey.py appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    267
+   ]
+  },
+  {
+   "id": "DD-033fc19c",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "website/docs/user-guide/features/plugins.md:777",
+   "doc_quote": "the same provenance in `plugins/.install-metadata.json`, so two installs of",
+   "problem": "Docs refer to `plugins/.install-metadata.json`; the directory `plugins/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "name": "plugins/.install-metadata.json",
+   "why": [
+    "`plugins/` is a top-level directory of the repository and `plugins/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    777
+   ]
+  },
+  {
+   "id": "DD-2112bf4b",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "website/docs/user-guide/sessions.md:926",
+   "doc_quote": "hermes sessions import --from claude",
+   "problem": "`--chunk-size` is defined in hermes_cli/subcommands/sessions.py but no doc mentions it; 13 of the other 16 flags from that file are documented in website/docs/user-guide/sessions.md.",
+   "code": "hermes_cli/subcommands/sessions.py:288",
+   "code_quote": "sessions_recover.add_argument(\"--chunk-size\", type=int, default=1000,",
+   "suggestion": "Document `--chunk-size` next to its siblings in website/docs/user-guide/sessions.md (around line 926).",
+   "name": "--chunk-size",
+   "why": [
+    "15 of 17 flags defined in hermes_cli/subcommands/sessions.py appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    926
+   ]
+  },
+  {
+   "id": "DD-8a22c41a",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "website/docs/user-guide/sessions.md:926",
+   "doc_quote": "hermes sessions import --from claude",
+   "problem": "`--work-dir` is defined in hermes_cli/subcommands/sessions.py but no doc mentions it; 13 of the other 16 flags from that file are documented in website/docs/user-guide/sessions.md.",
+   "code": "hermes_cli/subcommands/sessions.py:286",
+   "code_quote": "sessions_recover.add_argument(\"--work-dir\", type=Path,",
+   "suggestion": "Document `--work-dir` next to its siblings in website/docs/user-guide/sessions.md (around line 926).",
+   "name": "--work-dir",
+   "why": [
+    "15 of 17 flags defined in hermes_cli/subcommands/sessions.py appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    926
+   ]
+  },
+  {
+   "id": "DD-b8e5014e",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "website/docs/user-guide/skills/bundled/creative/creative-manim-video.md:55",
+   "doc_quote": "Run `scripts/setup.sh` to verify all dependencies. Requires: Python 3.10+, Manim Community Edition v0.20+ (`pip install manim`), LaTeX (`texlive-full` on Linux, `mactex` on macO...",
+   "problem": "Docs refer to `scripts/setup.sh`; the directory `scripts/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "name": "scripts/setup.sh",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    55
+   ]
+  },
+  {
+   "id": "DD-85b77805",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "website/docs/user-guide/skills/bundled/creative/creative-p5js.md:277",
+   "doc_quote": "- For `loadImage()`/`loadFont()` from local files: use `scripts/serve.sh` or `python -m http.server`",
+   "problem": "Docs refer to `scripts/serve.sh`; the directory `scripts/` exists but that file does not.",
+   "code": "skills/creative/p5js/scripts/serve.sh",
+   "suggestion": "A file named `serve.sh` exists at `skills/creative/p5js/scripts/serve.sh`; if it moved, update the reference.",
+   "name": "scripts/serve.sh",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    277
+   ]
+  },
+  {
+   "id": "DD-66b8ff53",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "website/docs/user-guide/skills/bundled/creative/creative-p5js.md:499",
+   "doc_quote": "The bundled `scripts/export-frames.js` detects `_p5Ready` and calls `redraw()` once per capture for exact 1:1 frame correspondence. See `references/export-pipeline.md` § Determi...",
+   "problem": "Docs refer to `scripts/export-frames.js`; the directory `scripts/` exists but that file does not.",
+   "code": "skills/creative/p5js/scripts/export-frames.js",
+   "suggestion": "A file named `export-frames.js` exists at `skills/creative/p5js/scripts/export-frames.js`; if it moved, update the reference.",
+   "name": "scripts/export-frames.js",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    499
+   ]
+  },
+  {
+   "id": "DD-9cb28cb7",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "website/docs/user-guide/skills/bundled/productivity/productivity-google-workspace.md:43",
+   "doc_quote": "- `scripts/setup.py` — OAuth2 setup (run once to authorize)",
+   "problem": "Docs refer to `scripts/setup.py`; the directory `scripts/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "name": "scripts/setup.py",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    43
+   ]
+  },
+  {
+   "id": "DD-0ad23fad",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "website/docs/user-guide/skills/bundled/research/research-grounded-citations.md:66",
+   "doc_quote": "None beyond the standard toolset. `scripts/sources.py` is stdlib-only Python 3.",
+   "problem": "Docs refer to `scripts/sources.py`; the directory `scripts/` exists but that file does not.",
+   "code": "skills/research/grounded-citations/scripts/sources.py",
+   "suggestion": "A file named `sources.py` exists at `skills/research/grounded-citations/scripts/sources.py`; if it moved, update the reference.",
+   "name": "scripts/sources.py",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    66
+   ]
+  },
+  {
+   "id": "DD-ac0c21eb",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "website/docs/user-guide/skills/bundled/software-development/software-development-github.md:51",
+   "doc_quote": "Supporting assets: `scripts/gh-env.sh` + `scripts/git-credential-token.py`",
+   "problem": "Docs refer to `scripts/gh-env.sh`; the directory `scripts/` exists but that file does not.",
+   "code": "skills/software-development/github/scripts/gh-env.sh",
+   "suggestion": "A file named `gh-env.sh` exists at `skills/software-development/github/scripts/gh-env.sh`; if it moved, update the reference.",
+   "name": "scripts/gh-env.sh",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    51
+   ]
+  },
+  {
+   "id": "DD-c69f6ec5",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "website/docs/user-guide/skills/bundled/software-development/software-development-github.md:51",
+   "doc_quote": "Supporting assets: `scripts/gh-env.sh` + `scripts/git-credential-token.py`",
+   "problem": "Docs refer to `scripts/git-credential-token.py`; the directory `scripts/` exists but that file does not.",
+   "code": "skills/software-development/github/scripts/git-credential-token.py",
+   "suggestion": "A file named `git-credential-token.py` exists at `skills/software-development/github/scripts/git-credential-token.py`; if it moved, update the reference.",
+   "name": "scripts/git-credential-token.py",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    51
+   ]
+  },
+  {
+   "id": "DD-cb4833d8",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "website/docs/user-guide/skills/optional/creative/creative-anatomy.md:131",
+   "doc_quote": "- Capture desktop, phone (390 wide), hover and several moments of motion with `scripts/capture.mjs`; use `scripts/drive.mjs` for sequences, the apart pose and the `--no-webgl` f...",
+   "problem": "Docs refer to `scripts/capture.mjs`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/creative/anatomy/scripts/capture.mjs",
+   "suggestion": "A file named `capture.mjs` exists at `optional-skills/creative/anatomy/scripts/capture.mjs`; if it moved, update the reference.",
+   "also_at_lines": [
+    154
+   ],
+   "name": "scripts/capture.mjs",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    131,
+    154
+   ]
+  },
+  {
+   "id": "DD-f47f2b59",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "website/docs/user-guide/skills/optional/creative/creative-anatomy.md:131",
+   "doc_quote": "- Capture desktop, phone (390 wide), hover and several moments of motion with `scripts/capture.mjs`; use `scripts/drive.mjs` for sequences, the apart pose and the `--no-webgl` f...",
+   "problem": "Docs refer to `scripts/drive.mjs`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/creative/anatomy/scripts/drive.mjs",
+   "suggestion": "A file named `drive.mjs` exists at `optional-skills/creative/anatomy/scripts/drive.mjs`; if it moved, update the reference.",
+   "also_at_lines": [
+    155
+   ],
+   "name": "scripts/drive.mjs",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    131,
+    155
+   ]
+  },
+  {
+   "id": "DD-af4b08d8",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "website/docs/user-guide/skills/optional/creative/creative-anatomy.md:156",
+   "doc_quote": "| `scripts/lines.mjs` | The line-end check on a built page, in headless Chrome: every texture line must end on a stroke, a dot or an outline. Rings the failures with `--out`; ex...",
+   "problem": "Docs refer to `scripts/lines.mjs`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/creative/anatomy/scripts/lines.mjs",
+   "suggestion": "A file named `lines.mjs` exists at `optional-skills/creative/anatomy/scripts/lines.mjs`; if it moved, update the reference.",
+   "name": "scripts/lines.mjs",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    156
+   ]
+  },
+  {
+   "id": "DD-c06343aa",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "website/docs/user-guide/skills/optional/creative/creative-anatomy.md:157",
+   "doc_quote": "| `scripts/inline-kit.mjs` | `kitScript()`, `glScript()` and `turnScript()` return the kit, the WebGL layer and the 3D runtime as source to inline into a standalone page. |",
+   "problem": "Docs refer to `scripts/inline-kit.mjs`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/creative/anatomy/scripts/inline-kit.mjs",
+   "suggestion": "A file named `inline-kit.mjs` exists at `optional-skills/creative/anatomy/scripts/inline-kit.mjs`; if it moved, update the reference.",
+   "name": "scripts/inline-kit.mjs",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    157
+   ]
+  },
+  {
+   "id": "DD-52dc7300",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "website/docs/user-guide/skills/optional/creative/creative-anatomy.md:158",
+   "doc_quote": "| `scripts/turn-check.mjs`, `scripts/turn-bench.mjs` | 3D figures: fidelity against the kit builders, a z-buffer order check, pixel pops, line ends at 24 angles and frame timing...",
+   "problem": "Docs refer to `scripts/turn-bench.mjs`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/creative/anatomy/scripts/turn-bench.mjs",
+   "suggestion": "A file named `turn-bench.mjs` exists at `optional-skills/creative/anatomy/scripts/turn-bench.mjs`; if it moved, update the reference.",
+   "name": "scripts/turn-bench.mjs",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    158
+   ]
+  },
+  {
+   "id": "DD-4812942f",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "website/docs/user-guide/skills/optional/creative/creative-anatomy.md:158",
+   "doc_quote": "| `scripts/turn-check.mjs`, `scripts/turn-bench.mjs` | 3D figures: fidelity against the kit builders, a z-buffer order check, pixel pops, line ends at 24 angles and frame timing...",
+   "problem": "Docs refer to `scripts/turn-check.mjs`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/creative/anatomy/scripts/turn-check.mjs",
+   "suggestion": "A file named `turn-check.mjs` exists at `optional-skills/creative/anatomy/scripts/turn-check.mjs`; if it moved, update the reference.",
+   "also_at_lines": [
+    216
+   ],
+   "name": "scripts/turn-check.mjs",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    158,
+    216
+   ]
+  },
+  {
+   "id": "DD-25ba0160",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "website/docs/user-guide/skills/optional/creative/creative-archify.md:57",
+   "doc_quote": "- Upstream's \"Update awareness\" step runs `scripts/check-update.mjs`, which",
+   "problem": "Docs refer to `scripts/check-update.mjs`; the directory `scripts/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "name": "scripts/check-update.mjs",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    57
+   ]
+  },
+  {
+   "id": "DD-26c2e3b6",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "website/docs/user-guide/skills/optional/creative/creative-auteur.md:53",
+   "doc_quote": "- **Playwright (for the QA gates)** — in the project directory: `npm install playwright` then `npx playwright install chromium`. Required by `scripts/shoot.mjs`, `motionqa.mjs`,...",
+   "problem": "Docs refer to `scripts/shoot.mjs`; the directory `scripts/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "name": "scripts/shoot.mjs",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    53
+   ]
+  },
+  {
+   "id": "DD-618fa310",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "website/docs/user-guide/skills/optional/creative/creative-auteur.md:166",
+   "doc_quote": "- `references/system.md` — the **multi-screen register**: route map, the component inventory as a gate, the state matrix (empty/loading/error are not edge cases), density rules,...",
+   "problem": "Docs refer to `scripts/systemscan.mjs`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/creative/auteur/scripts/systemscan.mjs",
+   "suggestion": "A file named `systemscan.mjs` exists at `optional-skills/creative/auteur/scripts/systemscan.mjs`; if it moved, update the reference.",
+   "name": "scripts/systemscan.mjs",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    166
+   ]
+  },
+  {
+   "id": "DD-b15121c4",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "website/docs/user-guide/skills/optional/creative/creative-brag.md:67",
+   "doc_quote": "- `uv` runs `scripts/analyze_music_cues.py` when a custom track needs beat-sync",
+   "problem": "Docs refer to `scripts/analyze_music_cues.py`; the directory `scripts/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "name": "scripts/analyze_music_cues.py",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    67
+   ]
+  },
+  {
+   "id": "DD-31294599",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "website/docs/user-guide/skills/optional/creative/creative-excalidraw.md:44",
+   "doc_quote": "4. **Optionally upload** for a shareable link using `scripts/upload.py` via `terminal`",
+   "problem": "Docs refer to `scripts/upload.py`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/creative/excalidraw/scripts/upload.py",
+   "suggestion": "A file named `upload.py` exists at `optional-skills/creative/excalidraw/scripts/upload.py`; if it moved, update the reference.",
+   "name": "scripts/upload.py",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    44
+   ]
+  },
+  {
+   "id": "DD-bef50f7b",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "website/docs/user-guide/skills/optional/creative/creative-pixel-art.md:38",
+   "doc_quote": "- `scripts/pixel_art.py` — photo → pixel-art PNG (Floyd-Steinberg dithering)",
+   "problem": "Docs refer to `scripts/pixel_art.py`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/creative/pixel-art/scripts/pixel_art.py",
+   "suggestion": "A file named `pixel_art.py` exists at `optional-skills/creative/pixel-art/scripts/pixel_art.py`; if it moved, update the reference.",
+   "name": "scripts/pixel_art.py",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    38
+   ]
+  },
+  {
+   "id": "DD-da9ce1fb",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "website/docs/user-guide/skills/optional/creative/creative-pixel-art.md:39",
+   "doc_quote": "- `scripts/pixel_art_video.py` — pixel-art PNG → animated MP4 (+ optional GIF)",
+   "problem": "Docs refer to `scripts/pixel_art_video.py`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/creative/pixel-art/scripts/pixel_art_video.py",
+   "suggestion": "A file named `pixel_art_video.py` exists at `optional-skills/creative/pixel-art/scripts/pixel_art_video.py`; if it moved, update the reference.",
+   "name": "scripts/pixel_art_video.py",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    39
+   ]
+  },
+  {
+   "id": "DD-40288877",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "website/docs/user-guide/skills/optional/creative/creative-pixel-art.md:124",
+   "doc_quote": "Named palettes live in `scripts/palettes.py` (see `references/palettes.md` for",
+   "problem": "Docs refer to `scripts/palettes.py`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/creative/pixel-art/scripts/palettes.py",
+   "suggestion": "A file named `palettes.py` exists at `optional-skills/creative/pixel-art/scripts/palettes.py`; if it moved, update the reference.",
+   "name": "scripts/palettes.py",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    124
+   ]
+  },
+  {
+   "id": "DD-c9e78463",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "website/docs/user-guide/skills/optional/creative/creative-tldraw-offline.md:106",
+   "doc_quote": "The ready-to-adapt document script is `scripts/main.js`.",
+   "problem": "Docs refer to `scripts/main.js`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/creative/tldraw-offline/scripts/main.js",
+   "suggestion": "A file named `main.js` exists at `optional-skills/creative/tldraw-offline/scripts/main.js`; if it moved, update the reference.",
+   "name": "scripts/main.js",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    106
+   ]
+  },
+  {
+   "id": "DD-74ef5404",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "website/docs/user-guide/skills/optional/creative/creative-tldraw-offline.md:143",
+   "doc_quote": "Full example: `scripts/counter.js` (a number display + MINUS/RESET/PLUS buttons).",
+   "problem": "Docs refer to `scripts/counter.js`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/creative/tldraw-offline/scripts/counter.js",
+   "suggestion": "A file named `counter.js` exists at `optional-skills/creative/tldraw-offline/scripts/counter.js`; if it moved, update the reference.",
+   "name": "scripts/counter.js",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    143
+   ]
+  },
+  {
+   "id": "DD-776aa9e4",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "website/docs/user-guide/skills/optional/creative/creative-tldraw-offline.md:243",
+   "doc_quote": "below is required (run `scripts/validate_shapes.mjs`):",
+   "problem": "Docs refer to `scripts/validate_shapes.mjs`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/creative/tldraw-offline/scripts/validate_shapes.mjs",
+   "suggestion": "A file named `validate_shapes.mjs` exists at `optional-skills/creative/tldraw-offline/scripts/validate_shapes.mjs`; if it moved, update the reference.",
+   "name": "scripts/validate_shapes.mjs",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    243
+   ]
+  },
+  {
+   "id": "DD-e711876d",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "website/docs/user-guide/skills/optional/finance/finance-excel-author.md:261",
+   "doc_quote": "Or use a Python recalc helper (see `scripts/recalc.py` in this skill).",
+   "problem": "Docs refer to `scripts/recalc.py`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/finance/excel-author/scripts/recalc.py",
+   "suggestion": "A file named `recalc.py` exists at `optional-skills/finance/excel-author/scripts/recalc.py`; if it moved, update the reference.",
+   "name": "scripts/recalc.py",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    261
+   ]
+  },
+  {
+   "id": "DD-98194670",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "website/docs/user-guide/skills/optional/mcp/mcp-fastmcp.md:74",
+   "doc_quote": "- `scripts/scaffold_fastmcp.py` - copy a starter template and replace the server name placeholder",
+   "problem": "Docs refer to `scripts/scaffold_fastmcp.py`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/mcp/fastmcp/scripts/scaffold_fastmcp.py",
+   "suggestion": "A file named `scaffold_fastmcp.py` exists at `optional-skills/mcp/fastmcp/scripts/scaffold_fastmcp.py`; if it moved, update the reference.",
+   "name": "scripts/scaffold_fastmcp.py",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    74
+   ]
+  },
+  {
+   "id": "DD-e5a3a79c",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "website/docs/user-guide/skills/optional/mcp/mcp-mcp-oauth-remote-gateway.md:331",
+   "doc_quote": "`scripts/diagnose-oauth-mcp.py` automates this smoke test.",
+   "problem": "Docs refer to `scripts/diagnose-oauth-mcp.py`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/mcp/mcp-oauth-remote-gateway/scripts/diagnose-oauth-mcp.py",
+   "suggestion": "A file named `diagnose-oauth-mcp.py` exists at `optional-skills/mcp/mcp-oauth-remote-gateway/scripts/diagnose-oauth-mcp.py`; if it moved, update the reference.",
+   "name": "scripts/diagnose-oauth-mcp.py",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    331
+   ]
+  },
+  {
+   "id": "DD-b6109098",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "website/docs/user-guide/skills/optional/productivity/productivity-canvas.md:37",
+   "doc_quote": "- `scripts/canvas_api.py` — Python CLI for Canvas API calls",
+   "problem": "Docs refer to `scripts/canvas_api.py`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/productivity/canvas/scripts/canvas_api.py",
+   "suggestion": "A file named `canvas_api.py` exists at `optional-skills/productivity/canvas/scripts/canvas_api.py`; if it moved, update the reference.",
+   "name": "scripts/canvas_api.py",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    37
+   ]
+  },
+  {
+   "id": "DD-9d3d3ccd",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "website/docs/user-guide/skills/optional/research/research-darwinian-evolver.md:110",
+   "doc_quote": "The skill ships `scripts/parrot_openrouter.py` — same parrot problem, but the",
+   "problem": "Docs refer to `scripts/parrot_openrouter.py`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/research/darwinian-evolver/scripts/parrot_openrouter.py",
+   "suggestion": "A file named `parrot_openrouter.py` exists at `optional-skills/research/darwinian-evolver/scripts/parrot_openrouter.py`; if it moved, update the reference.",
+   "also_at_lines": [
+    161
+   ],
+   "name": "scripts/parrot_openrouter.py",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    110,
+    161
+   ]
+  },
+  {
+   "id": "DD-701f851c",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "website/docs/user-guide/skills/optional/research/research-darwinian-evolver.md:125",
+   "doc_quote": "Inspect the result with `scripts/show_snapshot.py`:",
+   "problem": "Docs refer to `scripts/show_snapshot.py`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/research/darwinian-evolver/scripts/show_snapshot.py",
+   "suggestion": "A file named `show_snapshot.py` exists at `optional-skills/research/darwinian-evolver/scripts/show_snapshot.py`; if it moved, update the reference.",
+   "name": "scripts/show_snapshot.py",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    125
+   ]
+  },
+  {
+   "id": "DD-9fc6fdee",
+   "check": "default-mismatch",
+   "confidence": "high",
+   "doc": "website/docs/user-guide/skills/optional/research/research-darwinian-evolver.md:167",
+   "doc_quote": "| `--num_iterations` | 5 | bump to 10–20 once you trust the evaluator |",
+   "problem": "Docs say the default of `--num-iterations` is 5, the code says 3.",
+   "code": "optional-skills/research/darwinian-evolver/templates/custom_problem_template.py:204",
+   "code_quote": "ap.add_argument(\"--num_iterations\", type=int, default=3)",
+   "suggestion": "Change the documented default to 3, or change the code if the docs are right.",
+   "name": "--num-iterations",
+   "why": [
+    "the doc line names exactly one option and states one default",
+    "the code defines one static default for it (optional-skills/research/darwinian-evolver/templates/custom_problem_template.py:204)"
+   ],
+   "what_this_check_means": "Docs state a default value that differs from the default in the code.",
+   "doc_lines": [
+    167
+   ]
+  },
+  {
+   "id": "DD-7dd13a75",
+   "check": "default-mismatch",
+   "confidence": "high",
+   "doc": "website/docs/user-guide/skills/optional/research/research-darwinian-evolver.md:169",
+   "doc_quote": "| `--mutator_concurrency` | 10 | drop to 2–4 to avoid rate limits |",
+   "problem": "Docs say the default of `--mutator-concurrency` is 10, the code says 2.",
+   "code": "optional-skills/research/darwinian-evolver/templates/custom_problem_template.py:205",
+   "code_quote": "ap.add_argument(\"--mutator_concurrency\", type=int, default=2)",
+   "suggestion": "Change the documented default to 2, or change the code if the docs are right.",
+   "name": "--mutator-concurrency",
+   "why": [
+    "the doc line names exactly one option and states one default",
+    "the code defines one static default for it (optional-skills/research/darwinian-evolver/templates/custom_problem_template.py:205)"
+   ],
+   "what_this_check_means": "Docs state a default value that differs from the default in the code.",
+   "doc_lines": [
+    169
+   ]
+  },
+  {
+   "id": "DD-644e8824",
+   "check": "default-mismatch",
+   "confidence": "high",
+   "doc": "website/docs/user-guide/skills/optional/research/research-darwinian-evolver.md:170",
+   "doc_quote": "| `--evaluator_concurrency` | 10 | same; evaluator hits the LLM too |",
+   "problem": "Docs say the default of `--evaluator-concurrency` is 10, the code says 2.",
+   "code": "optional-skills/research/darwinian-evolver/templates/custom_problem_template.py:206",
+   "code_quote": "ap.add_argument(\"--evaluator_concurrency\", type=int, default=2)",
+   "suggestion": "Change the documented default to 2, or change the code if the docs are right.",
+   "name": "--evaluator-concurrency",
+   "why": [
+    "the doc line names exactly one option and states one default",
+    "the code defines one static default for it (optional-skills/research/darwinian-evolver/templates/custom_problem_template.py:206)"
+   ],
+   "what_this_check_means": "Docs state a default value that differs from the default in the code.",
+   "doc_lines": [
+    170
+   ]
+  },
+  {
+   "id": "DD-343505ac",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "website/docs/user-guide/skills/optional/research/research-domain-intel.md:38",
+   "doc_quote": "This skill includes `scripts/domain_intel.py` — a complete CLI tool for all domain intelligence operations.",
+   "problem": "Docs refer to `scripts/domain_intel.py`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/research/domain-intel/scripts/domain_intel.py",
+   "suggestion": "A file named `domain_intel.py` exists at `optional-skills/research/domain-intel/scripts/domain_intel.py`; if it moved, update the reference.",
+   "name": "scripts/domain_intel.py",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    38
+   ]
+  },
+  {
+   "id": "DD-673b93db",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "website/docs/user-guide/skills/optional/software-development/software-development-ast-grep.md:96",
+   "doc_quote": "## The helper script — `scripts/ast_grep_helper.py`",
+   "problem": "Docs refer to `scripts/ast_grep_helper.py`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/software-development/ast-grep/scripts/ast_grep_helper.py",
+   "suggestion": "A file named `ast_grep_helper.py` exists at `optional-skills/software-development/ast-grep/scripts/ast_grep_helper.py`; if it moved, update the reference.",
+   "name": "scripts/ast_grep_helper.py",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    96
+   ]
+  },
+  {
+   "id": "DD-d0a2629f",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "website/docs/user-guide/skills/optional/software-development/software-development-pr-lens.md:120",
+   "doc_quote": "| `npx @coldtea/pr-lens-cli@latest validate .pr-lens/graph.json` | validate the document (also validates `.github/pr-lens.yml`) |",
+   "problem": "Docs refer to `.github/pr-lens.yml`; the directory `.github/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "also_at_lines": [
+    142
+   ],
+   "name": ".github/pr-lens.yml",
+   "why": [
+    "`.github/` is a top-level directory of the repository and `.github/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    120,
+    142
+   ]
+  },
+  {
+   "id": "DD-b1c48756",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "website/docs/user-guide/skills/optional/web-development/web-development-cloudflare-temporary-deploy.md:94",
+   "doc_quote": "(Resolve `scripts/parse_deploy_output.py` to this skill's absolute path.) It prints JSON: `{\"live_url\", \"claim_url\", \"account\", \"account_state\", \"expires_minutes\", \"deployed\"}`.",
+   "problem": "Docs refer to `scripts/parse_deploy_output.py`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/web-development/cloudflare-temporary-deploy/scripts/parse_deploy_output.py",
+   "suggestion": "A file named `parse_deploy_output.py` exists at `optional-skills/web-development/cloudflare-temporary-deploy/scripts/parse_deploy_output.py`; if it moved, update the reference.",
+   "name": "scripts/parse_deploy_output.py",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    94
+   ]
+  },
+  {
+   "id": "DD-2ac94bdf",
+   "check": "npm-script-missing",
+   "confidence": "high",
+   "doc": "website/docs/user-guide/skills/optional/web-development/web-development-page-agent.md:150",
+   "doc_quote": "npm run dev:demo # serve IIFE bundle at http://localhost:5174/page-agent.demo.js",
+   "problem": "Docs run the script `dev:demo`, but no package.json in the repository defines it.",
+   "code": "apps/desktop/package.json",
+   "suggestion": "Closest script: `dev:mock` (apps/desktop/package.json). Update the docs or add the script.",
+   "also_at_lines": [
+    161,
+    189
+   ],
+   "name": "dev:demo",
+   "why": [
+    "96 scripts are defined across the repository's package.json files; `dev:demo` is not one of them",
+    "the doc does not define that script in a JSON snippet"
+   ],
+   "what_this_check_means": "Docs tell the reader to run a package.json script that does not exist.",
+   "doc_lines": [
+    150,
+    161,
+    189
+   ]
+  },
+  {
+   "id": "DD-eec82c32",
+   "check": "npm-script-missing",
+   "confidence": "high",
+   "doc": "website/docs/user-guide/skills/optional/web-development/web-development-page-agent.md:151",
+   "doc_quote": "npm run dev:ext # develop the browser extension (WXT + React)",
+   "problem": "Docs run the script `dev:ext`, but no package.json in the repository defines it.",
+   "code": "apps/desktop/package.json",
+   "suggestion": "Closest script: `dev:electron` (apps/desktop/package.json). Update the docs or add the script.",
+   "name": "dev:ext",
+   "why": [
+    "96 scripts are defined across the repository's package.json files; `dev:ext` is not one of them",
+    "the doc does not define that script in a JSON snippet"
+   ],
+   "what_this_check_means": "Docs tell the reader to run a package.json script that does not exist.",
+   "doc_lines": [
+    151
+   ]
+  },
+  {
+   "id": "DD-9ad924df",
+   "check": "npm-script-missing",
+   "confidence": "high",
+   "doc": "website/docs/user-guide/skills/optional/web-development/web-development-page-agent.md:152",
+   "doc_quote": "npm run build:ext # build the extension",
+   "problem": "Docs run the script `build:ext`, but no package.json in the repository defines it.",
+   "code": "apps/desktop/package.json",
+   "suggestion": "Closest script: `builder` (apps/desktop/package.json). Update the docs or add the script.",
+   "name": "build:ext",
+   "why": [
+    "96 scripts are defined across the repository's package.json files; `build:ext` is not one of them",
+    "the doc does not define that script in a JSON snippet"
+   ],
+   "what_this_check_means": "Docs tell the reader to run a package.json script that does not exist.",
+   "doc_lines": [
+    152
+   ]
+  },
+  {
+   "id": "DD-ff45c278",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "website/docs/user-guide/skills/optional/web-development/web-development-scrollcraft.md:244",
+   "doc_quote": "- `scripts/shoot.mjs` needs Playwright (`npm install playwright` or",
+   "problem": "Docs refer to `scripts/shoot.mjs`; the directory `scripts/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "name": "scripts/shoot.mjs",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    244
+   ]
+  },
+  {
+   "id": "DD-2c8009a4",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "website/docs/user-guide/skills/optional/web-development/web-development-scrollcraft.md:248",
+   "doc_quote": "- `scripts/kie.mjs` needs `KIE_AI_API_KEY` and paid credit; prefer",
+   "problem": "Docs refer to `scripts/kie.mjs`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/web-development/scrollcraft/scripts/kie.mjs",
+   "suggestion": "A file named `kie.mjs` exists at `optional-skills/web-development/scrollcraft/scripts/kie.mjs`; if it moved, update the reference.",
+   "name": "scripts/kie.mjs",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    248
+   ]
+  },
+  {
+   "id": "DD-fbf6c0aa",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "website/docs/user-guide/skills/optional/web-development/web-development-scrollcraft.md:252",
+   "doc_quote": "`scripts/doctor.mjs` first.",
+   "problem": "Docs refer to `scripts/doctor.mjs`; the directory `scripts/` exists but that file does not.",
+   "code": "optional-skills/web-development/scrollcraft/scripts/doctor.mjs",
+   "suggestion": "A file named `doctor.mjs` exists at `optional-skills/web-development/scrollcraft/scripts/doctor.mjs`; if it moved, update the reference.",
+   "name": "scripts/doctor.mjs",
+   "why": [
+    "`scripts/` is a top-level directory of the repository and `scripts/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    252
+   ]
+  }
+ ]
+}

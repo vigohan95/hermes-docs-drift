@@ -1,0 +1,8 @@
+casey__just {'flag': 0, 'env': 1, 'npm': 0, 'make': 0, 'path': 2} {'env': 'edit-aware 1/1, plain scan 0/1', 'path': 'edit-aware 2/2, plain scan 2/2'}
+gitleaks__gitleaks {'flag': 21, 'env': 2, 'npm': 0, 'make': 2, 'path': 0} {'flag/refactor': 'edit-aware 11/12, plain scan 0/12', 'env': 'edit-aware 2/2, plain scan 2/2', 'make': 'edit-aware 0/2, plain scan 0/2'}
+httpie__cli {'flag': 54, 'env': 0, 'npm': 0, 'make': 7, 'path': 3} {'flag/literal': 'edit-aware 12/12, plain scan 0/12', 'flag/refactor': 'edit-aware 12/12, plain scan 0/12', 'make': 'edit-aware 6/7, plain scan 6/7', 'path': 'edit-aware 3/3, plain scan 3/3'}
+nektos__act {'flag': 2, 'env': 0, 'npm': 0, 'make': 10, 'path': 5} {'flag/refactor': 'edit-aware 1/2, plain scan 0/2', 'make': 'edit-aware 10/10, plain scan 10/10', 'path': 'edit-aware 5/5, plain scan 5/5'}
+pypa__pipx {'flag': 0, 'env': 0, 'npm': 0, 'make': 0, 'path': 0} {}
+simonw__llm {'flag': 92, 'env': 4, 'npm': 0, 'make': 0, 'path': 0} {'flag/literal': 'edit-aware 12/12, plain scan 0/12', 'flag/refactor': 'edit-aware 12/12, plain scan 1/12', 'env': 'edit-aware 4/4, plain scan 0/4'}
+yt-dlp__yt-dlp {'flag': 311, 'env': 6, 'npm': 0, 'make': 1, 'path': 13} {'flag/literal': 'edit-aware 8/12, plain scan 0/12', 'flag/refactor': 'edit-aware 8/12, plain scan 0/12', 'env': 'edit-aware 5/6, plain scan 0/6', 'make': 'edit-aware 1/1, plain scan 0/1', 'path': 'edit-aware 12/12, plain scan 12/12'}
+prettier__prettier {'flag': 0, 'env': 2, 'npm': 10, 'make': 0, 'path': 26} {'env': 'edit-aware 2/2, plain scan 1/2', 'npm': 'edit-aware 6/10, plain scan 3/10', 'path': 'edit-aware 12/12, plain scan 2/12'}

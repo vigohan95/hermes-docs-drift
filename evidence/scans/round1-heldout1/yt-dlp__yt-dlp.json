@@ -1,0 +1,127 @@
+{
+ "repo": "yt-dlp/yt-dlp",
+ "sha": "412e7f0a4b0588fe884a02b344ac66a06538475b",
+ "cold_scan_s": 14.83,
+ "warm_rescan_s": 0.11,
+ "doc_files": 7,
+ "code_files": 1197,
+ "incomplete": false,
+ "notes": [
+  "make-target-missing limited: a Makefile computes target names or includes generated files."
+ ],
+ "not_reported": {
+  "path-ref-about-readers-project": 2,
+  "stale-context": 5
+ },
+ "default_checks": [
+  "path-missing",
+  "cli-flag-undefined",
+  "env-undefined",
+  "default-mismatch",
+  "npm-script-missing",
+  "make-target-missing"
+ ],
+ "findings": [
+  {
+   "id": "DD-e34a9178",
+   "check": "cli-flag-undefined",
+   "confidence": "medium",
+   "doc": "README.md:168",
+   "doc_quote": "* The `nightly` channel offers releases that publish shortly before midnight UTC on any day that sees changes to the codebase. This channel serves as a snapshot of the project's...",
+   "problem": "`--pre` is documented as an option, but the code does not define that flag.",
+   "code": "devscripts/make_changelog.py:510",
+   "code_quote": "parser.add_argument(",
+   "suggestion": "Closest flag defined in code: `--repo` (devscripts/make_changelog.py:510). If it was renamed, update the docs to `--repo`; otherwise remove the flag from the docs.",
+   "name": "--pre",
+   "why": [
+    "no literal --pre (or --pre) in any non-doc file",
+    "a similarly named identifier exists, but this project defines its flags as literal strings",
+    "it sits in an option list where at least 70% of the other flags are defined in the code"
+   ],
+   "what_this_check_means": "Docs show a command-line flag that the code no longer defines.",
+   "doc_lines": [
+    168
+   ]
+  },
+  {
+   "id": "DD-2376db20",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "README.md:2454",
+   "doc_quote": "--yes-overwrites --force-overwrites",
+   "problem": "`--convert-sub` is defined in yt_dlp/options.py but no doc mentions it; 311 of the other 314 flags from that file are documented in README.md.",
+   "code": "yt_dlp/options.py:1790",
+   "code_quote": "postproc.add_option(",
+   "suggestion": "Document `--convert-sub` next to its siblings in README.md (around line 2454).",
+   "name": "--convert-sub",
+   "why": [
+    "311 of 315 flags defined in yt_dlp/options.py appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    2454
+   ]
+  },
+  {
+   "id": "DD-f85d067a",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "README.md:2454",
+   "doc_quote": "--yes-overwrites --force-overwrites",
+   "problem": "`--convert-subtitles` is defined in yt_dlp/options.py but no doc mentions it; 311 of the other 314 flags from that file are documented in README.md.",
+   "code": "yt_dlp/options.py:1790",
+   "code_quote": "postproc.add_option(",
+   "suggestion": "Document `--convert-subtitles` next to its siblings in README.md (around line 2454).",
+   "name": "--convert-subtitles",
+   "why": [
+    "311 of 315 flags defined in yt_dlp/options.py appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    2454
+   ]
+  },
+  {
+   "id": "DD-bb2061a7",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "README.md:2454",
+   "doc_quote": "--yes-overwrites --force-overwrites",
+   "problem": "`--srt-langs` is defined in yt_dlp/options.py but no doc mentions it; 311 of the other 314 flags from that file are documented in README.md.",
+   "code": "yt_dlp/options.py:1000",
+   "code_quote": "subtitles.add_option(",
+   "suggestion": "Document `--srt-langs` next to its siblings in README.md (around line 2454).",
+   "name": "--srt-langs",
+   "why": [
+    "311 of 315 flags defined in yt_dlp/options.py appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    2454
+   ]
+  },
+  {
+   "id": "DD-05b0cb2c",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "README.md:2454",
+   "doc_quote": "--yes-overwrites --force-overwrites",
+   "problem": "`--xattr` is defined in yt_dlp/options.py but no doc mentions it; 311 of the other 314 flags from that file are documented in README.md.",
+   "code": "yt_dlp/options.py:1740",
+   "code_quote": "postproc.add_option(",
+   "suggestion": "Document `--xattr` next to its siblings in README.md (around line 2454).",
+   "name": "--xattr",
+   "why": [
+    "311 of 315 flags defined in yt_dlp/options.py appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    2454
+   ]
+  }
+ ]
+}

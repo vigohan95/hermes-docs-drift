@@ -1,0 +1,26 @@
+{
+ "repo": "yt-dlp/yt-dlp",
+ "sha": "412e7f0a4b0588fe884a02b344ac66a06538475b",
+ "cold_scan_s": 2.0,
+ "warm_rescan_s": 0.16,
+ "doc_files": 7,
+ "code_files": 1197,
+ "incomplete": false,
+ "notes": [
+  "make-target-missing limited: a Makefile computes target names or includes generated files."
+ ],
+ "not_reported": {
+  "path-ref-about-readers-project": 2,
+  "stale-context": 5,
+  "alias-of-documented-flag": 4
+ },
+ "default_checks": [
+  "path-missing",
+  "cli-flag-undefined",
+  "env-undefined",
+  "default-mismatch",
+  "npm-script-missing",
+  "make-target-missing"
+ ],
+ "findings": []
+}

@@ -1,0 +1,9 @@
+code: 806d448941e7add1be43f8577890eea740ad7ae9 started 2026-11-10T10:38:47Z
+BurntSushi__ripgrep {'flag': 0, 'env': 4, 'npm': 0, 'make': 0, 'path': 4} {'env': 'edit-aware 4/4, plain scan 1/4', 'path': 'edit-aware 4/4, plain scan 4/4'}
+junegunn__fzf {'flag': 0, 'env': 6, 'npm': 0, 'make': 5, 'path': 7} {'env': 'edit-aware 5/6, plain scan 0/6', 'make': 'edit-aware 4/5, plain scan 0/5', 'path': 'edit-aware 7/7, plain scan 7/7'}
+sharkdp__bat {'flag': 0, 'env': 5, 'npm': 0, 'make': 1, 'path': 8} {'env': 'edit-aware 5/5, plain scan 0/5', 'make': 'edit-aware 0/1, plain scan 0/1', 'path': 'edit-aware 8/8, plain scan 8/8'}
+ajeetdsouza__zoxide {'flag': 0, 'env': 2, 'npm': 0, 'make': 0, 'path': 0} {'env': 'edit-aware 2/2, plain scan 0/2'}
+commitizen-tools__commitizen {'flag': 0, 'env': 0, 'npm': 0, 'make': 0, 'path': 43} {'path': 'edit-aware 12/12, plain scan 12/12'}
+pdm-project__pdm {'flag': 76, 'env': 23, 'npm': 0, 'make': 0, 'path': 19} {'flag/literal': 'edit-aware 12/12, plain scan 0/12', 'flag/refactor': 'edit-aware 12/12, plain scan 0/12', 'env': 'edit-aware 12/12, plain scan 0/12', 'path': 'edit-aware 12/12, plain scan 12/12'}
+http-party__http-server {'flag': 0, 'env': 2, 'npm': 0, 'make': 0, 'path': 0} {'env': 'edit-aware 2/2, plain scan 0/2'}
+mikefarah__yq {'flag': 45, 'env': 0, 'npm': 0, 'make': 4, 'path': 1} {'flag/refactor': 'edit-aware 12/12, plain scan 5/12', 'make': 'edit-aware 4/4, plain scan 4/4', 'path': 'edit-aware 1/1, plain scan 1/1'}

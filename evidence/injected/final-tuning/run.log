@@ -1,0 +1,10 @@
+code: b7ba05d661710de24ab81a2f1700e6552cddd709 started 2026-11-10T11:07:48Z sets: A=tuning B=first held-out C=second held-out
+Aider-AI__aider {'flag': 134, 'env': 12, 'npm': 0, 'make': 0, 'path': 10} {'flag/literal': 'edit-aware 11/12, plain scan 0/12', 'flag/refactor': 'edit-aware 11/12, plain scan 0/12', 'env': 'edit-aware 8/12, plain scan 0/12', 'path': 'edit-aware 10/10, plain scan 10/10'}
+encode__uvicorn {'flag': 47, 'env': 2, 'npm': 0, 'make': 0, 'path': 7} {'flag/literal': 'edit-aware 12/12, plain scan 0/12', 'flag/refactor': 'edit-aware 12/12, plain scan 2/12', 'env': 'edit-aware 2/2, plain scan 0/2', 'path': 'edit-aware 7/7, plain scan 6/7'}
+go-task__task {'flag': 45, 'env': 4, 'npm': 0, 'make': 0, 'path': 70} {'flag/refactor': 'edit-aware 12/12, plain scan 0/12', 'env': 'edit-aware 4/4, plain scan 0/4', 'path': 'edit-aware 12/12, plain scan 0/12'}
+mkdocs__mkdocs {'flag': 7, 'env': 0, 'npm': 0, 'make': 0, 'path': 22} {'flag/literal': 'edit-aware 7/7, plain scan 0/7', 'flag/refactor': 'edit-aware 7/7, plain scan 0/7', 'path': 'edit-aware 12/12, plain scan 12/12'}
+nvm-sh__nvm {'flag': 0, 'env': 0, 'npm': 15, 'make': 1, 'path': 3} {'npm': 'edit-aware 11/12, plain scan 11/12', 'make': 'edit-aware 1/1, plain scan 0/1', 'path': 'edit-aware 3/3, plain scan 3/3'}
+psf__black {'flag': 33, 'env': 3, 'npm': 0, 'make': 0, 'path': 13} {'flag/literal': 'edit-aware 12/12, plain scan 0/12', 'flag/refactor': 'edit-aware 12/12, plain scan 0/12', 'env': 'edit-aware 3/3, plain scan 2/3', 'path': 'edit-aware 12/12, plain scan 10/12'}
+sharkdp__fd {'flag': 0, 'env': 1, 'npm': 0, 'make': 0, 'path': 4} {'env': 'edit-aware 1/1, plain scan 0/1', 'path': 'edit-aware 4/4, plain scan 4/4'}
+vitejs__vite {'flag': 28, 'env': 10, 'npm': 9, 'make': 0, 'path': 30} {'flag/literal': 'edit-aware 12/12, plain scan 0/12', 'flag/refactor': 'edit-aware 12/12, plain scan 3/12', 'env': 'edit-aware 9/10, plain scan 0/10', 'npm': 'edit-aware 7/9, plain scan 6/9', 'path': 'edit-aware 12/12, plain scan 12/12'}
+finished 2026-11-10T11:08:57Z exit 0

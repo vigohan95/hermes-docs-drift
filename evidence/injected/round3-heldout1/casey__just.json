@@ -1,0 +1,52 @@
+{
+ "candidates_available": {
+  "flag": 0,
+  "env": 1,
+  "npm": 0,
+  "make": 0,
+  "path": 2
+ },
+ "baseline_findings": 0,
+ "rows": [
+  {
+   "kind": "env",
+   "name": "PATH",
+   "where": "src/command_ext.rs:54",
+   "files_changed": 9,
+   "detected_scan": false,
+   "scan_s": 0.03,
+   "detected": true,
+   "new_findings": 2,
+   "other_new_findings": [],
+   "finding": "README.md:111 [high]"
+  },
+  {
+   "kind": "path",
+   "name": "LICENSE",
+   "where": "CONTRIBUTING.md",
+   "files_changed": 1,
+   "detected_scan": true,
+   "scan_s": 0.02,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "CONTRIBUTING.md:5 [high]"
+  },
+  {
+   "kind": "path",
+   "name": "README.md",
+   "where": "CONTRIBUTING.md",
+   "files_changed": 1,
+   "detected_scan": true,
+   "scan_s": 0.02,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "CONTRIBUTING.md:8 [high]"
+  }
+ ],
+ "repo": "casey/just",
+ "sha": "7b7b51bec9359a5b4a76321018db65d07978fecc",
+ "per_kind_limit": 12,
+ "seed": 20261110
+}

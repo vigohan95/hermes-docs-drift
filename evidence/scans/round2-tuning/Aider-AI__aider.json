@@ -1,0 +1,68 @@
+{
+ "repo": "Aider-AI/aider",
+ "sha": "5dc9490bb35f9729ef2c95d00a19ccd30c26339c",
+ "cold_scan_s": 0.95,
+ "warm_rescan_s": 0.14,
+ "doc_files": 116,
+ "code_files": 367,
+ "incomplete": false,
+ "notes": [],
+ "not_reported": {
+  "link-to-generated-html": 11,
+  "path-ref-about-readers-project": 4,
+  "path-ref-generated-or-stale": 2,
+  "stale-context": 7,
+  "env-built-dynamically": 2
+ },
+ "default_checks": [
+  "path-missing",
+  "cli-flag-undefined",
+  "env-undefined",
+  "default-mismatch",
+  "npm-script-missing",
+  "make-target-missing"
+ ],
+ "findings": [
+  {
+   "id": "DD-3af61365",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "aider/website/examples/complex-change.md:23",
+   "doc_quote": "Yes, we can use the `prompt_toolkit.input` module to mock the input in the tests. Here's how to modify the `tests/test_main.py` file:",
+   "problem": "Docs refer to `tests/test_main.py`; the directory `tests/` exists but that file does not.",
+   "code": "tests/basic/test_main.py",
+   "suggestion": "A file named `test_main.py` exists at `tests/basic/test_main.py`; if it moved, update the reference.",
+   "also_at_lines": [
+    317
+   ],
+   "name": "tests/test_main.py",
+   "why": [
+    "`tests/` is a top-level directory of the repository and `tests/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    23,
+    317
+   ]
+  },
+  {
+   "id": "DD-81ced877",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "aider/website/examples/complex-change.md:226",
+   "doc_quote": "Update the `prompt()` function call in the `get_input()` method in `aider/getinput.py`:",
+   "problem": "Docs refer to `aider/getinput.py`; the directory `aider/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "name": "aider/getinput.py",
+   "why": [
+    "`aider/` is a top-level directory of the repository and `aider/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    226
+   ]
+  }
+ ]
+}

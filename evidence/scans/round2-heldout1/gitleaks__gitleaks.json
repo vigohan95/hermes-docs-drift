@@ -1,0 +1,20 @@
+{
+ "repo": "gitleaks/gitleaks",
+ "sha": "5f6ec56cfa6f8c67648d863582c7ae2f206d5c1c",
+ "cold_scan_s": 0.31,
+ "warm_rescan_s": 0.06,
+ "doc_files": 4,
+ "code_files": 429,
+ "incomplete": false,
+ "notes": [],
+ "not_reported": {},
+ "default_checks": [
+  "path-missing",
+  "cli-flag-undefined",
+  "env-undefined",
+  "default-mismatch",
+  "npm-script-missing",
+  "make-target-missing"
+ ],
+ "findings": []
+}

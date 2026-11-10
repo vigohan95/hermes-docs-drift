@@ -1,0 +1,24 @@
+{
+ "repo": "vitejs/vite",
+ "sha": "b8c8270f3f01a9dbf02c336e7468bf6f1df0f5ad",
+ "cold_scan_s": 1.31,
+ "warm_rescan_s": 0.27,
+ "doc_files": 54,
+ "code_files": 2723,
+ "incomplete": false,
+ "notes": [],
+ "not_reported": {
+  "path-ref-about-readers-project": 1,
+  "stale-context": 13,
+  "env-built-dynamically": 4
+ },
+ "default_checks": [
+  "path-missing",
+  "cli-flag-undefined",
+  "env-undefined",
+  "default-mismatch",
+  "npm-script-missing",
+  "make-target-missing"
+ ],
+ "findings": []
+}

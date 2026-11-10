@@ -1,0 +1,15 @@
+{
+ "candidates_available": {
+  "flag": 0,
+  "env": 0,
+  "npm": 0,
+  "make": 0,
+  "path": 0
+ },
+ "baseline_findings": 0,
+ "rows": [],
+ "repo": "pypa/pipx",
+ "sha": "e7fa855353cc8c15f199b746d5e4d93b69f3c889",
+ "per_kind_limit": 12,
+ "seed": 20261110
+}

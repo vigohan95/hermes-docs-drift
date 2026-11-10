@@ -1,0 +1,20 @@
+{
+ "repo": "http-party/http-server",
+ "sha": "0d3b7bb5b6e8a59fd450ae2dca65870009cfcd8b",
+ "cold_scan_s": 0.09,
+ "warm_rescan_s": 0.05,
+ "doc_files": 2,
+ "code_files": 111,
+ "incomplete": false,
+ "notes": [],
+ "not_reported": {},
+ "default_checks": [
+  "path-missing",
+  "cli-flag-undefined",
+  "env-undefined",
+  "default-mismatch",
+  "npm-script-missing",
+  "make-target-missing"
+ ],
+ "findings": []
+}

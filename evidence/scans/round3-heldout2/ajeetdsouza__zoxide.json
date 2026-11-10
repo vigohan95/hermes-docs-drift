@@ -1,0 +1,20 @@
+{
+ "repo": "ajeetdsouza/zoxide",
+ "sha": "1bb062057bef85aecb44e2e5c2a7983be4ebb710",
+ "cold_scan_s": 0.11,
+ "warm_rescan_s": 0.03,
+ "doc_files": 2,
+ "code_files": 59,
+ "incomplete": false,
+ "notes": [],
+ "not_reported": {},
+ "default_checks": [
+  "path-missing",
+  "cli-flag-undefined",
+  "env-undefined",
+  "default-mismatch",
+  "npm-script-missing",
+  "make-target-missing"
+ ],
+ "findings": []
+}

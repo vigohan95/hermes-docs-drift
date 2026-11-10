@@ -1,0 +1,167 @@
+{
+ "repo": "pdm-project/pdm",
+ "sha": "0f6ea802663d1081dedf8e39245e70123d1724c8",
+ "cold_scan_s": 0.59,
+ "warm_rescan_s": 0.11,
+ "doc_files": 25,
+ "code_files": 349,
+ "incomplete": false,
+ "notes": [],
+ "not_reported": {
+  "link-to-untracked-or-ignored-file": 10,
+  "stale-context": 17,
+  "flag-siblings-not-listed-in-one-doc": 8,
+  "env-built-dynamically": 1,
+  "env-maybe-derived-from-settings-field": 1
+ },
+ "default_checks": [
+  "path-missing",
+  "cli-flag-undefined",
+  "env-undefined",
+  "default-mismatch",
+  "npm-script-missing",
+  "make-target-missing"
+ ],
+ "findings": [
+  {
+   "id": "DD-ffc04104",
+   "check": "env-undocumented",
+   "confidence": "medium",
+   "doc": "docs/index.md:119",
+   "doc_quote": "--skip-add-to-path | envvar: PDM_SKIP_ADD_TO_PATH",
+   "problem": "The code reads `PDM_CONFIG_FILE` (src/pdm/cli/commands/new.py:22) but no doc mentions it; 7 other PDM_ variables are documented in docs/index.md.",
+   "code": "src/pdm/cli/commands/new.py:22",
+   "code_quote": "options.project_path, global_config=options.config or os.getenv(\"PDM_CONFIG_FILE\")",
+   "suggestion": "Document `PDM_CONFIG_FILE` next to the other PDM_ variables in docs/index.md (around line 119).",
+   "name": "PDM_CONFIG_FILE",
+   "why": [
+    "21 of 27 PDM_ variables read by the code appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code reads an environment variable that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    119
+   ]
+  },
+  {
+   "id": "DD-8a45059d",
+   "check": "env-undocumented",
+   "confidence": "medium",
+   "doc": "docs/index.md:119",
+   "doc_quote": "--skip-add-to-path | envvar: PDM_SKIP_ADD_TO_PATH",
+   "problem": "The code reads `PDM_FROZEN_LOCKFILE` (src/pdm/project/core.py:111) but no doc mentions it; 7 other PDM_ variables are documented in docs/index.md.",
+   "code": "src/pdm/project/core.py:111",
+   "code_quote": "self.enable_write_lockfile = os.getenv(\"PDM_FROZEN_LOCKFILE\", os.getenv(\"PDM_NO_LOCK\", \"0\")).lower() not in (",
+   "suggestion": "Document `PDM_FROZEN_LOCKFILE` next to the other PDM_ variables in docs/index.md (around line 119).",
+   "name": "PDM_FROZEN_LOCKFILE",
+   "why": [
+    "21 of 27 PDM_ variables read by the code appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code reads an environment variable that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    119
+   ]
+  },
+  {
+   "id": "DD-0a6a6c52",
+   "check": "env-undocumented",
+   "confidence": "medium",
+   "doc": "docs/index.md:119",
+   "doc_quote": "--skip-add-to-path | envvar: PDM_SKIP_ADD_TO_PATH",
+   "problem": "The code reads `PDM_NO_LOCK` (src/pdm/project/core.py:111) but no doc mentions it; 7 other PDM_ variables are documented in docs/index.md.",
+   "code": "src/pdm/project/core.py:111",
+   "code_quote": "self.enable_write_lockfile = os.getenv(\"PDM_FROZEN_LOCKFILE\", os.getenv(\"PDM_NO_LOCK\", \"0\")).lower() not in (",
+   "suggestion": "Document `PDM_NO_LOCK` next to the other PDM_ variables in docs/index.md (around line 119).",
+   "name": "PDM_NO_LOCK",
+   "why": [
+    "21 of 27 PDM_ variables read by the code appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code reads an environment variable that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    119
+   ]
+  },
+  {
+   "id": "DD-02539bbe",
+   "check": "env-undocumented",
+   "confidence": "medium",
+   "doc": "docs/index.md:119",
+   "doc_quote": "--skip-add-to-path | envvar: PDM_SKIP_ADD_TO_PATH",
+   "problem": "The code reads `PDM_NO_SELF` (src/pdm/cli/options.py:232) but no doc mentions it; 7 other PDM_ variables are documented in docs/index.md.",
+   "code": "src/pdm/cli/options.py:232",
+   "code_quote": "default=bool(os.getenv(\"PDM_NO_SELF\")),",
+   "suggestion": "Document `PDM_NO_SELF` next to the other PDM_ variables in docs/index.md (around line 119).",
+   "name": "PDM_NO_SELF",
+   "why": [
+    "21 of 27 PDM_ variables read by the code appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code reads an environment variable that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    119
+   ]
+  },
+  {
+   "id": "DD-1f27f1ba",
+   "check": "env-undocumented",
+   "confidence": "medium",
+   "doc": "docs/index.md:119",
+   "doc_quote": "--skip-add-to-path | envvar: PDM_SKIP_ADD_TO_PATH",
+   "problem": "The code reads `PDM_OVERRIDE` (src/pdm/cli/options.py:540) but no doc mentions it; 7 other PDM_ variables are documented in docs/index.md.",
+   "code": "src/pdm/cli/options.py:540",
+   "code_quote": "default=[env] if (env := os.getenv(\"PDM_OVERRIDE\")) else None,",
+   "suggestion": "Document `PDM_OVERRIDE` next to the other PDM_ variables in docs/index.md (around line 119).",
+   "name": "PDM_OVERRIDE",
+   "why": [
+    "21 of 27 PDM_ variables read by the code appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code reads an environment variable that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    119
+   ]
+  },
+  {
+   "id": "DD-bb2d8d2d",
+   "check": "env-undocumented",
+   "confidence": "medium",
+   "doc": "docs/index.md:119",
+   "doc_quote": "--skip-add-to-path | envvar: PDM_SKIP_ADD_TO_PATH",
+   "problem": "The code reads `PDM_REPO` (install-pdm.py:24) but no doc mentions it; 7 other PDM_ variables are documented in docs/index.md.",
+   "code": "install-pdm.py:24",
+   "code_quote": "REPO = os.getenv(\"PDM_REPO\", \"https://github.com/pdm-project/pdm\")",
+   "suggestion": "Document `PDM_REPO` next to the other PDM_ variables in docs/index.md (around line 119).",
+   "name": "PDM_REPO",
+   "why": [
+    "21 of 27 PDM_ variables read by the code appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code reads an environment variable that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    119
+   ]
+  },
+  {
+   "id": "DD-8e7a3e3a",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "docs/usage/venv.md:226",
+   "doc_quote": "Or you can create the virtual environment with `--with-pip`:",
+   "problem": "`--force` is defined in src/pdm/cli/commands/venv/create.py but no doc mentions it; 3 of the other 3 flags from that file are documented in docs/usage/venv.md.",
+   "code": "src/pdm/cli/commands/venv/create.py:35",
+   "code_quote": "parser.add_argument(",
+   "suggestion": "Document `--force` next to its siblings in docs/usage/venv.md (around line 226).",
+   "name": "--force",
+   "why": [
+    "3 of 4 flags defined in src/pdm/cli/commands/venv/create.py appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    226
+   ]
+  }
+ ]
+}

@@ -1,0 +1,62 @@
+{
+ "repo": "mkdocs/mkdocs",
+ "sha": "2862536793b3c67d9d83c33e0dd6d50a791928f8",
+ "cold_scan_s": 0.55,
+ "warm_rescan_s": 0.05,
+ "doc_files": 19,
+ "code_files": 194,
+ "incomplete": false,
+ "notes": [],
+ "not_reported": {
+  "site-resolved-link": 3,
+  "site-route-link": 1,
+  "stale-context": 3,
+  "flag-siblings-not-listed-in-one-doc": 1
+ },
+ "default_checks": [
+  "path-missing",
+  "cli-flag-undefined",
+  "env-undefined",
+  "default-mismatch",
+  "npm-script-missing",
+  "make-target-missing"
+ ],
+ "findings": [
+  {
+   "id": "DD-89d31a0d",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "docs/getting-started.md:161",
+   "doc_quote": "even have a `sitemap.xml` file and `mkdocs/search_index.json`.",
+   "problem": "Docs refer to `mkdocs/search_index.json`; the directory `mkdocs/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "name": "mkdocs/search_index.json",
+   "why": [
+    "`mkdocs/` is a top-level directory of the repository and `mkdocs/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    161
+   ]
+  },
+  {
+   "id": "DD-af253c52",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "docs/user-guide/writing-your-docs.md:120",
+   "doc_quote": "`docs/about.md`.",
+   "problem": "Docs refer to `docs/about.md`; the directory `docs/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "name": "docs/about.md",
+   "why": [
+    "`docs/` is a top-level directory of the repository and `docs/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    120
+   ]
+  }
+ ]
+}

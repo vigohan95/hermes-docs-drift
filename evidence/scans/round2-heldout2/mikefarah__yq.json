@@ -1,0 +1,64 @@
+{
+ "repo": "mikefarah/yq",
+ "sha": "f2944b823f84906a127dbd29e4c2a3e60c4e550e",
+ "cold_scan_s": 5.17,
+ "warm_rescan_s": 0.08,
+ "doc_files": 163,
+ "code_files": 392,
+ "incomplete": false,
+ "notes": [],
+ "not_reported": {
+  "path-ref-about-readers-project": 1,
+  "other-project-or-stale": 8
+ },
+ "default_checks": [
+  "path-missing",
+  "cli-flag-undefined",
+  "env-undefined",
+  "default-mismatch",
+  "npm-script-missing",
+  "make-target-missing"
+ ],
+ "findings": [
+  {
+   "id": "DD-3694525d",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "README.md:458",
+   "doc_quote": "--yaml-fix-merge-anchor-to-spec Fix merge anchor to match YAML spec. Will default to true in late 2025",
+   "problem": "`--tojson` is defined in cmd/root.go but no doc mentions it; 43 of the other 48 flags from that file are documented in README.md.",
+   "code": "cmd/root.go:95",
+   "code_quote": "rootCmd.PersistentFlags().BoolVarP(&outputToJSON, \"tojson\", \"j\", false, \"(deprecated) output as json. Set indent to 0 to print json in one line.\")",
+   "suggestion": "Document `--tojson` next to its siblings in README.md (around line 458).",
+   "name": "--tojson",
+   "why": [
+    "48 of 49 flags defined in cmd/root.go appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    458
+   ]
+  },
+  {
+   "id": "DD-9a01685d",
+   "check": "default-mismatch",
+   "confidence": "high",
+   "doc": "pkg/yqlib/doc/operators/anchor-and-alias-operators.md:349",
+   "doc_quote": "Set `--yaml-fix-merge-anchor-to-spec=true` to get this correct merge behaviour (flag will default to true in late 2025).",
+   "problem": "Docs say the default of `--yaml-fix-merge-anchor-to-spec` is true, the code says False.",
+   "code": "cmd/root.go:201",
+   "code_quote": "rootCmd.PersistentFlags().BoolVarP(&yqlib.ConfiguredYamlPreferences.FixMergeAnchorToSpec, \"yaml-fix-merge-anchor-to-spec\", \"\", false, \"Fix merge anchor to match YAML spec. Will ...",
+   "suggestion": "Change the documented default to False, or change the code if the docs are right.",
+   "name": "--yaml-fix-merge-anchor-to-spec",
+   "why": [
+    "the doc line names exactly one option and states one default",
+    "the code defines one static default for it (cmd/root.go:201)"
+   ],
+   "what_this_check_means": "Docs state a default value that differs from the default in the code.",
+   "doc_lines": [
+    349
+   ]
+  }
+ ]
+}

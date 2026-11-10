@@ -1,0 +1,183 @@
+{
+ "candidates_available": {
+  "flag": 0,
+  "env": 5,
+  "npm": 0,
+  "make": 1,
+  "path": 8
+ },
+ "baseline_findings": 0,
+ "rows": [
+  {
+   "kind": "env",
+   "name": "BAT_CONFIG_DIR",
+   "where": "src/bin/bat/directories.rs:28",
+   "files_changed": 8,
+   "detected_scan": false,
+   "scan_s": 0.03,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "README.md:762 [high]"
+  },
+  {
+   "kind": "env",
+   "name": "BAT_CONFIG_PATH",
+   "where": "src/bin/bat/config.rs:26",
+   "files_changed": 10,
+   "detected_scan": false,
+   "scan_s": 0.03,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "README.md:762 [high]"
+  },
+  {
+   "kind": "env",
+   "name": "BAT_PAGER",
+   "where": "src/pager.rs:101",
+   "files_changed": 17,
+   "detected_scan": false,
+   "scan_s": 0.03,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "README.md:653 [high]"
+  },
+  {
+   "kind": "env",
+   "name": "COLORTERM",
+   "where": "src/bin/bat/app.rs:32",
+   "files_changed": 6,
+   "detected_scan": false,
+   "scan_s": 0.05,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "README.md:868 [high]"
+  },
+  {
+   "kind": "env",
+   "name": "PAGER",
+   "where": "src/pager.rs:102",
+   "files_changed": 16,
+   "detected_scan": false,
+   "scan_s": 0.03,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "README.md:651 [high]"
+  },
+  {
+   "kind": "make",
+   "name": "install",
+   "where": "tests/syntax-tests/source/Makefile/Makefile:375",
+   "files_changed": 1,
+   "detected_scan": false,
+   "scan_s": 0.05,
+   "detected": false,
+   "new_findings": 0,
+   "other_new_findings": []
+  },
+  {
+   "kind": "path",
+   "name": "CHANGELOG.md",
+   "where": "CONTRIBUTING.md",
+   "files_changed": 1,
+   "detected_scan": true,
+   "scan_s": 0.03,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "CONTRIBUTING.md:9 [high]"
+  },
+  {
+   "kind": "path",
+   "name": "CONTRIBUTING.md",
+   "where": "README.md",
+   "files_changed": 1,
+   "detected_scan": true,
+   "scan_s": 0.03,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "README.md:917 [high]"
+  },
+  {
+   "kind": "path",
+   "name": "LICENSE-APACHE",
+   "where": "README.md",
+   "files_changed": 1,
+   "detected_scan": true,
+   "scan_s": 0.05,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "README.md:947 [high]"
+  },
+  {
+   "kind": "path",
+   "name": "LICENSE-MIT",
+   "where": "README.md",
+   "files_changed": 1,
+   "detected_scan": true,
+   "scan_s": 0.05,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "README.md:947 [high]"
+  },
+  {
+   "kind": "path",
+   "name": "SECURITY.md",
+   "where": "README.md",
+   "files_changed": 1,
+   "detected_scan": true,
+   "scan_s": 0.03,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "README.md:928 [high]"
+  },
+  {
+   "kind": "path",
+   "name": "assets/syntaxes/02_Extra/Manpage.sublime-syntax",
+   "where": "README.md",
+   "files_changed": 1,
+   "detected_scan": true,
+   "scan_s": 0.03,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "README.md:191 [high]"
+  },
+  {
+   "kind": "path",
+   "name": "doc/alternatives.md",
+   "where": "README.md",
+   "files_changed": 1,
+   "detected_scan": true,
+   "scan_s": 0.03,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "README.md:940 [high]"
+  },
+  {
+   "kind": "path",
+   "name": "doc/assets.md",
+   "where": "README.md",
+   "files_changed": 1,
+   "detected_scan": true,
+   "scan_s": 0.05,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "README.md:596 [high]"
+  }
+ ],
+ "repo": "sharkdp/bat",
+ "sha": "8cf33bdde9a6e4c11d0f866415b1fc867df0cd40",
+ "per_kind_limit": 12,
+ "seed": 20261110
+}

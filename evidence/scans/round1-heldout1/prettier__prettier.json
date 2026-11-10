@@ -1,0 +1,24 @@
+{
+ "repo": "prettier/prettier",
+ "sha": "21fd5d769c36707c51ae94f7c84a4bf678febce4",
+ "cold_scan_s": 89.69,
+ "warm_rescan_s": 0.66,
+ "doc_files": 118,
+ "code_files": 9218,
+ "incomplete": false,
+ "notes": [],
+ "not_reported": {
+  "path-ref-about-readers-project": 1,
+  "stale-context": 5,
+  "option-list-not-ours": 3
+ },
+ "default_checks": [
+  "path-missing",
+  "cli-flag-undefined",
+  "env-undefined",
+  "default-mismatch",
+  "npm-script-missing",
+  "make-target-missing"
+ ],
+ "findings": []
+}

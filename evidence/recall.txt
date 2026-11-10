@@ -1,0 +1,202 @@
+===== round1-tuning   scanner code 974f7f2
+8 repositories
+kind             injected  edit-aware  plain scan
+env                    32          27           2
+flag/literal           55          54          45
+flag/refactor          67          66          45
+make                    1           1           0
+npm                    21          18          17
+path                   72          72          57
+total                 248         238         166
+recall: edit-aware 0.960, plain scan 0.669
+mutations that could not be made and are not counted: 12
+further findings for the injected item itself (other doc lines linking the removed file): 10
+findings after an injection that were about something else: 0
+
+===== round1-heldout1   scanner code 974f7f2
+8 repositories
+kind             injected  edit-aware  plain scan
+env                    15          14           3
+flag/literal           36          23          16
+flag/refactor          50          28          17
+make                   20          17          16
+npm                    10           6           3
+path                   34          34          24
+total                 165         122          79
+recall: edit-aware 0.739, plain scan 0.479
+mutations that could not be made and are not counted: 14
+further findings for the injected item itself (other doc lines linking the removed file): 0
+findings after an injection that were about something else: 10
+  other: nektos/act path Makefile make-target-missing build AGENTS.md:9
+  other: nektos/act path Makefile make-target-missing test AGENTS.md:10
+  other: nektos/act path Makefile make-target-missing test-fast AGENTS.md:11
+  other: nektos/act path Makefile make-target-missing lint-go AGENTS.md:12
+  other: nektos/act path Makefile make-target-missing format AGENTS.md:13
+  other: nektos/act path Makefile make-target-missing tidy AGENTS.md:14
+  other: nektos/act path Makefile make-target-missing pr AGENTS.md:15
+  other: nektos/act path Makefile make-target-missing promote AGENTS.md:16
+  other: nektos/act path Makefile make-target-missing snapshot AGENTS.md:18
+  other: nektos/act path Makefile make-target-missing pr CONTRIBUTING.md:51
+
+===== round2-tuning   scanner code 806d448
+8 repositories
+kind             injected  edit-aware  plain scan
+env                    32          27           2
+flag/literal           55          54           0
+flag/refactor          67          66           5
+make                    1           1           0
+npm                    21          18          17
+path                   72          72          57
+total                 248         238          81
+recall: edit-aware 0.960, plain scan 0.327
+mutations that could not be made and are not counted: 12
+further findings for the injected item itself (other doc lines linking the removed file): 10
+findings after an injection that were about something else: 0
+
+===== round2-heldout1   scanner code 806d448
+8 repositories
+kind             injected  edit-aware  plain scan
+env                    15          14           3
+flag/literal           36          32           0
+flag/refactor          50          44           1
+make                   20          17          16
+npm                    10           6           3
+path                   34          34          24
+total                 165         147          47
+recall: edit-aware 0.891, plain scan 0.285
+mutations that could not be made and are not counted: 14
+further findings for the injected item itself (other doc lines linking the removed file): 0
+findings after an injection that were about something else: 10
+  other: nektos/act path Makefile make-target-missing build AGENTS.md:9
+  other: nektos/act path Makefile make-target-missing test AGENTS.md:10
+  other: nektos/act path Makefile make-target-missing test-fast AGENTS.md:11
+  other: nektos/act path Makefile make-target-missing lint-go AGENTS.md:12
+  other: nektos/act path Makefile make-target-missing format AGENTS.md:13
+  other: nektos/act path Makefile make-target-missing tidy AGENTS.md:14
+  other: nektos/act path Makefile make-target-missing pr AGENTS.md:15
+  other: nektos/act path Makefile make-target-missing promote AGENTS.md:16
+  other: nektos/act path Makefile make-target-missing snapshot AGENTS.md:18
+  other: nektos/act path Makefile make-target-missing pr CONTRIBUTING.md:51
+
+===== round2-heldout2   scanner code 806d448
+8 repositories
+kind             injected  edit-aware  plain scan
+env                    31          30           1
+flag/literal           12          12           0
+flag/refactor          24          24           5
+make                   10           8           4
+path                   44          44          44
+total                 121         118          54
+recall: edit-aware 0.975, plain scan 0.446
+mutations that could not be made and are not counted: 12
+further findings for the injected item itself (other doc lines linking the removed file): 0
+findings after an injection that were about something else: 0
+
+===== round3-tuning   scanner code 8ff4f2c
+8 repositories
+kind             injected  edit-aware  plain scan
+env                    32          27           2
+flag/literal           55          54           0
+flag/refactor          67          66           5
+make                    1           1           0
+npm                    21          18          17
+path                   72          72          57
+total                 248         238          81
+recall: edit-aware 0.960, plain scan 0.327
+mutations that could not be made and are not counted: 12
+further findings for the injected item itself (other doc lines linking the removed file): 10
+findings after an injection that were about something else: 0
+
+===== round3-heldout1   scanner code 8ff4f2c
+8 repositories
+kind             injected  edit-aware  plain scan
+env                    15          14           3
+flag/literal           36          32           0
+flag/refactor          50          44           1
+make                   20          17          16
+npm                    10           6           3
+path                   34          34          24
+total                 165         147          47
+recall: edit-aware 0.891, plain scan 0.285
+mutations that could not be made and are not counted: 14
+further findings for the injected item itself (other doc lines linking the removed file): 0
+findings after an injection that were about something else: 10
+  other: nektos/act path Makefile make-target-missing build AGENTS.md:9
+  other: nektos/act path Makefile make-target-missing test AGENTS.md:10
+  other: nektos/act path Makefile make-target-missing test-fast AGENTS.md:11
+  other: nektos/act path Makefile make-target-missing lint-go AGENTS.md:12
+  other: nektos/act path Makefile make-target-missing format AGENTS.md:13
+  other: nektos/act path Makefile make-target-missing tidy AGENTS.md:14
+  other: nektos/act path Makefile make-target-missing pr AGENTS.md:15
+  other: nektos/act path Makefile make-target-missing promote AGENTS.md:16
+  other: nektos/act path Makefile make-target-missing snapshot AGENTS.md:18
+  other: nektos/act path Makefile make-target-missing pr CONTRIBUTING.md:51
+
+===== round3-heldout2   scanner code 8ff4f2c
+8 repositories
+kind             injected  edit-aware  plain scan
+env                    31          30           1
+flag/literal           12          12           0
+flag/refactor          24          24           5
+make                   10           8           4
+path                   44          44          44
+total                 121         118          54
+recall: edit-aware 0.975, plain scan 0.446
+mutations that could not be made and are not counted: 12
+further findings for the injected item itself (other doc lines linking the removed file): 0
+findings after an injection that were about something else: 0
+
+===== final-tuning   scanner code b7ba05d
+8 repositories
+kind             injected  edit-aware  plain scan
+env                    32          27           2
+flag/literal           55          54           0
+flag/refactor          67          66           5
+make                    1           1           0
+npm                    21          18          17
+path                   72          72          57
+total                 248         238          81
+recall: edit-aware 0.960, plain scan 0.327
+mutations that could not be made and are not counted: 12
+further findings for the injected item itself (other doc lines linking the removed file): 10
+findings after an injection that were about something else: 0
+
+===== final-heldout1   scanner code b7ba05d
+8 repositories
+kind             injected  edit-aware  plain scan
+env                    15          14           3
+flag/literal           36          32           0
+flag/refactor          50          44           1
+make                   20          17          16
+npm                    10           6           3
+path                   34          34          24
+total                 165         147          47
+recall: edit-aware 0.891, plain scan 0.285
+mutations that could not be made and are not counted: 14
+further findings for the injected item itself (other doc lines linking the removed file): 0
+findings after an injection that were about something else: 10
+  other: nektos/act path Makefile make-target-missing build AGENTS.md:9
+  other: nektos/act path Makefile make-target-missing test AGENTS.md:10
+  other: nektos/act path Makefile make-target-missing test-fast AGENTS.md:11
+  other: nektos/act path Makefile make-target-missing lint-go AGENTS.md:12
+  other: nektos/act path Makefile make-target-missing format AGENTS.md:13
+  other: nektos/act path Makefile make-target-missing tidy AGENTS.md:14
+  other: nektos/act path Makefile make-target-missing pr AGENTS.md:15
+  other: nektos/act path Makefile make-target-missing promote AGENTS.md:16
+  other: nektos/act path Makefile make-target-missing snapshot AGENTS.md:18
+  other: nektos/act path Makefile make-target-missing pr CONTRIBUTING.md:51
+
+===== final-heldout2   scanner code b7ba05d
+8 repositories
+kind             injected  edit-aware  plain scan
+env                    31          30           1
+flag/literal           12          12           0
+flag/refactor          24          24           5
+make                   10           8           4
+path                   44          44          44
+total                 121         118          54
+recall: edit-aware 0.975, plain scan 0.446
+mutations that could not be made and are not counted: 12
+further findings for the injected item itself (other doc lines linking the removed file): 0
+findings after an injection that were about something else: 0
+

@@ -1,0 +1,22 @@
+{
+ "repo": "BurntSushi/ripgrep",
+ "sha": "178cc027e283fd965cb72d0a7395b219eada170c",
+ "cold_scan_s": 0.47,
+ "warm_rescan_s": 0.05,
+ "doc_files": 20,
+ "code_files": 197,
+ "incomplete": false,
+ "notes": [],
+ "not_reported": {
+  "stale-context": 51
+ },
+ "default_checks": [
+  "path-missing",
+  "cli-flag-undefined",
+  "env-undefined",
+  "default-mismatch",
+  "npm-script-missing",
+  "make-target-missing"
+ ],
+ "findings": []
+}

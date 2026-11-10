@@ -1,0 +1,44 @@
+{
+ "repo": "junegunn/fzf",
+ "sha": "c7bf2b8eea25952dd257a466c0afa72faae206fb",
+ "cold_scan_s": 0.42,
+ "warm_rescan_s": 0.05,
+ "doc_files": 5,
+ "code_files": 152,
+ "incomplete": false,
+ "notes": [
+  "make-target-missing limited: a Makefile computes target names or includes generated files."
+ ],
+ "not_reported": {
+  "stale-context": 2
+ },
+ "default_checks": [
+  "path-missing",
+  "cli-flag-undefined",
+  "env-undefined",
+  "default-mismatch",
+  "npm-script-missing",
+  "make-target-missing"
+ ],
+ "findings": [
+  {
+   "id": "DD-d545555e",
+   "check": "env-undefined",
+   "confidence": "high",
+   "doc": "README.md:776",
+   "doc_quote": "`FZF_EXPANSION_OPS`.",
+   "problem": "`FZF_EXPANSION_OPS` is documented, but no non-doc file in the repository contains that name.",
+   "suggestion": "Remove `FZF_EXPANSION_OPS` from the docs, or read it in the code.",
+   "name": "FZF_EXPANSION_OPS",
+   "why": [
+    "the prefix matches the project name",
+    "`FZF_EXPANSION_OPS` does not occur in any code, config or script file",
+    "no code builds variable names from that prefix dynamically"
+   ],
+   "what_this_check_means": "Docs name an environment variable that nothing in the code reads.",
+   "doc_lines": [
+    776
+   ]
+  }
+ ]
+}

@@ -1,0 +1,126 @@
+{
+  "about": "Hand labels for every finding of every saved whole-repository scan (EVIDENCE/scans/*). One label per distinct finding; the same finding seen in several runs has one label. 'true' means a reader following the doc line would be misled about the code at the pinned commit. Anything arguable is labelled false. Labels were made by reading both sides in the pinned clone, not by rule.",
+  "labelled_on": "2026-11-10",
+  "sets": {
+    "tuning": "8 repositories used while writing and adjusting the checks",
+    "heldout1": "8 repositories first scanned with code 974f7f2 (round 1). Their false reports were then used to tighten the checks, so from round 2 on they are no longer unseen.",
+    "heldout2": "8 repositories first scanned with code 806d448 (round 2), cloned after that commit. One scanner bug and one rule were fixed after reading this run (commit 8ff4f2c), so the round 3 and final rows for this set are not unseen either.",
+    "hermes-agent": "NousResearch/hermes-agent at b7db40d was scanned with code 8ff4f2c (EVIDENCE/hermes-self/round3) and five guards were added after reading that run (commit b7ba05d). It is a 25th tuning repository. Its labels are in EVIDENCE/hermes-self/labels.json, not here."
+  },
+  "runs": {
+    "round1": "code 974f7f2",
+    "round2": "code 806d448 (tuning and heldout1 were run from the working tree that became 806d448; heldout2 from the commit itself)",
+    "round3": "code 8ff4f2c, all 24 repositories",
+    "final": "code b7ba05d, all 24 repositories. Findings are identical to round 3. Later commits change the elapsed-time field of change scans, the README and the evidence files, not the checks."
+  },
+  "labels": {
+    "Aider-AI/aider|path-ref-missing|tests/test_main.py|aider/website/examples/complex-change.md:23": {
+      "true": false,
+      "reason": "The page is a transcript of an old chat session; the file was at that path when the session was recorded (now tests/basic/test_main.py). Not a statement about the current tree."
+    },
+    "Aider-AI/aider|path-ref-missing|aider/getinput.py|aider/website/examples/complex-change.md:226": {
+      "true": false,
+      "reason": "Same transcript page; aider/getinput.py existed when the session was recorded."
+    },
+    "mkdocs/mkdocs|path-ref-missing|mkdocs/search_index.json|docs/getting-started.md:161": {
+      "true": false,
+      "reason": "The sentence lists files in the site that `mkdocs build` writes for the reader's project, not files of this repository."
+    },
+    "mkdocs/mkdocs|path-ref-missing|docs/about.md|docs/user-guide/writing-your-docs.md:120": {
+      "true": false,
+      "reason": "Describes where the reader's own pages would be for the example nav configuration."
+    },
+    "psf/black|cli-flag-undocumented|--bind-host|docs/usage_and_configuration/black_as_a_server.md:63": {
+      "true": true,
+      "reason": "blackd defines --bind-host (src/blackd/__init__.py:73). The page documents its siblings --bind-port and --max-body-size and no doc mentions --bind-host."
+    },
+    "casey/just|cli-flag-undefined|--file|README.md:1136": {
+      "true": false,
+      "reason": "`just backup --file FAQ.md` passes --file to the reader's recipe `backup` in an example about recipe options; it is not an option of just."
+    },
+    "casey/just|cli-flag-undefined|--long|README.md:4807": {
+      "true": false,
+      "reason": "`--LONG` is a placeholder for whatever long option name a recipe attribute declares."
+    },
+    "simonw/llm|cli-flag-undefined|--index-url|docs/setup.md:78": {
+      "true": false,
+      "reason": "`llm python -m pip install ... --index-url` hands the rest of the line to pip; --index-url is pip's option."
+    },
+    "yt-dlp/yt-dlp|cli-flag-undefined|--pre|README.md:168": {
+      "true": false,
+      "reason": "The sentence says nightly builds can be installed with pip's `--pre` flag."
+    },
+    "yt-dlp/yt-dlp|cli-flag-undocumented|--convert-sub|README.md:2454": {
+      "true": false,
+      "reason": "Alias of --convert-subs declared in the same add_option call (yt_dlp/options.py:1790); the README documents the main spelling."
+    },
+    "yt-dlp/yt-dlp|cli-flag-undocumented|--convert-subtitles|README.md:2454": {
+      "true": false,
+      "reason": "Alias of --convert-subs, same call."
+    },
+    "yt-dlp/yt-dlp|cli-flag-undocumented|--srt-langs|README.md:2454": {
+      "true": false,
+      "reason": "Alias of --sub-langs (yt_dlp/options.py:1000); the README documents the main spelling."
+    },
+    "yt-dlp/yt-dlp|cli-flag-undocumented|--xattr|README.md:2454": {
+      "true": false,
+      "reason": "Alias of --xattrs (yt_dlp/options.py:1740); the README documents the main spelling."
+    },
+    "junegunn/fzf|env-undefined|FZF_EXPANSION_OPS|README.md:776": {
+      "true": true,
+      "reason": "Typo in the README. The code reads FZF_EXPANSION_OPTS (shell/completion.fish:8 and :63); nothing reads FZF_EXPANSION_OPS, so a reader who sets the documented name gets no effect."
+    },
+    "mikefarah/yq|default-mismatch|--yaml-fix-merge-anchor-to-spec|pkg/yqlib/doc/operators/anchor-and-alias-operators.md:349": {
+      "true": false,
+      "reason": "The line tells the reader to set the flag to true and says it \"will default to true in late 2025\". That is an announcement, not the current default (false, cmd/root.go:201). Whether the announcement is overdue is not something the scanner can know."
+    },
+    "mikefarah/yq|cli-flag-undocumented|--tojson|README.md:458": {
+      "true": false,
+      "reason": "The flag is marked deprecated in code (MarkDeprecated, cmd/root.go:95-96); leaving a deprecated flag out of the README is deliberate."
+    },
+    "pdm-project/pdm|path-missing|docs/reference/cli.md|docs/usage/project.md:176": {
+      "true": false,
+      "reason": "docs/reference/cli.md is written by tasks/render_reference_docs.py when the docs are built and is named in docs/reference/.gitignore. Scanner bug: it stopped asking git about ignored files after 40 links. Fixed in 8ff4f2c."
+    },
+    "pdm-project/pdm|path-missing|docs/reference/cli.md|docs/usage/venv.md:3": {
+      "true": false,
+      "reason": "Same generated, git-ignored page; same scanner bug."
+    },
+    "pdm-project/pdm|path-missing|docs/reference/configuration.md|docs/usage/venv.md:168": {
+      "true": false,
+      "reason": "Same: generated at build time and git-ignored; same scanner bug."
+    },
+    "pdm-project/pdm|cli-flag-undocumented|--force|docs/usage/venv.md:226": {
+      "true": false,
+      "reason": "`pdm venv create --force` is documented in the CLI reference, which is generated from the argparse definitions at build time and is not in the repository."
+    },
+    "pdm-project/pdm|env-undocumented|PDM_CONFIG_FILE|docs/index.md:119": {
+      "true": false,
+      "reason": "The argparse help text carries \"[env var: PDM_CONFIG_FILE]\" and is rendered into the generated CLI reference."
+    },
+    "pdm-project/pdm|env-undocumented|PDM_FROZEN_LOCKFILE|docs/index.md:119": {
+      "true": false,
+      "reason": "Named in argparse help text, which is rendered into the generated CLI reference."
+    },
+    "pdm-project/pdm|env-undocumented|PDM_NO_SELF|docs/index.md:119": {
+      "true": false,
+      "reason": "Named in argparse help text, which is rendered into the generated CLI reference."
+    },
+    "pdm-project/pdm|env-undocumented|PDM_OVERRIDE|docs/index.md:119": {
+      "true": false,
+      "reason": "Named in argparse help text, which is rendered into the generated CLI reference."
+    },
+    "pdm-project/pdm|env-undocumented|PDM_NO_LOCK|docs/index.md:119": {
+      "true": false,
+      "reason": "Read only as a fallback for the older name of PDM_FROZEN_LOCKFILE (src/pdm/project/core.py:111). Not documenting a legacy fallback looks deliberate; labelled false to be safe."
+    },
+    "pdm-project/pdm|env-undocumented|PDM_REPO|docs/index.md:119": {
+      "true": true,
+      "reason": "install-pdm.py:24 reads PDM_REPO to choose the repository to install from. docs/index.md lists the installer's other variables (PDM_VERSION, PDM_PRERELEASE, PDM_HOME, PDM_DEPS, ...) and no file in the repository mentions PDM_REPO. Minor: a maintainer may regard it as internal."
+    },
+    "sharkdp/bat|env-undocumented|BAT_ASSETS_GEN_DIR|README.md:762": {
+      "true": false,
+      "reason": "Read only by the build script (build/application.rs:30) to choose where generated assets go. The README list it was compared with is about run-time settings."
+    }
+  }
+}

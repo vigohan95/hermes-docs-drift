@@ -1,0 +1,160 @@
+{
+ "candidates_available": {
+  "flag": 0,
+  "env": 0,
+  "npm": 0,
+  "make": 0,
+  "path": 43
+ },
+ "baseline_findings": 0,
+ "rows": [
+  {
+   "kind": "path",
+   "name": "docs/contributing/pull_request.md",
+   "where": "AGENTS.md",
+   "files_changed": 1,
+   "detected_scan": true,
+   "scan_s": 0.02,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "AGENTS.md:12 [high]"
+  },
+  {
+   "kind": "path",
+   "name": "docs/customization/python_class.md",
+   "where": "docs/config/option.md",
+   "files_changed": 1,
+   "detected_scan": true,
+   "scan_s": 0.02,
+   "detected": true,
+   "new_findings": 2,
+   "other_new_findings": [],
+   "finding": "docs/config/option.md:14 [high]"
+  },
+  {
+   "kind": "path",
+   "name": "docs/images/cli_help/cz_check___help.svg",
+   "where": "docs/commands/check.md",
+   "files_changed": 1,
+   "detected_scan": true,
+   "scan_s": 0.02,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "docs/commands/check.md:7 [high]"
+  },
+  {
+   "kind": "path",
+   "name": "docs/images/cli_help/cz_commit___help.svg",
+   "where": "docs/commands/commit.md",
+   "files_changed": 1,
+   "detected_scan": true,
+   "scan_s": 0.02,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "docs/commands/commit.md:3 [high]"
+  },
+  {
+   "kind": "path",
+   "name": "docs/images/cli_help/cz_init___help.svg",
+   "where": "docs/commands/init.md",
+   "files_changed": 1,
+   "detected_scan": true,
+   "scan_s": 0.02,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "docs/commands/init.md:5 [high]"
+  },
+  {
+   "kind": "path",
+   "name": "docs/images/cli_help/cz_schema___help.svg",
+   "where": "docs/commands/schema.md",
+   "files_changed": 1,
+   "detected_scan": true,
+   "scan_s": 0.03,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "docs/commands/schema.md:5 [high]"
+  },
+  {
+   "kind": "path",
+   "name": "docs/images/cli_interactive/shortcut_custom.gif",
+   "where": "docs/customization/config_file.md",
+   "files_changed": 1,
+   "detected_scan": true,
+   "scan_s": 0.02,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "docs/customization/config_file.md:226 [high]"
+  },
+  {
+   "kind": "path",
+   "name": "docs/images/gitlab_ci/gitlab_variables.png",
+   "where": "docs/tutorials/gitlab_ci.md",
+   "files_changed": 1,
+   "detected_scan": true,
+   "scan_s": 0.02,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "docs/tutorials/gitlab_ci.md:31 [high]"
+  },
+  {
+   "kind": "path",
+   "name": "docs/third-party-plugins/cz-conventional-gitmoji.md",
+   "where": "docs/tutorials/auto_check.md",
+   "files_changed": 1,
+   "detected_scan": true,
+   "scan_s": 0.03,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "docs/tutorials/auto_check.md:54 [high]"
+  },
+  {
+   "kind": "path",
+   "name": "docs/tutorials/auto_prepare_commit_message.md",
+   "where": "docs/commands/commit.md",
+   "files_changed": 1,
+   "detected_scan": true,
+   "scan_s": 0.03,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "docs/commands/commit.md:29 [high]"
+  },
+  {
+   "kind": "path",
+   "name": "docs/tutorials/dev_releases.md",
+   "where": "docs/tutorials/tag_format.md",
+   "files_changed": 1,
+   "detected_scan": true,
+   "scan_s": 0.02,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "docs/tutorials/tag_format.md:29 [high]"
+  },
+  {
+   "kind": "path",
+   "name": "docs/tutorials/monorepo_guidance.md",
+   "where": "docs/tutorials/tag_format.md",
+   "files_changed": 1,
+   "detected_scan": true,
+   "scan_s": 0.03,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "docs/tutorials/tag_format.md:49 [high]"
+  }
+ ],
+ "repo": "commitizen-tools/commitizen",
+ "sha": "33c248e4d21fa67d312991d96b038ab71be3039b",
+ "per_kind_limit": 12,
+ "seed": 20261110
+}

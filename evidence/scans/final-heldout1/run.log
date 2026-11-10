@@ -1,0 +1,10 @@
+code: b7ba05d661710de24ab81a2f1700e6552cddd709 started 2026-11-10T11:07:34Z sets: A=tuning B=first held-out C=second held-out
+casey__just: 0 findings {} docs=6 code=317 cold=0.4s warm=0.1s
+gitleaks__gitleaks: 0 findings {} docs=4 code=429 cold=0.3s warm=0.1s
+httpie__cli: 0 findings {} docs=16 code=232 cold=0.2s warm=0.1s
+nektos__act: 0 findings {} docs=4 code=443 cold=0.4s warm=0.1s
+prettier__prettier: 0 findings {} docs=118 code=9218 cold=3.2s warm=0.7s
+pypa__pipx: 0 findings {} docs=2 code=174 cold=0.5s warm=0.0s
+simonw__llm: 0 findings {} docs=29 code=92 cold=0.6s warm=0.1s
+yt-dlp__yt-dlp: 0 findings {} docs=7 code=1197 cold=1.8s warm=0.1s
+finished 2026-11-10T11:07:43Z exit 0
