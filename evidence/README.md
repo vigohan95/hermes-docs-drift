@@ -37,9 +37,11 @@ The three sets and the commit each repository was scanned at are in `targets.txt
 
 ## Things to know when reading the files
 
-- The demo transcripts and `slash-command.txt` contain the path of a temporary directory on
-  the machine they were recorded on. The value after `--api-key` in them is the literal text `not-a-real-key`;
-  the model stub ignores it.
+- In the demo transcripts and `slash-command.txt` the temporary directory of the machine they
+  were recorded on is written as `%TEMP%`. For the four files recorded before `demo/scrub.py`
+  existed, that replacement was made afterwards and is the only edit; the drivers now make it
+  while they print. The value after `--api-key` in the stub transcripts is the literal text
+  `not-a-real-key`; the model stub ignores it.
 - The times in `scans/round1-*/run.log` are first scans right after cloning. The times in
   the later runs were taken with the files already in the operating system's file cache
   and are much lower for that reason.

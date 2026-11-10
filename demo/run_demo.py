@@ -21,6 +21,9 @@ install anything and does not change the Hermes configuration.
 ``"python -m hermes_cli.main"`` from a source checkout. The value after
 ``--api-key`` passed to Hermes is the literal text ``not-a-real-key``; the stub
 ignores it.
+
+The transcript goes to standard output through ``demo/scrub.py``, which replaces
+the temporary directory with ``%TEMP%`` and the home directory with ``~``.
 """
 
 from __future__ import annotations
@@ -38,6 +41,9 @@ import time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
+sys.path.insert(0, HERE)
+import scrub  # noqa: E402  (demo/scrub.py)
+
 PROMPT = "Rename the --output-dir flag of notesync to --dest."
 REMINDER = "docs-drift: your edits in this session left"
 
@@ -89,8 +95,8 @@ def main(argv=None) -> int:
     ap.add_argument("--keep", action="store_true", help="keep the temporary project directory")
     ap.add_argument("--max-turns", type=int, default=12)
     args = ap.parse_args(argv)
-    if hasattr(sys.stdout, "reconfigure"):
-        sys.stdout.reconfigure(encoding="utf-8", line_buffering=True)
+    # Everything printed from here on has the temp and home directory prefixes replaced.
+    scrub.install()
 
     hermes = shlex.split(args.hermes, posix=(os.name != "nt"))
     work = tempfile.mkdtemp(prefix="docs-drift-demo-")
@@ -209,6 +215,7 @@ def main(argv=None) -> int:
         print(indent("\n".join(raw_lines[-20:]), "  "))
     if args.keep:
         print(f"kept: {work}")
+        print(f"kept (real path, standard error only): {work}", file=sys.stderr)
     else:
         shutil.rmtree(work, ignore_errors=True)
     return 0 if ok else 1
