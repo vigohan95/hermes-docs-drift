@@ -193,3 +193,29 @@ def test_old_name_deleted_from_the_docs_leaves_the_new_one_to_report(ctx, notesy
     edit(notesync, "README.md", "| `--dry-run` | off | print what would be copied |\n", "")
     nudge = hp.on_pre_verify(session_id="s1", changed_paths=[cli_path(notesync)], attempt=0)
     assert "added 1 name that no doc mentions" in nudge["message"] and "--simulate" in nudge["message"]
+
+
+def test_an_edit_that_leaves_the_file_unparsable_does_not_resolve_it(ctx, notesync):
+    """Seen in a recorded session on encode/uvicorn: a patch broke the indentation of the file
+    that defines the new flag, and the plugin reported the open note as resolved."""
+    out = do_edit(notesync, "notesync/cli.py", DRY, ADD_FLAG)
+    fid = out["docs_drift"]["added"][0]["id"]
+    body = "    args = build_parser().parse_args(argv)\n"
+    broken = "args = build_parser().parse_args(argv)\n"
+    out = do_edit(notesync, "notesync/cli.py", body, broken) or {}            # the file no longer parses
+    with open(cli_path(notesync), encoding="utf-8") as fh:
+        with pytest.raises(SyntaxError):
+            compile(fh.read(), "cli.py", "exec")
+    assert "resolved" not in out.get("docs_drift", {})
+    out = do_edit(notesync, "notesync/cli.py", broken, body) or {}            # repaired
+    assert "added" not in out.get("docs_drift", {}) and "resolved" not in out.get("docs_drift", {})
+    row = "| `--dry-run` | off | print what would be copied |\n"
+    out = do_edit(notesync, "README.md", row, row + "| `--verbose` | off | say what is copied |\n")
+    assert out["docs_drift"]["resolved"] == [fid]
+
+
+def test_a_flag_deleted_by_the_edit_that_breaks_the_file_is_not_kept(ctx, notesync):
+    sc = Scanner(notesync)
+    assert "dry-run" in sc.scan().index.flag_facts
+    edit(notesync, "notesync/cli.py", DRY, "  broken = (\n")
+    assert "dry-run" not in sc.scan().index.flag_facts

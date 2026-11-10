@@ -82,6 +82,11 @@ class Scanner:
         if text is None:
             return None
         ff = extract_file(rel, text)
+        if ff.unparsed and hit is not None:
+            # The file does not parse as it stands (an edit in progress). Keep the flags read when it
+            # last did, as long as their names are still written in it; otherwise every flag of the
+            # file would look removed, and a flag the session added would look documented.
+            ff.facts.extend(f for f in hit[1].facts if f.kind == "flag" and norm_flag(f.name) in ff.flag_literals)
         self._facts[rel] = (key, ff)
         return ff
 

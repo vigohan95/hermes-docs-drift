@@ -106,6 +106,7 @@ class FileFacts:
     facts: List[Fact] = field(default_factory=list)
     dyn_prefixes: Set[str] = field(default_factory=set)
     auto_env: bool = False
+    unparsed: bool = False       # a Python file that does not parse as it stands: its flags were not read
 
 
 def norm_flag(name: str) -> str:
@@ -154,6 +155,7 @@ def _python_facts(rel: str, text: str, out: FileFacts) -> None:
     try:
         tree = ast.parse(text)
     except (SyntaxError, ValueError, RecursionError, MemoryError):
+        out.unparsed = True
         return
     consts: Dict[str, Any] = {}
     seen_twice: Set[str] = set()
