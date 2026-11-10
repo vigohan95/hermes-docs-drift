@@ -1,7 +1,7 @@
-# 2026-11-10T11:20:28Z  hermes plugins validate, run on the working tree that was committed right after 2071824
-# (that tree is this commit, except that this file then held the output of the previous run)
+# 2026-11-10T13:25:31Z  hermes plugins validate, run in the working tree that was then committed
+# (commit 2c47a1b plus one sentence in plugin.yaml and this file)
 # hermes: Hermes Agent vgit.b7db40d (2026.9.24) · stable · local b7db40d82568
-$ hermes plugins validate plugin --install-deps
+$ hermes plugins validate . --install-deps
 
 ✓ manifest — plugin.yaml parses
 ✓ manifest fields — name, version, description present
