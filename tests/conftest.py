@@ -14,6 +14,32 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
+
+class _RootIsADirectory:
+    """Collect the repository root as a plain directory, not as a test package.
+
+    The root has an ``__init__.py`` because Hermes loads the plugin from it. pytest
+    would make the root a ``Package`` node and import that file before the first
+    test, under whatever name the checkout directory has. With a name that is not
+    an identifier (``hermes-docs-drift``) the file's relative import fails and
+    every test errors at setup. Nothing in the suite needs the root imported, so
+    it is not: tests/test_layout.py runs the suite under three directory names.
+
+    This is a plugin object and not a plain hook in this file because pytest only
+    applies a conftest's hooks to paths at or below the conftest's directory.
+    """
+
+    @pytest.hookimpl(tryfirst=True)
+    def pytest_collect_directory(self, path, parent):
+        if os.path.abspath(str(path)) == os.path.abspath(str(parent.config.rootpath)):
+            return pytest.Dir.from_parent(parent, path=path)
+        return None
+
+
+def pytest_configure(config):
+    config.pluginmanager.register(_RootIsADirectory(), "docsdrift-root-is-a-directory")
+
+
 HAVE_GIT = shutil.which("git") is not None
 needs_git = pytest.mark.skipif(not HAVE_GIT, reason="git is not installed")
 
