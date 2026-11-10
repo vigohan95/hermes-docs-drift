@@ -292,14 +292,34 @@ def test_ordering_counts_doc_edits_before_and_after_the_plugin_spoke():
         {"answer": 4, "calls": []},
     ]
     assert tasks.ordering(trace) == {"spoke": True, "first_request": 3, "how": "edit result", "reminder": False,
-                                     "doc_edits_before": 1, "doc_edits_after": 2}
+                                     "doc_edits_before": 1, "doc_edits_after": 2, "doc_edits_outside": 0}
+
+
+def test_ordering_does_not_count_a_doc_named_file_outside_the_project(tmp_path):
+    root = str(tmp_path / "work" / "notesync")
+    os.makedirs(root)
+    scratch = str(tmp_path / "home" / "cache" / "scratch" / "a.md")
+    trace = [
+        {"request": 1, "told_edit": False, "told_reminder": False},
+        {"answer": 1, "calls": [call("patch", path="notesync/cli.py"), call("write_file", path=scratch),
+                                call("patch", path=os.path.join(root, "README.md"))]},
+        {"request": 2, "told_edit": True, "told_reminder": False},
+        {"answer": 2, "calls": [call("patch", path=r"docs\configuration.md"), call("write_file", path=scratch),
+                                call("write_file", path="../notes.md")]},
+    ]
+    out = tasks.ordering(trace, root=root)
+    assert (out["doc_edits_before"], out["doc_edits_after"], out["doc_edits_outside"]) == (1, 1, 3)
+    loose = tasks.ordering(trace)                 # without a root every doc-named path counts, as in round 3
+    assert (loose["doc_edits_before"], loose["doc_edits_after"], loose["doc_edits_outside"]) == (2, 3, 0)
+    assert tasks.in_project("README.md", root) and tasks.in_project(os.path.join(root, "docs", "a.md"), root)
+    assert not tasks.in_project(scratch, root) and not tasks.in_project("..", root + os.sep + "x" + os.sep + ".." + os.sep + "..")
 
 
 def test_ordering_when_the_plugin_said_nothing_and_when_only_the_reminder_came():
     quiet = [{"request": 1, "told_edit": False, "told_reminder": False},
              {"answer": 1, "calls": [call("patch", path="README.md"), call("patch", path="CHANGELOG.md")]}]
     assert tasks.ordering(quiet) == {"spoke": False, "first_request": None, "how": "", "reminder": False,
-                                     "doc_edits_before": 1, "doc_edits_after": 0}
+                                     "doc_edits_before": 1, "doc_edits_after": 0, "doc_edits_outside": 0}
     late = quiet + [{"request": 2, "told_edit": False, "told_reminder": True},
                     {"answer": 2, "calls": [call("patch", mode="patch", patch="*** Begin Patch\n*** Update File: docs/a.md\n")]}]
     out = tasks.ordering(late)

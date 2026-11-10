@@ -18,7 +18,7 @@ from __future__ import annotations
 import os
 import re
 import subprocess
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 
 DOC_SUFFIXES = (".md", ".mdx", ".markdown", ".rst", ".txt", ".adoc")
 DOC_DIRS = ("docs/", "doc/", "documentation/", "website/", "man/")
@@ -177,13 +177,29 @@ def doc_path(path: str) -> bool:
     return (tail.lower().endswith(DOC_SUFFIXES) or in_doc_dir) and not is_history(tail)
 
 
-def ordering(trace: List[dict]) -> dict:
+def in_project(path: str, root: str) -> bool:
+    """Is this path, as a tool call wrote it, inside the project at ``root`` (the session's working directory)."""
+    full = os.path.abspath(os.path.join(root, os.path.expanduser(os.path.expandvars(path))))
+    base = os.path.abspath(root)
+    try:
+        return os.path.normcase(os.path.commonpath([full, base])) == os.path.normcase(base)
+    except ValueError:                    # another drive
+        return False
+
+
+def ordering(trace: List[dict], root: Optional[str] = None) -> dict:
     """From the relay's trace: when the plugin first told the model something, and the doc edits around it.
 
     ``trace`` is the list of records ``demo/relay.py --trace`` writes: one per
     request (what it carried that the plugin wrote) and one per answer (the tool
     calls in it). A doc edit counts as "before" when the model issued it in an
     answer to a request that did not yet carry anything from the plugin.
+
+    With ``root``, the project's directory, an edit of a file outside it is not a
+    doc edit, whatever its name (a model that writes ``a.md`` into a scratch
+    directory to try its change has not touched the docs); those are counted in
+    ``doc_edits_outside``. The round 3 sessions were recorded without this, see
+    evidence/real-model/round3/README.md.
     """
     first = None
     how = ""
@@ -191,16 +207,18 @@ def ordering(trace: List[dict]) -> dict:
         if "request" in rec and (rec.get("told_edit") or rec.get("told_reminder")):
             first, how = rec["request"], "edit result" if rec.get("told_edit") else "reminder"
             break
-    before = after = 0
+    before = after = outside = 0
     for rec in trace:
         if "answer" not in rec:
             continue
-        n = sum(1 for call in rec.get("calls") or []
-                for p in edited_paths(call.get("name", ""), call.get("arguments", "")) if doc_path(p))
+        paths = [p for call in rec.get("calls") or []
+                 for p in edited_paths(call.get("name", ""), call.get("arguments", "")) if doc_path(p)]
+        n = sum(1 for p in paths if root is None or in_project(p, root))
+        outside += len(paths) - n
         if first is not None and rec["answer"] >= first:
             after += n
         else:
             before += n
     return {"spoke": first is not None, "first_request": first, "how": how,
-            "doc_edits_before": before, "doc_edits_after": after,
+            "doc_edits_before": before, "doc_edits_after": after, "doc_edits_outside": outside,
             "reminder": any(rec.get("told_reminder") for rec in trace if "request" in rec)}

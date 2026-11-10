@@ -309,7 +309,7 @@ def main(argv=None) -> int:
     if os.path.exists(relay_trace):
         with open(relay_trace, encoding="utf-8") as fh:
             trace = [json.loads(ln) for ln in fh if ln.strip()]
-    order = ordering(trace)
+    order = ordering(trace, root=repo)
     end = [e for e in events if e.get("type") == "result"]
     exit_code = end[-1].get("exit_code") if end else None
     requests = log_text.count("] request ") - log_text.count("refused by the relay")
@@ -328,6 +328,8 @@ def main(argv=None) -> int:
     else:
         print("the plugin told the model something: no")
         print(f"edits of doc files the model issued: {order['doc_edits_before']}")
+    if order["doc_edits_outside"]:
+        print(f"edits of files with a doc suffix outside the project, not counted above: {order['doc_edits_outside']}")
     print()
     print("$ git status --short")
     status = run(["git", "status", "--short"], cwd=repo)
@@ -355,7 +357,7 @@ def main(argv=None) -> int:
                    "stale_lines": len(result["stale"]), "entries": len(blocks), "entries_with_findings": spoke_blocks,
                    "findings_reported": reported, "reminder": reminded, "spoke": order["spoke"],
                    "spoke_how": order["how"], "doc_edits_before": order["doc_edits_before"],
-                   "doc_edits_after": order["doc_edits_after"]}
+                   "doc_edits_after": order["doc_edits_after"], "doc_edits_outside": order["doc_edits_outside"]}
         print("SUMMARY: " + json.dumps(summary, sort_keys=True))
         if raw_lines and exit_code != 0:
             print("other output from Hermes:")
