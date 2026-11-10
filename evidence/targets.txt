@@ -24,3 +24,15 @@ heldout2     pdm-project/pdm                0f6ea802663d1081dedf8e39245e70123d17
 heldout2     http-party/http-server         0d3b7bb5b6e8a59fd450ae2dca65870009cfcd8b
 heldout2     mikefarah/yq                   f2944b823f84906a127dbd29e4c2a3e60c4e550e
 hermes-self  NousResearch/hermes-agent      b7db40d82568ea68ce321ac1ead3bfea354c7f56
+heldout3     mvanhorn/cli-printing-press    7bf298bff3bb63b2e877e5e5e8856831e7c2254d
+heldout3     red-data-tools/YouPlot         492d8864c22dbe2c50b089f5c79e840f07d49658
+heldout3     carloscuesta/gitmoji-cli       8f370b30271e41d33cff531dbc5b6d15b70bf869
+heldout3     Jia-Ethan/codex-keysmith       cfcd96eb727c324ee8649170c43aaa632ff53cb3
+heldout3     speedyapply/JobSpy             68b88d6909a2342ad75fbb945c4204a3a7ed6665
+heldout3     alexellis/arkade               a5f88e9316f954916ea8bf6fed53254417c2d9d6
+heldout3     realiti4/claude-swap           5ac68bfbfb7f7ecfbf9f724d9bd82fcb5fcc022d
+heldout3     tmux-python/tmuxp              bf11ab25572ed400c224a01076139635919b75b0
+heldout3     medialab/xan                   6849efffb609c2806b6072af85c878c6246c977c
+heldout3     CLIUtils/CLI11                 1764a057b760e8873eab03f4635b4aaed5303a04
+heldout3     six-ddc/plow                   b5afa2935ad47ca84afbb52b7b8c77bd77a58a8b
+heldout3     KKKKhazix/agent-autoloop       d6b2391293c66b3c219b6cfa3a4495772ad9c1a7

@@ -1,0 +1,83 @@
+{
+ "repo": "tmux-python/tmuxp",
+ "sha": "bf11ab25572ed400c224a01076139635919b75b0",
+ "cold_scan_s": 3.21,
+ "warm_rescan_s": 0.07,
+ "doc_files": 78,
+ "code_files": 300,
+ "incomplete": false,
+ "notes": [],
+ "not_reported": {
+  "stale-context": 5
+ },
+ "default_checks": [
+  "path-missing",
+  "cli-flag-undefined",
+  "env-undefined",
+  "default-mismatch",
+  "npm-script-missing",
+  "make-target-missing"
+ ],
+ "findings": [
+  {
+   "id": "DD-21b8a91b",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "docs/cli/load.md:258",
+   "doc_quote": "$ tmuxp load --no-progress myproject",
+   "problem": "`--append` is defined in src/tmuxp/cli/load.py but no doc mentions it; 4 of the other 5 flags from that file are documented in docs/cli/load.md.",
+   "code": "src/tmuxp/cli/load.py:789",
+   "code_quote": "parser.add_argument(",
+   "suggestion": "Document `--append` next to its siblings in docs/cli/load.md (around line 258).",
+   "name": "--append",
+   "why": [
+    "5 of 6 flags defined in src/tmuxp/cli/load.py appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    258
+   ]
+  },
+  {
+   "id": "DD-2b7162be",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "docs/cli/shell.md:121",
+   "doc_quote": "- `--ptipython`: drop into [IPython] + [ptpython], accepts `--use-vi-mode`",
+   "problem": "`--no-startup` is defined in src/tmuxp/cli/shell.py but no doc mentions it; 8 of the other 10 flags from that file are documented in docs/cli/shell.md.",
+   "code": "src/tmuxp/cli/shell.py:151",
+   "code_quote": "parser.add_argument(",
+   "suggestion": "Document `--no-startup` next to its siblings in docs/cli/shell.md (around line 121).",
+   "name": "--no-startup",
+   "why": [
+    "9 of 11 flags defined in src/tmuxp/cli/shell.py appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    121
+   ]
+  },
+  {
+   "id": "DD-7be3f501",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "docs/cli/shell.md:121",
+   "doc_quote": "- `--ptipython`: drop into [IPython] + [ptpython], accepts `--use-vi-mode`",
+   "problem": "`--no-vi-mode` is defined in src/tmuxp/cli/shell.py but no doc mentions it; 8 of the other 10 flags from that file are documented in docs/cli/shell.md.",
+   "code": "src/tmuxp/cli/shell.py:165",
+   "code_quote": "parser.add_argument(",
+   "suggestion": "Document `--no-vi-mode` next to its siblings in docs/cli/shell.md (around line 121).",
+   "name": "--no-vi-mode",
+   "why": [
+    "9 of 11 flags defined in src/tmuxp/cli/shell.py appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    121
+   ]
+  }
+ ]
+}

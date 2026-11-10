@@ -1,0 +1,28 @@
+query: topic:cli stars:300..5000 pushed:>=2026-08-12 archived:false fork:false   sort: stars, descending   run at 2026-11-10T12:29:08Z
+total_count reported by the API: 1170
+  1  mvanhorn/cli-printing-press  (4939 stars, Go, 67977 KB)  TAKEN as number 1: README has 32 long flags and 1 environment-style names
+  2  red-data-tools/YouPlot  (4878 stars, Ruby, 837 KB)  TAKEN as number 2: README has 9 long flags and 0 environment-style names
+  3  sayanarijit/xplr  (4852 stars, Rust, 10897 KB)  skipped: README has 0 long flags and 0 environment-style names
+  4  carloscuesta/gitmoji-cli  (4829 stars, JavaScript, 5545 KB)  TAKEN as number 3: README has 12 long flags and 0 environment-style names
+  5  Jia-Ethan/codex-keysmith  (4793 stars, Python, 24888 KB)  TAKEN as number 4: README has 12 long flags and 2 environment-style names
+  6  topgrade-rs/topgrade  (4767 stars, Rust, 9455 KB)  skipped: README has 1 long flags and 2 environment-style names
+  7  x-cmd/x-cmd  (4746 stars, Awk, 36760 KB)  skipped: README has 0 long flags and 0 environment-style names
+  8  cloudflare/workers-sdk  (4712 stars, TypeScript, 175742 KB)  skipped: larger than 150 MB
+  9  speedyapply/JobSpy  (4686 stars, Python, 1266 KB)  TAKEN as number 5: README has 5 long flags and 4 environment-style names
+ 10  restatedev/restate  (4685 stars, Rust, 117458 KB)  skipped: README has 2 long flags and 0 environment-style names
+ 11  nunomaduro/collision  (4664 stars, PHP, 2327 KB)  skipped: README has 1 long flags and 0 environment-style names
+ 12  lukasmasuch/best-of-python  (4654 stars, None, 11199 KB)  skipped: name or description marks it as a list, tutorial or book
+ 13  alexellis/arkade  (4629 stars, Go, 15857 KB)  TAKEN as number 6: README has 24 long flags and 0 environment-style names
+ 14  IvanMurzak/Unity-MCP  (4615 stars, C#, 303275 KB)  skipped: larger than 150 MB
+ 15  realiti4/claude-swap  (4601 stars, Python, 4531 KB)  TAKEN as number 7: README has 31 long flags and 4 environment-style names
+ 16  tmux-python/tmuxp  (4596 stars, Python, 12836 KB)  TAKEN as number 8: README has 10 long flags and 2 environment-style names
+ 17  zenbu-labs/terminal-browser  (4558 stars, TypeScript, 24254 KB)  skipped: README has 3 long flags and 2 environment-style names
+ 18  medialab/xan  (4554 stars, Rust, 62949 KB)  TAKEN as number 9: README has 7 long flags and 3 environment-style names
+ 19  CLIUtils/CLI11  (4518 stars, C++, 5678 KB)  TAKEN as number 10: README has 18 long flags and 8 environment-style names
+ 20  six-ddc/plow  (4515 stars, Go, 3201 KB)  TAKEN as number 11: README has 37 long flags and 2 environment-style names
+ 21  jhspetersson/fselect  (4474 stars, Rust, 8293 KB)  skipped: README has 3 long flags and 0 environment-style names
+ 22  gptme/gptme  (4469 stars, Python, 127021 KB)  skipped: 4 repositories in Python already taken
+ 23  dvorka/hstr  (4466 stars, C, 2847 KB)  skipped: README has 2 long flags and 0 environment-style names
+ 24  KKKKhazix/agent-autoloop  (4388 stars, TypeScript, 1206 KB)  TAKEN as number 12: README has 6 long flags and 0 environment-style names
+
+taken (12): mvanhorn/cli-printing-press red-data-tools/YouPlot carloscuesta/gitmoji-cli Jia-Ethan/codex-keysmith speedyapply/JobSpy alexellis/arkade realiti4/claude-swap tmux-python/tmuxp medialab/xan CLIUtils/CLI11 six-ddc/plow KKKKhazix/agent-autoloop

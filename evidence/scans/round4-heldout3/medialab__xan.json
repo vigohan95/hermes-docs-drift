@@ -1,0 +1,84 @@
+{
+ "repo": "medialab/xan",
+ "sha": "6849efffb609c2806b6072af85c878c6246c977c",
+ "cold_scan_s": 3.39,
+ "warm_rescan_s": 0.14,
+ "doc_files": 90,
+ "code_files": 207,
+ "incomplete": false,
+ "notes": [],
+ "not_reported": {
+  "stale-context": 35,
+  "flag-has-loose-trace": 5
+ },
+ "default_checks": [
+  "path-missing",
+  "cli-flag-undefined",
+  "env-undefined",
+  "default-mismatch",
+  "npm-script-missing",
+  "make-target-missing"
+ ],
+ "findings": [
+  {
+   "id": "DD-624d10d6",
+   "check": "path-missing",
+   "confidence": "high",
+   "doc": "docs/cookbook/dataviz.md:862",
+   "doc_quote": "People usually rely on [Gephi](https://gephi.org/) or [sigma.js](sigmajs.org/) to interactively explore this kind of graphs.",
+   "problem": "Link target `sigmajs.org/` resolves to `docs/cookbook/sigmajs.org`, which is not in the repository.",
+   "suggestion": "Fix or remove the link.",
+   "name": "docs/cookbook/sigmajs.org",
+   "why": [
+    "the link is relative and stays inside the repository",
+    "the target is neither tracked, untracked-on-disk, git-ignored nor inside a submodule"
+   ],
+   "what_this_check_means": "A Markdown link or image points at a file that is not in the repository.",
+   "doc_lines": [
+    862
+   ]
+  },
+  {
+   "id": "DD-468a2fcf",
+   "check": "path-missing",
+   "confidence": "high",
+   "doc": "src/moonblade/doc/cheatsheet.md:13",
+   "doc_quote": "with a lot of helpful functions that you can review using [`xan help functions`](./functions.md)",
+   "problem": "Link target `./functions.md` resolves to `src/moonblade/doc/functions.md`, which is not in the repository.",
+   "code": "docs/moonblade/functions.md",
+   "suggestion": "A file with the same name exists at `docs/moonblade/functions.md`; if it moved, update the link.",
+   "also_at_lines": [
+    219
+   ],
+   "name": "src/moonblade/doc/functions.md",
+   "why": [
+    "the link is relative and stays inside the repository",
+    "the target is neither tracked, untracked-on-disk, git-ignored nor inside a submodule"
+   ],
+   "what_this_check_means": "A Markdown link or image points at a file that is not in the repository.",
+   "doc_lines": [
+    13,
+    219
+   ]
+  },
+  {
+   "id": "DD-7bd65f75",
+   "check": "path-missing",
+   "confidence": "high",
+   "doc": "src/moonblade/doc/cheatsheet.md:15",
+   "doc_quote": "capabilities, on the other hand, you should use [`xan help aggs`](./aggs.md) instead.",
+   "problem": "Link target `./aggs.md` resolves to `src/moonblade/doc/aggs.md`, which is not in the repository.",
+   "code": "docs/moonblade/aggs.md",
+   "suggestion": "A file with the same name exists at `docs/moonblade/aggs.md`; if it moved, update the link.",
+   "name": "src/moonblade/doc/aggs.md",
+   "why": [
+    "the link is relative and stays inside the repository",
+    "the target is neither tracked, untracked-on-disk, git-ignored nor inside a submodule"
+   ],
+   "what_this_check_means": "A Markdown link or image points at a file that is not in the repository.",
+   "doc_lines": [
+    15
+   ]
+  }
+ ]
+}

@@ -1,0 +1,20 @@
+{
+ "repo": "speedyapply/JobSpy",
+ "sha": "68b88d6909a2342ad75fbb945c4204a3a7ed6665",
+ "cold_scan_s": 0.5,
+ "warm_rescan_s": 0.04,
+ "doc_files": 2,
+ "code_files": 45,
+ "incomplete": false,
+ "notes": [],
+ "not_reported": {},
+ "default_checks": [
+  "path-missing",
+  "cli-flag-undefined",
+  "env-undefined",
+  "default-mismatch",
+  "npm-script-missing",
+  "make-target-missing"
+ ],
+ "findings": []
+}

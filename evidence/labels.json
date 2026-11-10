@@ -5,13 +5,15 @@
     "tuning": "8 repositories used while writing and adjusting the checks",
     "heldout1": "8 repositories first scanned with code 974f7f2 (round 1). Their false reports were then used to tighten the checks, so from round 2 on they are no longer unseen.",
     "heldout2": "8 repositories first scanned with code 806d448 (round 2), cloned after that commit. One scanner bug and one rule were fixed after reading this run (commit 8ff4f2c), so the round 3 and final rows for this set are not unseen either.",
-    "hermes-agent": "NousResearch/hermes-agent at b7db40d was scanned with code 8ff4f2c (EVIDENCE/hermes-self/round3) and five guards were added after reading that run (commit b7ba05d). It is a 25th tuning repository. Its labels are in EVIDENCE/hermes-self/labels.json, not here."
+    "hermes-agent": "NousResearch/hermes-agent at b7db40d was scanned with code 8ff4f2c (EVIDENCE/hermes-self/round3) and five guards were added after reading that run (commit b7ba05d). It is a 25th tuning repository. Its labels are in EVIDENCE/hermes-self/labels.json, not here.",
+    "heldout3": "12 repositories chosen by the rule in heldout3-rule.md, written before the search was run. Scanned once with code 4a1d964 (round 4). No check was changed afterwards."
   },
   "runs": {
     "round1": "code 974f7f2",
     "round2": "code 806d448 (tuning and heldout1 were run from the working tree that became 806d448; heldout2 from the commit itself)",
     "round3": "code 8ff4f2c, all 24 repositories",
-    "final": "code b7ba05d, all 24 repositories. Findings are identical to round 3. Later commits change the elapsed-time field of change scans, the README and the evidence files, not the checks."
+    "final": "code b7ba05d, all 24 repositories. Findings are identical to round 3. Later commits change the elapsed-time field of change scans, the README and the evidence files, not the checks.",
+    "round4": "code 4a1d964, held-out 3 only, its first and only scan"
   },
   "labels": {
     "Aider-AI/aider|path-ref-missing|tests/test_main.py|aider/website/examples/complex-change.md:23": {
@@ -121,6 +123,258 @@
     "sharkdp/bat|env-undocumented|BAT_ASSETS_GEN_DIR|README.md:762": {
       "true": false,
       "reason": "Read only by the build script (build/application.rs:30) to choose where generated assets go. The README list it was compared with is about run-time settings."
+    },
+    "CLIUtils/CLI11|path-missing|book/chapters/help_output1.png|book/chapters/formatting.md:45": {
+      "true": true,
+      "reason": "`![example help output](help_output1.png)` resolves to book/chapters/help_output1.png. The only copy of the image is book/images/help_output1.png, so the figure does not show."
+    },
+    "Jia-Ethan/codex-keysmith|cli-flag-undefined|--with-context-hook|docs/v0.3-scenario-deployment-design.md:213": {
+      "true": false,
+      "reason": "The line says the opposite of what was reported: `--with-context-hook` does not enter the M1 CLI and would need its own design. A design note about a flag that is deliberately absent."
+    },
+    "KKKKhazix/agent-autoloop|path-ref-missing|docs/decisions.md|skills/agent-autoloop/SKILL.md:45": {
+      "true": false,
+      "reason": "The skill tells the user to keep docs/decisions.md in the user's own project. It is not a file of this repository."
+    },
+    "KKKKhazix/agent-autoloop|path-ref-missing|docs/declined.md|skills/agent-autoloop/SKILL.md:45": {
+      "true": false,
+      "reason": "Same line: a file the user's own project should have, not a file of this repository."
+    },
+    "alexellis/arkade|cli-flag-undocumented|--print-version|AGENTS.md:218": {
+      "true": false,
+      "reason": "AGENTS.md:218 is an instruction to run `arkade get NAME --os ... --arch ... --path`. --print-version belongs to `arkade system install prometheus` (cmd/system/prometheus.go:39), a different command."
+    },
+    "alexellis/arkade|cli-flag-undocumented|--progress|AGENTS.md:218": {
+      "true": false,
+      "reason": "Same line about `arkade get`. --progress here is a flag of the `arkade system install` commands (cmd/system/buildkitd.go:30)."
+    },
+    "alexellis/arkade|cli-flag-undocumented|--progress|README.md:248": {
+      "true": false,
+      "reason": "README.md:247-248 is one example (`arkade system install containerd --systemd`), not a list of that command's options. --progress (default true) is indeed in no doc; arguable, labelled false."
+    },
+    "alexellis/arkade|cli-flag-undocumented|--default-ingress|README.md:563": {
+      "true": true,
+      "reason": "README.md:545-563 is the pasted --help of `arkade install ingress-nginx` and lists four flags. cmd/apps/nginx_app.go:31 registers --default-ingress (default true) on that same command, and no doc mentions it: the pasted help is older than the flag."
+    },
+    "alexellis/arkade|cli-flag-undocumented|--dns-server|README.md:563": {
+      "true": false,
+      "reason": "README.md:545-563 is the pasted --help of `arkade install ingress-nginx`. --dns-server is defined on another app's command (cert-manager, cmd/apps/certmanager_app.go:32), so it is not missing from this list."
+    },
+    "alexellis/arkade|cli-flag-undocumented|--grafana|README.md:563": {
+      "true": false,
+      "reason": "README.md:545-563 is the pasted --help of `arkade install ingress-nginx`. --grafana is defined on another app's command (loki, cmd/apps/loki_app.go:29), so it is not missing from this list."
+    },
+    "alexellis/arkade|cli-flag-undocumented|--loki-url|README.md:563": {
+      "true": false,
+      "reason": "README.md:545-563 is the pasted --help of `arkade install ingress-nginx`. --loki-url is defined on another app's command (openfaas-loki, cmd/apps/of_loki.go:31), so it is not missing from this list."
+    },
+    "alexellis/arkade|cli-flag-undocumented|--nfs-path|README.md:563": {
+      "true": false,
+      "reason": "README.md:545-563 is the pasted --help of `arkade install ingress-nginx`. --nfs-path is defined on another app's command (nfs-provisioner, cmd/apps/nfs_app.go:28), so it is not missing from this list."
+    },
+    "alexellis/arkade|cli-flag-undocumented|--nfs-server|README.md:563": {
+      "true": false,
+      "reason": "README.md:545-563 is the pasted --help of `arkade install ingress-nginx`. --nfs-server is defined on another app's command (nfs-provisioner, cmd/apps/nfs_app.go:27), so it is not missing from this list."
+    },
+    "alexellis/arkade|cli-flag-undocumented|--openfaas-namespace|README.md:563": {
+      "true": false,
+      "reason": "README.md:545-563 is the pasted --help of `arkade install ingress-nginx`. --openfaas-namespace is defined on another app's command (openfaas-loki, cmd/apps/of_loki.go:30), so it is not missing from this list."
+    },
+    "alexellis/arkade|cli-flag-undocumented|--service-type|README.md:563": {
+      "true": false,
+      "reason": "README.md:545-563 is the pasted --help of `arkade install ingress-nginx`. --service-type is defined on another app's command (portainer, cmd/apps/portainer_app.go:28), so it is not missing from this list."
+    },
+    "alexellis/arkade|cli-flag-undocumented|--tag|README.md:563": {
+      "true": false,
+      "reason": "README.md:545-563 is the pasted --help of `arkade install ingress-nginx`. --tag is defined on another app's command (metrics-server, cmd/apps/metricsserver_app.go:29), so it is not missing from this list."
+    },
+    "medialab/xan|path-missing|docs/cookbook/sigmajs.org|docs/cookbook/dataviz.md:862": {
+      "true": true,
+      "reason": "`[sigma.js](sigmajs.org/)` has no scheme, so Markdown treats it as a relative path and the link opens docs/cookbook/sigmajs.org/, which does not exist. The link next to it, to Gephi, has https://."
+    },
+    "medialab/xan|path-missing|src/moonblade/doc/functions.md|src/moonblade/doc/cheatsheet.md:13": {
+      "true": false,
+      "reason": "This file is the source text compiled into the binary (src/cmd/help.rs:17) and written to docs/moonblade/cheatsheet.md by scripts/docs.sh:28. In docs/moonblade/ the link resolves (functions.md is there)."
+    },
+    "medialab/xan|path-missing|src/moonblade/doc/aggs.md|src/moonblade/doc/cheatsheet.md:15": {
+      "true": false,
+      "reason": "Same source file as the functions.md link: published as docs/moonblade/cheatsheet.md, where ./aggs.md exists."
+    },
+    "mvanhorn/cli-printing-press|cli-flag-undocumented|--skip-build|AGENTS.md:57": {
+      "true": false,
+      "reason": "AGENTS.md:57 is a rule about `--json`/`--agent` in generated commands. --skip-build is a flag of the `patch` command (internal/cli/patch_cmd.go:69); the line is not a list of its options."
+    },
+    "mvanhorn/cli-printing-press|env-undocumented|PRINTING_PRESS_CLIENT_PROFILE|AGENTS.md:61": {
+      "true": false,
+      "reason": "The only occurrence is in a test template for generated CLIs (internal/generator/templates/platform_cli_test.go.tmpl:181). This program does not read it."
+    },
+    "mvanhorn/cli-printing-press|env-undocumented|PRINTING_PRESS_REPO_ROOT|AGENTS.md:61": {
+      "true": false,
+      "reason": "Read at internal/pipeline/paths.go:183 as an override of the repository root, and in no doc. AGENTS.md:61 is a paragraph about the verify harness, not a list of variables; a maintainer may regard this one as internal. Arguable, labelled false."
+    },
+    "mvanhorn/cli-printing-press|env-undocumented|PRINTING_PRESS_SCOPE|AGENTS.md:61": {
+      "true": false,
+      "reason": "Read at internal/pipeline/paths.go:26 as an override of the workspace scope, and in no doc. Same paragraph as PRINTING_PRESS_REPO_ROOT; arguable, labelled false."
+    },
+    "mvanhorn/cli-printing-press|cli-flag-undocumented|--keep-baseline|README.md:454": {
+      "true": false,
+      "reason": "README.md:454 is a single example of `emboss --audit-only`, not an option list. --keep-baseline (internal/cli/emboss.go:174) is in no doc; arguable, labelled false."
+    },
+    "mvanhorn/cli-printing-press|cli-flag-undocumented|--save-baseline|README.md:454": {
+      "true": false,
+      "reason": "Same example line. --save-baseline (internal/cli/emboss.go:173) is in no doc; arguable, labelled false."
+    },
+    "mvanhorn/cli-printing-press|cli-flag-undocumented|--service-uuid|docs/BLE-PROBE.md:97": {
+      "true": false,
+      "reason": "docs/BLE-PROBE.md:97 is an example of `device-sniff ble write`. --service-uuid is registered on the scan command (internal/devicesniff/bleprobe/command.go:128), not on write."
+    },
+    "mvanhorn/cli-printing-press|path-ref-missing|.claude/settings.local.json|docs/PLUGIN-DEV.md:7": {
+      "true": false,
+      "reason": "The page tells the reader to create this git-ignored local settings file. It is not supposed to be in the repository."
+    },
+    "mvanhorn/cli-printing-press|path-ref-missing|internal/cli/recall.go|docs/decisions/2026-05-27-self-teaching-loop-generator-port-findings.md:41": {
+      "true": false,
+      "reason": "A dated decision record listing work units of a port into the generator; the file is a file of the generated CLI (a copy is under testdata/golden/expected/.../internal/learn/recall.go), not of this tree."
+    },
+    "mvanhorn/cli-printing-press|path-ref-missing|internal/cli/playbook_init.go|docs/decisions/2026-05-27-self-teaching-loop-generator-port-findings.md:49": {
+      "true": false,
+      "reason": "Same dated decision record: a work unit naming a file of the CLI being ported, not a file this repository claims to have."
+    },
+    "mvanhorn/cli-printing-press|path-ref-missing|internal/spec/reader.go|docs/retros/2026-03-30-steam-retro.md:62": {
+      "true": false,
+      "reason": "A retrospective dated 2026-03-30 describing the tree as it was then. Historical record, not current documentation."
+    },
+    "mvanhorn/cli-printing-press|cli-flag-undefined|--fix-descriptions|docs/retros/2026-04-01-steam-run7-retro.md:60": {
+      "true": false,
+      "reason": "A dated retrospective proposing a possible fix (`Or: printing-press polish --fix-descriptions`). It is a proposal, not documentation of an existing flag."
+    },
+    "mvanhorn/cli-printing-press|path-ref-missing|skills/printing-press/references/sniff-capture.md|docs/retros/2026-04-03-pagliacci-retro.md:176": {
+      "true": false,
+      "reason": "A retrospective dated 2026-04-03 listing files as they were then. Historical record."
+    },
+    "mvanhorn/cli-printing-press|path-ref-missing|internal/generator/promoted.go|docs/retros/2026-04-04-cal-com-retro.md:148": {
+      "true": false,
+      "reason": "The retrospective itself says '(or wherever promotion logic lives)': a guess at a location in a dated note."
+    },
+    "mvanhorn/cli-printing-press|default-mismatch|--max-endpoints-per-resource|docs/retros/2026-04-05-cal-com-retro.md:101": {
+      "true": false,
+      "reason": "The effective default is 50: internal/cli/root.go:622 registers the flag with 0 meaning 'not set' and help text '(default 50 ...)', and internal/openapi/parser.go:30 has maxEndpointsPerResource = 50. The doc is right; the scanner read the registration value."
+    },
+    "mvanhorn/cli-printing-press|path-ref-missing|internal/cli/search_query.go|docs/retros/2026-04-11-yahoo-finance-retro.md:82": {
+      "true": false,
+      "reason": "The line reports that this file of a generated CLI was deleted. It is correctly absent."
+    },
+    "mvanhorn/cli-printing-press|path-ref-missing|internal/cli/dead.go|docs/retros/2026-04-11-yahoo-finance-retro.md:196": {
+      "true": false,
+      "reason": "A hypothetical file in a proposed negative test ('delete a file internal/cli/dead.go whose constructor is NOT registered')."
+    },
+    "mvanhorn/cli-printing-press|path-ref-missing|internal/cli/sync.go|docs/solutions/logic-errors/mcp-handler-conflates-path-and-query-positional-params-2026-05-05.md:45": {
+      "true": false,
+      "reason": "A dated solution note about a diff in generated golden output; internal/cli/sync.go is a file of the generated CLI (internal/generator/templates/sync.go.tmpl)."
+    },
+    "mvanhorn/cli-printing-press|path-ref-missing|.github/workflows/verify-skills.yml|scripts/verify-skill/README.md:94": {
+      "true": false,
+      "reason": "The sentence continues on the next line: 'in mvanhorn/printing-press-library'. The workflow is in another repository, as the doc says."
+    },
+    "mvanhorn/cli-printing-press|env-undefined|PP_GO_VERSION_INPUT|skills/printing-press-amend/SKILL.md:115": {
+      "true": false,
+      "reason": "A shell variable local to the snippet: set on line 119 as a prefix assignment for the helper function defined on line 114. Not an environment variable of the program."
+    },
+    "mvanhorn/cli-printing-press|env-undefined|PP_GO_VERSION_INPUT|skills/printing-press-polish/SKILL.md:143": {
+      "true": false,
+      "reason": "Same snippet as in printing-press-amend/SKILL.md: a variable set and read inside the doc's own shell function (lines 143-148)."
+    },
+    "mvanhorn/cli-printing-press|cli-flag-undocumented|--live-check-timeout|skills/printing-press-polish/SKILL.md:469": {
+      "true": false,
+      "reason": "The doc line is a shell comment about scorecard totals, not an option list. --live-check-timeout (internal/cli/scorecard.go:121) is in no doc; arguable, labelled false."
+    },
+    "mvanhorn/cli-printing-press|env-undefined|PP_GO_VERSION_INPUT|skills/printing-press-publish/SKILL.md:244": {
+      "true": false,
+      "reason": "Same snippet again (lines 244-249): set and read inside the doc's own shell function."
+    },
+    "mvanhorn/cli-printing-press|cli-flag-undocumented|--allow-mirror-deletions|skills/printing-press-publish/SKILL.md:1364": {
+      "true": false,
+      "reason": "The doc line explains --old-name/--new-name of the rename step. --allow-mirror-deletions (internal/cli/publish.go:608) is a flag of another publish subcommand whose help says to use it only after manual review; not a sibling in an option list."
+    },
+    "mvanhorn/cli-printing-press|cli-flag-undocumented|--api-name|skills/printing-press-publish/SKILL.md:1364": {
+      "true": false,
+      "reason": "internal/cli/publish.go:165 keeps --api-name as a 'Deprecated no-op'. Leaving a deprecated no-op out of the docs is correct."
+    },
+    "mvanhorn/cli-printing-press|path-missing|skills/printing-press-retro/references/references/secret-scrubbing.md|skills/printing-press-retro/references/artifact-packaging.md:60": {
+      "true": false,
+      "reason": "The link is written relative to the skill's root directory (skills/printing-press-retro/), where references/secret-scrubbing.md exists; relative to the page it does not resolve. Same case as the skill pages in Hermes Agent; arguable, labelled false."
+    },
+    "mvanhorn/cli-printing-press|env-undefined|CLI_SOURCE_ZIP|skills/printing-press-retro/references/artifact-packaging.md:90": {
+      "true": false,
+      "reason": "A shell variable assigned on line 90 and line 96 of the same bash block and used below it. Not an environment variable of the program."
+    },
+    "mvanhorn/cli-printing-press|env-undefined|PP_GO_VERSION_INPUT|skills/printing-press/phases/01-preflight.md:298": {
+      "true": false,
+      "reason": "Same snippet again (lines 298-307): set and read inside the doc's own shell function."
+    },
+    "mvanhorn/cli-printing-press|path-ref-missing|docs/CHANGELOG.md|skills/printing-press/phases/03-resolve-and-reuse.md:177": {
+      "true": true,
+      "reason": "The skill tells the agent to read `docs/CHANGELOG.md`. The repository has CHANGELOG.md at its root and no docs/CHANGELOG.md, so the instruction points at a file that is not there."
+    },
+    "mvanhorn/cli-printing-press|path-ref-missing|internal/cli/doctor.go|skills/printing-press/phases/10-generate.md:206": {
+      "true": false,
+      "reason": "The page describes a file of a generated CLI, not of this repository: the generator writes it from internal/generator/templates/doctor.go.tmpl and copies exist under testdata/golden/expected/. The path is right in the tree the page is about."
+    },
+    "mvanhorn/cli-printing-press|path-ref-missing|internal/cli/agent_context.go|skills/printing-press/phases/10-generate.md:853": {
+      "true": false,
+      "reason": "The page describes a file of a generated CLI, not of this repository: the generator writes it from internal/generator/templates/agent_context.go.tmpl and copies exist under testdata/golden/expected/. The path is right in the tree the page is about."
+    },
+    "mvanhorn/cli-printing-press|cli-flag-undocumented|--store|skills/printing-press/phases/11-build-the-goat.md:121": {
+      "true": false,
+      "reason": "--store is written into generated device CLIs (internal/generator/device.go:469 emits the root command of the generated program). It is not a flag of this program, and the doc line is about timeouts."
+    },
+    "mvanhorn/cli-printing-press|path-ref-missing|internal/cli/helpers.go|skills/printing-press/phases/11-build-the-goat.md:245": {
+      "true": false,
+      "reason": "The page describes a file of a generated CLI, not of this repository: the generator writes it from internal/generator/templates/helpers.go.tmpl and copies exist under testdata/golden/expected/. The path is right in the tree the page is about."
+    },
+    "mvanhorn/cli-printing-press|path-ref-missing|internal/cli/which.go|skills/printing-press/phases/14-agentic-skill-review.md:48": {
+      "true": false,
+      "reason": "The page describes a file of a generated CLI, not of this repository: the generator writes it from internal/generator/templates/which.go.tmpl and copies exist under testdata/golden/expected/. The path is right in the tree the page is about."
+    },
+    "mvanhorn/cli-printing-press|path-ref-missing|internal/cli/which.go|skills/printing-press/phases/15-readme-skill-agents-correctness-audit.md:37": {
+      "true": false,
+      "reason": "The page describes a file of a generated CLI, not of this repository: the generator writes it from internal/generator/templates/which.go.tmpl and copies exist under testdata/golden/expected/. The path is right in the tree the page is about."
+    },
+    "mvanhorn/cli-printing-press|path-ref-missing|internal/cli/which.go|skills/printing-press/phases/17-local-code-review.md:15": {
+      "true": false,
+      "reason": "The page describes a file of a generated CLI, not of this repository: the generator writes it from internal/generator/templates/which.go.tmpl and copies exist under testdata/golden/expected/. The path is right in the tree the page is about."
+    },
+    "mvanhorn/cli-printing-press|path-ref-missing|internal/cli/auth.go|skills/printing-press/references/scorecard-patterns.md:16": {
+      "true": false,
+      "reason": "The page describes a file of a generated CLI, not of this repository: the generator writes it from internal/generator/templates/auth.go.tmpl and copies exist under testdata/golden/expected/. The path is right in the tree the page is about."
+    },
+    "mvanhorn/cli-printing-press|path-ref-missing|internal/cli/helpers.go|skills/printing-press/references/scorecard-patterns.md:17": {
+      "true": false,
+      "reason": "The page describes a file of a generated CLI, not of this repository: the generator writes it from internal/generator/templates/helpers.go.tmpl and copies exist under testdata/golden/expected/. The path is right in the tree the page is about."
+    },
+    "mvanhorn/cli-printing-press|path-ref-missing|internal/cli/doctor.go|skills/printing-press/references/scorecard-patterns.md:20": {
+      "true": false,
+      "reason": "The page describes a file of a generated CLI, not of this repository: the generator writes it from internal/generator/templates/doctor.go.tmpl and copies exist under testdata/golden/expected/. The path is right in the tree the page is about."
+    },
+    "mvanhorn/cli-printing-press|env-undefined|PRINTING_PRESS_SKILL_UPDATE_START|skills/printing-press/references/setup-checks.md:94": {
+      "true": false,
+      "reason": "A comment marker (`# PRINTING_PRESS_SKILL_UPDATE_START`) around a block of the bash snippet, not a variable."
+    },
+    "mvanhorn/cli-printing-press|env-undefined|PRINTING_PRESS_SKILL_UPDATE_END|skills/printing-press/references/setup-checks.md:105": {
+      "true": false,
+      "reason": "The closing comment marker of the same block, not a variable."
+    },
+    "tmux-python/tmuxp|cli-flag-undocumented|--append|docs/cli/load.md:258": {
+      "true": false,
+      "reason": "docs/cli/load.md:17 has a Sphinx `.. argparse::` directive that writes the full option list from the parser when the docs are built, so the built page documents -a/--append. The Markdown source does not, which is all the scanner sees."
+    },
+    "tmux-python/tmuxp|cli-flag-undocumented|--no-startup|docs/cli/shell.md:121": {
+      "true": false,
+      "reason": "docs/cli/shell.md:15 has a Sphinx `.. argparse::` directive that writes the full option list from the parser when the docs are built, so the built page documents --no-startup. The Markdown source does not, which is all the scanner sees."
+    },
+    "tmux-python/tmuxp|cli-flag-undocumented|--no-vi-mode|docs/cli/shell.md:121": {
+      "true": false,
+      "reason": "docs/cli/shell.md:15 has a Sphinx `.. argparse::` directive that writes the full option list from the parser when the docs are built, so the built page documents --no-vi-mode. The Markdown source does not, which is all the scanner sees."
     }
   }
 }

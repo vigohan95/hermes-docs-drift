@@ -1,0 +1,22 @@
+{
+ "repo": "six-ddc/plow",
+ "sha": "b5afa2935ad47ca84afbb52b7b8c77bd77a58a8b",
+ "cold_scan_s": 0.39,
+ "warm_rescan_s": 0.03,
+ "doc_files": 1,
+ "code_files": 23,
+ "incomplete": false,
+ "notes": [],
+ "not_reported": {
+  "flag-has-loose-trace": 2
+ },
+ "default_checks": [
+  "path-missing",
+  "cli-flag-undefined",
+  "env-undefined",
+  "default-mismatch",
+  "npm-script-missing",
+  "make-target-missing"
+ ],
+ "findings": []
+}

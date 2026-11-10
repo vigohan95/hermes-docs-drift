@@ -1,0 +1,23 @@
+{
+ "repo": "realiti4/claude-swap",
+ "sha": "5ac68bfbfb7f7ecfbf9f724d9bd82fcb5fcc022d",
+ "cold_scan_s": 1.92,
+ "warm_rescan_s": 0.04,
+ "doc_files": 7,
+ "code_files": 112,
+ "incomplete": false,
+ "notes": [],
+ "not_reported": {
+  "stale-context": 21,
+  "flag-siblings-not-listed-in-one-doc": 1
+ },
+ "default_checks": [
+  "path-missing",
+  "cli-flag-undefined",
+  "env-undefined",
+  "default-mismatch",
+  "npm-script-missing",
+  "make-target-missing"
+ ],
+ "findings": []
+}

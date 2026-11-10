@@ -1,0 +1,267 @@
+{
+ "repo": "alexellis/arkade",
+ "sha": "a5f88e9316f954916ea8bf6fed53254417c2d9d6",
+ "cold_scan_s": 15.36,
+ "warm_rescan_s": 0.13,
+ "doc_files": 6,
+ "code_files": 1305,
+ "incomplete": false,
+ "notes": [
+  "make-target-missing limited: a Makefile computes target names or includes generated files."
+ ],
+ "not_reported": {
+  "stale-context": 11,
+  "flag-has-loose-trace": 2,
+  "flag-siblings-not-listed-in-one-doc": 2
+ },
+ "default_checks": [
+  "path-missing",
+  "cli-flag-undefined",
+  "env-undefined",
+  "default-mismatch",
+  "npm-script-missing",
+  "make-target-missing"
+ ],
+ "findings": [
+  {
+   "id": "DD-95d13134",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "AGENTS.md:218",
+   "doc_quote": "`arkade get NAME --os ... --arch ... --path /tmp/x` and `file` the result.",
+   "problem": "`--print-version` is defined in cmd/system/prometheus.go but no doc mentions it; 4 of the other 5 flags from that file are documented in AGENTS.md.",
+   "code": "cmd/system/prometheus.go:39",
+   "code_quote": "command.Flags().Bool(\"print-version\", false, \"Print the resolved version to stdout and exit\")",
+   "suggestion": "Document `--print-version` next to its siblings in AGENTS.md (around line 218).",
+   "name": "--print-version",
+   "why": [
+    "4 of 6 flags defined in cmd/system/prometheus.go appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    218
+   ]
+  },
+  {
+   "id": "DD-9eb66131",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "AGENTS.md:218",
+   "doc_quote": "`arkade get NAME --os ... --arch ... --path /tmp/x` and `file` the result.",
+   "problem": "`--progress` is defined in cmd/system/buildkitd.go but no doc mentions it; 3 of the other 3 flags from that file are documented in AGENTS.md.",
+   "code": "cmd/system/buildkitd.go:30",
+   "code_quote": "command.Flags().Bool(\"progress\", true, \"Show download progress\")",
+   "suggestion": "Document `--progress` next to its siblings in AGENTS.md (around line 218).",
+   "name": "--progress",
+   "why": [
+    "3 of 4 flags defined in cmd/system/buildkitd.go appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    218
+   ]
+  },
+  {
+   "id": "DD-45473011",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "README.md:248",
+   "doc_quote": "--systemd",
+   "problem": "`--progress` is defined in cmd/system/containerd.go but no doc mentions it; 4 of the other 4 flags from that file are documented in README.md.",
+   "code": "cmd/system/containerd.go:34",
+   "code_quote": "cmd.Flags().Bool(\"progress\", true, \"Show download progress\")",
+   "suggestion": "Document `--progress` next to its siblings in README.md (around line 248).",
+   "name": "--progress",
+   "why": [
+    "4 of 5 flags defined in cmd/system/containerd.go appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    248
+   ]
+  },
+  {
+   "id": "DD-0aff8235",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "README.md:563",
+   "doc_quote": "--update-repo Update the helm repo (default true)",
+   "problem": "`--default-ingress` is defined in cmd/apps/nginx_app.go but no doc mentions it; 4 of the other 4 flags from that file are documented in README.md.",
+   "code": "cmd/apps/nginx_app.go:31",
+   "code_quote": "nginx.Flags().Bool(\"default-ingress\", true, \"Is this the default ingressClass for the cluster?\")",
+   "suggestion": "Document `--default-ingress` next to its siblings in README.md (around line 563).",
+   "name": "--default-ingress",
+   "why": [
+    "4 of 5 flags defined in cmd/apps/nginx_app.go appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    563
+   ]
+  },
+  {
+   "id": "DD-5955a10c",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "README.md:563",
+   "doc_quote": "--update-repo Update the helm repo (default true)",
+   "problem": "`--dns-server` is defined in cmd/apps/certmanager_app.go but no doc mentions it; 4 of the other 4 flags from that file are documented in README.md.",
+   "code": "cmd/apps/certmanager_app.go:32",
+   "code_quote": "certManager.Flags().StringArray(\"dns-server\", []string{}, \"Use custom flags or override existing flags \\n(example --dns-servers key=value)\")",
+   "suggestion": "Document `--dns-server` next to its siblings in README.md (around line 563).",
+   "name": "--dns-server",
+   "why": [
+    "4 of 5 flags defined in cmd/apps/certmanager_app.go appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    563
+   ]
+  },
+  {
+   "id": "DD-8247e936",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "README.md:563",
+   "doc_quote": "--update-repo Update the helm repo (default true)",
+   "problem": "`--grafana` is defined in cmd/apps/loki_app.go but no doc mentions it; 3 of the other 4 flags from that file are documented in README.md.",
+   "code": "cmd/apps/loki_app.go:29",
+   "code_quote": "lokiApp.Flags().Bool(\"grafana\", false, \"Install Grafana alongside Loki (default: false)\")",
+   "suggestion": "Document `--grafana` next to its siblings in README.md (around line 563).",
+   "name": "--grafana",
+   "why": [
+    "4 of 5 flags defined in cmd/apps/loki_app.go appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    563
+   ]
+  },
+  {
+   "id": "DD-5cc47495",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "README.md:563",
+   "doc_quote": "--update-repo Update the helm repo (default true)",
+   "problem": "`--loki-url` is defined in cmd/apps/of_loki.go but no doc mentions it; 4 of the other 5 flags from that file are documented in README.md.",
+   "code": "cmd/apps/of_loki.go:31",
+   "code_quote": "OpenFaaSlokiApp.Flags().String(\"loki-url\", \"http://loki-stack.default:3100\", \"set the loki url (default http://loki-stack.default:3100)\")",
+   "suggestion": "Document `--loki-url` next to its siblings in README.md (around line 563).",
+   "name": "--loki-url",
+   "why": [
+    "4 of 6 flags defined in cmd/apps/of_loki.go appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    563
+   ]
+  },
+  {
+   "id": "DD-1ead24b0",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "README.md:563",
+   "doc_quote": "--update-repo Update the helm repo (default true)",
+   "problem": "`--nfs-path` is defined in cmd/apps/nfs_app.go but no doc mentions it; 3 of the other 4 flags from that file are documented in README.md.",
+   "code": "cmd/apps/nfs_app.go:28",
+   "code_quote": "nfsProvisionerApp.Flags().String(\"nfs-path\", \"\", \"Basepath of the mount point to be used\")",
+   "suggestion": "Document `--nfs-path` next to its siblings in README.md (around line 563).",
+   "name": "--nfs-path",
+   "why": [
+    "3 of 5 flags defined in cmd/apps/nfs_app.go appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    563
+   ]
+  },
+  {
+   "id": "DD-94938a28",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "README.md:563",
+   "doc_quote": "--update-repo Update the helm repo (default true)",
+   "problem": "`--nfs-server` is defined in cmd/apps/nfs_app.go but no doc mentions it; 3 of the other 4 flags from that file are documented in README.md.",
+   "code": "cmd/apps/nfs_app.go:27",
+   "code_quote": "nfsProvisionerApp.Flags().String(\"nfs-server\", \"\", \"IP or hostname of the NFS server \")",
+   "suggestion": "Document `--nfs-server` next to its siblings in README.md (around line 563).",
+   "name": "--nfs-server",
+   "why": [
+    "3 of 5 flags defined in cmd/apps/nfs_app.go appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    563
+   ]
+  },
+  {
+   "id": "DD-4e88c983",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "README.md:563",
+   "doc_quote": "--update-repo Update the helm repo (default true)",
+   "problem": "`--openfaas-namespace` is defined in cmd/apps/of_loki.go but no doc mentions it; 4 of the other 5 flags from that file are documented in README.md.",
+   "code": "cmd/apps/of_loki.go:30",
+   "code_quote": "OpenFaaSlokiApp.Flags().String(\"openfaas-namespace\", \"openfaas\", \"set the namespace that OpenFaaS is installed into\")",
+   "suggestion": "Document `--openfaas-namespace` next to its siblings in README.md (around line 563).",
+   "name": "--openfaas-namespace",
+   "why": [
+    "4 of 6 flags defined in cmd/apps/of_loki.go appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    563
+   ]
+  },
+  {
+   "id": "DD-bfe8badc",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "README.md:563",
+   "doc_quote": "--update-repo Update the helm repo (default true)",
+   "problem": "`--service-type` is defined in cmd/apps/portainer_app.go but no doc mentions it; 3 of the other 4 flags from that file are documented in README.md.",
+   "code": "cmd/apps/portainer_app.go:28",
+   "code_quote": "portainer.Flags().String(\"service-type\", \"ClusterIP\", \"Service Type for the main Portainer Service; ClusterIP, NodePort or LoadBalancer\")",
+   "suggestion": "Document `--service-type` next to its siblings in README.md (around line 563).",
+   "name": "--service-type",
+   "why": [
+    "4 of 5 flags defined in cmd/apps/portainer_app.go appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    563
+   ]
+  },
+  {
+   "id": "DD-65833fde",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "README.md:563",
+   "doc_quote": "--update-repo Update the helm repo (default true)",
+   "problem": "`--tag` is defined in cmd/apps/metricsserver_app.go but no doc mentions it; 3 of the other 3 flags from that file are documented in README.md.",
+   "code": "cmd/apps/metricsserver_app.go:29",
+   "code_quote": "metricsServer.Flags().StringP(\"tag\", \"t\", \"v0.6.3\", \"The tag or version of the metrics-server to install\")",
+   "suggestion": "Document `--tag` next to its siblings in README.md (around line 563).",
+   "name": "--tag",
+   "why": [
+    "3 of 4 flags defined in cmd/apps/metricsserver_app.go appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    563
+   ]
+  }
+ ]
+}

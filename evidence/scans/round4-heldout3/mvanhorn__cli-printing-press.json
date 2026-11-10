@@ -1,0 +1,872 @@
+{
+ "repo": "mvanhorn/cli-printing-press",
+ "sha": "7bf298bff3bb63b2e877e5e5e8856831e7c2254d",
+ "cold_scan_s": 32.36,
+ "warm_rescan_s": 0.45,
+ "doc_files": 226,
+ "code_files": 1762,
+ "incomplete": false,
+ "notes": [],
+ "not_reported": {
+  "placeholder-link": 3,
+  "link-to-untracked-or-ignored-file": 2,
+  "path-ref-parent-dir-missing": 85,
+  "path-ref-about-readers-project": 7,
+  "path-ref-generated-or-stale": 7,
+  "stale-context": 38,
+  "option-list-not-ours": 1,
+  "flag-has-loose-trace": 3,
+  "flag-siblings-not-listed-in-one-doc": 3,
+  "env-maybe-derived-from-settings-field": 26,
+  "make-doc-not-about-this-project": 1
+ },
+ "default_checks": [
+  "path-missing",
+  "cli-flag-undefined",
+  "env-undefined",
+  "default-mismatch",
+  "npm-script-missing",
+  "make-target-missing"
+ ],
+ "findings": [
+  {
+   "id": "DD-db48675a",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "AGENTS.md:57",
+   "doc_quote": "2. Refuse when `cliutil.IsAnyHarness()` is true, and emit structured JSON when `--json` or `--agent` is active. The helper covers `PRINTING_PRESS_VERIFY=1` and `PRINTING_PRESS_D...",
+   "problem": "`--skip-build` is defined in internal/cli/patch_cmd.go but no doc mentions it; 3 of the other 3 flags from that file are documented in AGENTS.md.",
+   "code": "internal/cli/patch_cmd.go:69",
+   "code_quote": "cmd.Flags().BoolVar(&skipBuild, \"skip-build\", false, \"Skip the post-patch `go build ./...` gate\")",
+   "suggestion": "Document `--skip-build` next to its siblings in AGENTS.md (around line 57).",
+   "name": "--skip-build",
+   "why": [
+    "3 of 4 flags defined in internal/cli/patch_cmd.go appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    57
+   ]
+  },
+  {
+   "id": "DD-e780d842",
+   "check": "env-undocumented",
+   "confidence": "medium",
+   "doc": "AGENTS.md:61",
+   "doc_quote": "Generated endpoint-mirror commands also gate mutating HTTP verbs (DELETE/POST/PUT/PATCH) at the transport layer (`internal/client/client.go`): under `PRINTING_PRESS_VERIFY=1` th...",
+   "problem": "The code reads `PRINTING_PRESS_CLIENT_PROFILE` (internal/generator/templates/platform_cli_test.go.tmpl:181) but no doc mentions it; 3 other PRINTING_ variables are documented in AGENTS.md.",
+   "code": "internal/generator/templates/platform_cli_test.go.tmpl:181",
+   "code_quote": "t.Setenv(\"PRINTING_PRESS_CLIENT_PROFILE\", \"tenant-a\")",
+   "suggestion": "Document `PRINTING_PRESS_CLIENT_PROFILE` next to the other PRINTING_ variables in AGENTS.md (around line 61).",
+   "name": "PRINTING_PRESS_CLIENT_PROFILE",
+   "why": [
+    "5 of 8 PRINTING_ variables read by the code appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code reads an environment variable that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    61
+   ]
+  },
+  {
+   "id": "DD-e7e6e829",
+   "check": "env-undocumented",
+   "confidence": "medium",
+   "doc": "AGENTS.md:61",
+   "doc_quote": "Generated endpoint-mirror commands also gate mutating HTTP verbs (DELETE/POST/PUT/PATCH) at the transport layer (`internal/client/client.go`): under `PRINTING_PRESS_VERIFY=1` th...",
+   "problem": "The code reads `PRINTING_PRESS_REPO_ROOT` (internal/pipeline/paths.go:183) but no doc mentions it; 3 other PRINTING_ variables are documented in AGENTS.md.",
+   "code": "internal/pipeline/paths.go:183",
+   "code_quote": "if root := os.Getenv(\"PRINTING_PRESS_REPO_ROOT\"); root != \"\" {",
+   "suggestion": "Document `PRINTING_PRESS_REPO_ROOT` next to the other PRINTING_ variables in AGENTS.md (around line 61).",
+   "name": "PRINTING_PRESS_REPO_ROOT",
+   "why": [
+    "5 of 8 PRINTING_ variables read by the code appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code reads an environment variable that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    61
+   ]
+  },
+  {
+   "id": "DD-2193a90e",
+   "check": "env-undocumented",
+   "confidence": "medium",
+   "doc": "AGENTS.md:61",
+   "doc_quote": "Generated endpoint-mirror commands also gate mutating HTTP verbs (DELETE/POST/PUT/PATCH) at the transport layer (`internal/client/client.go`): under `PRINTING_PRESS_VERIFY=1` th...",
+   "problem": "The code reads `PRINTING_PRESS_SCOPE` (internal/pipeline/paths.go:26) but no doc mentions it; 3 other PRINTING_ variables are documented in AGENTS.md.",
+   "code": "internal/pipeline/paths.go:26",
+   "code_quote": "if scope := os.Getenv(\"PRINTING_PRESS_SCOPE\"); scope != \"\" {",
+   "suggestion": "Document `PRINTING_PRESS_SCOPE` next to the other PRINTING_ variables in AGENTS.md (around line 61).",
+   "name": "PRINTING_PRESS_SCOPE",
+   "why": [
+    "5 of 8 PRINTING_ variables read by the code appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code reads an environment variable that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    61
+   ]
+  },
+  {
+   "id": "DD-10454be1",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "README.md:454",
+   "doc_quote": "cli-printing-press emboss --dir ./my-pp-cli --spec ./openapi.json --audit-only",
+   "problem": "`--keep-baseline` is defined in internal/cli/emboss.go but no doc mentions it; 5 of the other 7 flags from that file are documented in README.md.",
+   "code": "internal/cli/emboss.go:174",
+   "code_quote": "cmd.Flags().BoolVar(&keepBaseline, \"keep-baseline\", false, \"Keep the saved baseline after computing a delta\")",
+   "suggestion": "Document `--keep-baseline` next to its siblings in README.md (around line 454).",
+   "name": "--keep-baseline",
+   "why": [
+    "6 of 8 flags defined in internal/cli/emboss.go appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    454
+   ]
+  },
+  {
+   "id": "DD-3a568414",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "README.md:454",
+   "doc_quote": "cli-printing-press emboss --dir ./my-pp-cli --spec ./openapi.json --audit-only",
+   "problem": "`--save-baseline` is defined in internal/cli/emboss.go but no doc mentions it; 5 of the other 7 flags from that file are documented in README.md.",
+   "code": "internal/cli/emboss.go:173",
+   "code_quote": "cmd.Flags().BoolVar(&saveBaseline, \"save-baseline\", false, \"Save the baseline report to disk for a future delta run\")",
+   "suggestion": "Document `--save-baseline` next to its siblings in README.md (around line 454).",
+   "name": "--save-baseline",
+   "why": [
+    "6 of 8 flags defined in internal/cli/emboss.go appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    454
+   ]
+  },
+  {
+   "id": "DD-15ef822a",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "docs/BLE-PROBE.md:97",
+   "doc_quote": "cli-printing-press device-sniff ble write --live --address '<address>' --service '<uuid>' --characteristic '<uuid>' --value-hex '<payload>' > write.json",
+   "problem": "`--service-uuid` is defined in internal/devicesniff/bleprobe/command.go but no doc mentions it; 8 of the other 8 flags from that file are documented in docs/BLE-PROBE.md.",
+   "code": "internal/devicesniff/bleprobe/command.go:128",
+   "code_quote": "cmd.Flags().StringArrayVar(&opts.serviceUUIDs, \"service-uuid\", nil, \"Filter replayed scan results by advertised service UUID\")",
+   "suggestion": "Document `--service-uuid` next to its siblings in docs/BLE-PROBE.md (around line 97).",
+   "name": "--service-uuid",
+   "why": [
+    "8 of 9 flags defined in internal/devicesniff/bleprobe/command.go appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    97
+   ]
+  },
+  {
+   "id": "DD-338bc8f1",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "docs/PLUGIN-DEV.md:7",
+   "doc_quote": "For persistent local development, register a gitignored local marketplace in `.claude/settings.local.json`.",
+   "problem": "Docs refer to `.claude/settings.local.json`; the directory `.claude/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "name": ".claude/settings.local.json",
+   "why": [
+    "`.claude/` is a top-level directory of the repository and `.claude/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    7
+   ]
+  },
+  {
+   "id": "DD-ba452312",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "docs/decisions/2026-05-27-self-teaching-loop-generator-port-findings.md:41",
+   "doc_quote": "- **U5.** `internal/cli/recall.go` cross-alias machinery + Greptile guards",
+   "problem": "Docs refer to `internal/cli/recall.go`; the directory `internal/cli/` exists but that file does not.",
+   "code": "testdata/golden/expected/generate-learn-loop-api/learn-loop-example/internal/learn/recall.go",
+   "suggestion": "A file named `recall.go` exists at `testdata/golden/expected/generate-learn-loop-api/learn-loop-example/internal/learn/recall.go`; if it moved, update the reference.",
+   "name": "internal/cli/recall.go",
+   "why": [
+    "`internal/` is a top-level directory of the repository and `internal/cli/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    41
+   ]
+  },
+  {
+   "id": "DD-bb57f9f7",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "docs/decisions/2026-05-27-self-teaching-loop-generator-port-findings.md:49",
+   "doc_quote": "- **U10.** `internal/cli/playbook_init.go` embed-FS auto-install +",
+   "problem": "Docs refer to `internal/cli/playbook_init.go`; the directory `internal/cli/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "name": "internal/cli/playbook_init.go",
+   "why": [
+    "`internal/` is a top-level directory of the repository and `internal/cli/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    49
+   ]
+  },
+  {
+   "id": "DD-1931b029",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "docs/retros/2026-03-30-steam-retro.md:62",
+   "doc_quote": "- **Root cause:** Python's `yaml.dump` produces slightly different YAML formatting than Go's YAML libraries expect. The spec parser in `internal/spec/reader.go` is stricter abou...",
+   "problem": "Docs refer to `internal/spec/reader.go`; the directory `internal/spec/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "also_at_lines": [
+    124
+   ],
+   "name": "internal/spec/reader.go",
+   "why": [
+    "`internal/` is a top-level directory of the repository and `internal/spec/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    62,
+    124
+   ]
+  },
+  {
+   "id": "DD-6b8d0d4c",
+   "check": "cli-flag-undefined",
+   "confidence": "high",
+   "doc": "docs/retros/2026-04-01-steam-run7-retro.md:60",
+   "doc_quote": "- **Durable fix:** Generator template: if `oneline .Description` produces < 5 words, append ` (required for <endpoint purpose>)`. Or: `printing-press polish --fix-descriptions` ...",
+   "problem": "`--fix-descriptions` is used with `printing-press` in the docs, but the code does not define that flag.",
+   "code": "internal/cli/verify.go:161",
+   "code_quote": "cmd.Flags().IntVar(&maxIterations, \"max-iterations\", 3, \"Maximum fix loop iterations\")",
+   "suggestion": "Closest flag defined in code: `--max-iterations` (internal/cli/verify.go:161). If it was renamed, update the docs to `--max-iterations`; otherwise remove the flag from the docs.",
+   "name": "--fix-descriptions",
+   "why": [
+    "no literal --fix-descriptions (or --fix_descriptions) in any non-doc file",
+    "no identifier or string for it either",
+    "the doc line runs this project's own command `printing-press`"
+   ],
+   "what_this_check_means": "Docs show a command-line flag that the code no longer defines.",
+   "doc_lines": [
+    60
+   ]
+  },
+  {
+   "id": "DD-70bc3e53",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "docs/retros/2026-04-03-pagliacci-retro.md:176",
+   "doc_quote": "- `skills/printing-press/references/sniff-capture.md`",
+   "problem": "Docs refer to `skills/printing-press/references/sniff-capture.md`; the directory `skills/printing-press/references/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "also_at_lines": [
+    188
+   ],
+   "name": "skills/printing-press/references/sniff-capture.md",
+   "why": [
+    "`skills/` is a top-level directory of the repository and `skills/printing-press/references/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    176,
+    188
+   ]
+  },
+  {
+   "id": "DD-5d248f48",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "docs/retros/2026-04-04-cal-com-retro.md:148",
+   "doc_quote": "- `internal/generator/promoted.go` (or wherever promotion logic lives) — pass sibling info to template",
+   "problem": "Docs refer to `internal/generator/promoted.go`; the directory `internal/generator/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "name": "internal/generator/promoted.go",
+   "why": [
+    "`internal/` is a top-level directory of the repository and `internal/generator/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    148
+   ]
+  },
+  {
+   "id": "DD-e2f0d4bd",
+   "check": "default-mismatch",
+   "confidence": "high",
+   "doc": "docs/retros/2026-04-05-cal-com-retro.md:101",
+   "doc_quote": "- **Durable fix:** Change the 50-endpoint limit to a flag (`--max-endpoints-per-resource`, default 50). When the limit is hit, log a warning listing skipped endpoints so the use...",
+   "problem": "Docs say the default of `--max-endpoints-per-resource` is 50, the code says 0.",
+   "code": "internal/cli/root.go:622",
+   "code_quote": "cmd.Flags().IntVar(&maxEndpointsPerResource, \"max-endpoints-per-resource\", 0, \"Maximum endpoints per resource (default 50, raise for large APIs)\")",
+   "suggestion": "Change the documented default to 0, or change the code if the docs are right.",
+   "name": "--max-endpoints-per-resource",
+   "why": [
+    "the doc line names exactly one option and states one default",
+    "the code defines one static default for it (internal/cli/root.go:622)"
+   ],
+   "what_this_check_means": "Docs state a default value that differs from the default in the code.",
+   "doc_lines": [
+    101
+   ]
+  },
+  {
+   "id": "DD-c766b3c4",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "docs/retros/2026-04-11-yahoo-finance-retro.md:82",
+   "doc_quote": "- **What happened:** Deleted `internal/cli/search_query.go` (genuinely dead — duplicate of `search` command). Scorecard workflows dimension dropped from 10/10 to 8/10 and total ...",
+   "problem": "Docs refer to `internal/cli/search_query.go`; the directory `internal/cli/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "name": "internal/cli/search_query.go",
+   "why": [
+    "`internal/` is a top-level directory of the repository and `internal/cli/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    82
+   ]
+  },
+  {
+   "id": "DD-a28acc5f",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "docs/retros/2026-04-11-yahoo-finance-retro.md:196",
+   "doc_quote": "- negative test: delete a file `internal/cli/dead.go` whose constructor is NOT registered → score unchanged",
+   "problem": "Docs refer to `internal/cli/dead.go`; the directory `internal/cli/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "name": "internal/cli/dead.go",
+   "why": [
+    "`internal/` is a top-level directory of the repository and `internal/cli/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    196
+   ]
+  },
+  {
+   "id": "DD-c0d7ce6d",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "docs/solutions/logic-errors/mcp-handler-conflates-path-and-query-positional-params-2026-05-05.md:45",
+   "doc_quote": "One transient flake during golden regeneration: an unrelated `internal/cli/sync.go` map-iteration order surfaced in the diff on the first `scripts/golden.sh update`, then resolv...",
+   "problem": "Docs refer to `internal/cli/sync.go`; the directory `internal/cli/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "name": "internal/cli/sync.go",
+   "why": [
+    "`internal/` is a top-level directory of the repository and `internal/cli/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    45
+   ]
+  },
+  {
+   "id": "DD-aede80dc",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "scripts/verify-skill/README.md:94",
+   "doc_quote": "unverified commands or flags. See `.github/workflows/verify-skills.yml`",
+   "problem": "Docs refer to `.github/workflows/verify-skills.yml`; the directory `.github/workflows/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "name": ".github/workflows/verify-skills.yml",
+   "why": [
+    "`.github/` is a top-level directory of the repository and `.github/workflows/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    94
+   ]
+  },
+  {
+   "id": "DD-2a8385ee",
+   "check": "env-undefined",
+   "confidence": "high",
+   "doc": "skills/printing-press-amend/SKILL.md:115",
+   "doc_quote": "printf '%s\\n' \"${PP_GO_VERSION_INPUT:-}\" | sed -nE 's/.*go([0-9]+)\\.([0-9]+)(\\.([0-9]+))?.*/\\1.\\2.\\4/p' | sed -E 's/\\.$/.0/'",
+   "problem": "`PP_GO_VERSION_INPUT` is documented, but no non-doc file in the repository contains that name.",
+   "suggestion": "Remove `PP_GO_VERSION_INPUT` from the docs, or read it in the code.",
+   "also_at_lines": [
+    119,
+    120
+   ],
+   "name": "PP_GO_VERSION_INPUT",
+   "why": [
+    "the code reads 44 other variables starting with PP_ (e.g. PP_ADOPT_LEGACY)",
+    "`PP_GO_VERSION_INPUT` does not occur in any code, config or script file",
+    "no code builds variable names from that prefix dynamically"
+   ],
+   "what_this_check_means": "Docs name an environment variable that nothing in the code reads.",
+   "doc_lines": [
+    115,
+    119,
+    120
+   ]
+  },
+  {
+   "id": "DD-5864aace",
+   "check": "env-undefined",
+   "confidence": "high",
+   "doc": "skills/printing-press-polish/SKILL.md:143",
+   "doc_quote": "printf '%s\\n' \"${PP_GO_VERSION_INPUT:-}\" | sed -nE 's/.*go([0-9]+)\\.([0-9]+)(\\.([0-9]+))?.*/\\1.\\2.\\4/p' | sed -E 's/\\.$/.0/'",
+   "problem": "`PP_GO_VERSION_INPUT` is documented, but no non-doc file in the repository contains that name.",
+   "suggestion": "Remove `PP_GO_VERSION_INPUT` from the docs, or read it in the code.",
+   "also_at_lines": [
+    147,
+    148
+   ],
+   "name": "PP_GO_VERSION_INPUT",
+   "why": [
+    "the code reads 44 other variables starting with PP_ (e.g. PP_ADOPT_LEGACY)",
+    "`PP_GO_VERSION_INPUT` does not occur in any code, config or script file",
+    "no code builds variable names from that prefix dynamically"
+   ],
+   "what_this_check_means": "Docs name an environment variable that nothing in the code reads.",
+   "doc_lines": [
+    143,
+    147,
+    148
+   ]
+  },
+  {
+   "id": "DD-1b13e67f",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "skills/printing-press-polish/SKILL.md:469",
+   "doc_quote": "# A bare scorecard and scorecard --write-manifest report the same total.",
+   "problem": "`--live-check-timeout` is defined in internal/cli/scorecard.go but no doc mentions it; 6 of the other 7 flags from that file are documented in skills/printing-press-polish/SKILL.md.",
+   "code": "internal/cli/scorecard.go:121",
+   "code_quote": "cmd.Flags().DurationVar(&liveCheckTimeout, \"live-check-timeout\", 10*time.Second, \"Per-feature timeout for live check invocations\")",
+   "suggestion": "Document `--live-check-timeout` next to its siblings in skills/printing-press-polish/SKILL.md (around line 469).",
+   "name": "--live-check-timeout",
+   "why": [
+    "7 of 8 flags defined in internal/cli/scorecard.go appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    469
+   ]
+  },
+  {
+   "id": "DD-467c6327",
+   "check": "env-undefined",
+   "confidence": "high",
+   "doc": "skills/printing-press-publish/SKILL.md:244",
+   "doc_quote": "printf '%s\\n' \"${PP_GO_VERSION_INPUT:-}\" | sed -nE 's/.*go([0-9]+)\\.([0-9]+)(\\.([0-9]+))?.*/\\1.\\2.\\4/p' | sed -E 's/\\.$/.0/'",
+   "problem": "`PP_GO_VERSION_INPUT` is documented, but no non-doc file in the repository contains that name.",
+   "suggestion": "Remove `PP_GO_VERSION_INPUT` from the docs, or read it in the code.",
+   "also_at_lines": [
+    248,
+    249
+   ],
+   "name": "PP_GO_VERSION_INPUT",
+   "why": [
+    "the code reads 44 other variables starting with PP_ (e.g. PP_ADOPT_LEGACY)",
+    "`PP_GO_VERSION_INPUT` does not occur in any code, config or script file",
+    "no code builds variable names from that prefix dynamically"
+   ],
+   "what_this_check_means": "Docs name an environment variable that nothing in the code reads.",
+   "doc_lines": [
+    244,
+    248,
+    249
+   ]
+  },
+  {
+   "id": "DD-9288a828",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "skills/printing-press-publish/SKILL.md:1364",
+   "doc_quote": "Since Step 6 copied the staged CLI into `$PUBLISH_REPO_DIR`, the rename operates on that directory. Note: `--old-name`/`--new-name` still use CLI-name format (e.g., `dub-pp-cli`...",
+   "problem": "`--allow-mirror-deletions` is defined in internal/cli/publish.go but no doc mentions it; 9 of the other 11 flags from that file are documented in skills/printing-press-publish/SKILL.md.",
+   "code": "internal/cli/publish.go:608",
+   "code_quote": "cmd.Flags().BoolVar(&allowMirrorDeletions, \"allow-mirror-deletions\", false, \"Allow the overlay to delete mirror files that have no source counterpart (use only after manual reco...",
+   "suggestion": "Document `--allow-mirror-deletions` next to its siblings in skills/printing-press-publish/SKILL.md (around line 1364).",
+   "name": "--allow-mirror-deletions",
+   "why": [
+    "10 of 12 flags defined in internal/cli/publish.go appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    1364
+   ]
+  },
+  {
+   "id": "DD-c246857c",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "skills/printing-press-publish/SKILL.md:1364",
+   "doc_quote": "Since Step 6 copied the staged CLI into `$PUBLISH_REPO_DIR`, the rename operates on that directory. Note: `--old-name`/`--new-name` still use CLI-name format (e.g., `dub-pp-cli`...",
+   "problem": "`--api-name` is defined in internal/cli/publish.go but no doc mentions it; 9 of the other 11 flags from that file are documented in skills/printing-press-publish/SKILL.md.",
+   "code": "internal/cli/publish.go:165",
+   "code_quote": "cmd.Flags().StringVar(&legacyAPIName, \"api-name\", \"\", \"Deprecated no-op; api_name now follows --new-name\")",
+   "suggestion": "Document `--api-name` next to its siblings in skills/printing-press-publish/SKILL.md (around line 1364).",
+   "name": "--api-name",
+   "why": [
+    "10 of 12 flags defined in internal/cli/publish.go appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    1364
+   ]
+  },
+  {
+   "id": "DD-a8c0cc28",
+   "check": "path-missing",
+   "confidence": "high",
+   "doc": "skills/printing-press-retro/references/artifact-packaging.md:60",
+   "doc_quote": "Read and apply [references/secret-scrubbing.md](references/secret-scrubbing.md) on",
+   "problem": "Link target `references/secret-scrubbing.md` resolves to `skills/printing-press-retro/references/references/secret-scrubbing.md`, which is not in the repository.",
+   "code": "skills/printing-press-retro/references/secret-scrubbing.md",
+   "suggestion": "A file with the same name exists at `skills/printing-press-retro/references/secret-scrubbing.md`; if it moved, update the link.",
+   "name": "skills/printing-press-retro/references/references/secret-scrubbing.md",
+   "why": [
+    "the link is relative and stays inside the repository",
+    "the target is neither tracked, untracked-on-disk, git-ignored nor inside a submodule"
+   ],
+   "what_this_check_means": "A Markdown link or image points at a file that is not in the repository.",
+   "doc_lines": [
+    60
+   ]
+  },
+  {
+   "id": "DD-89af5281",
+   "check": "env-undefined",
+   "confidence": "high",
+   "doc": "skills/printing-press-retro/references/artifact-packaging.md:90",
+   "doc_quote": "CLI_SOURCE_ZIP=\"\"",
+   "problem": "`CLI_SOURCE_ZIP` is documented, but no non-doc file in the repository contains that name.",
+   "suggestion": "Remove `CLI_SOURCE_ZIP` from the docs, or read it in the code.",
+   "also_at_lines": [
+    96,
+    97,
+    98,
+    147,
+    148,
+    171,
+    213
+   ],
+   "name": "CLI_SOURCE_ZIP",
+   "why": [
+    "the prefix matches the project name",
+    "`CLI_SOURCE_ZIP` does not occur in any code, config or script file",
+    "no code builds variable names from that prefix dynamically"
+   ],
+   "what_this_check_means": "Docs name an environment variable that nothing in the code reads.",
+   "doc_lines": [
+    90,
+    96,
+    97,
+    98,
+    147,
+    148,
+    171,
+    213
+   ]
+  },
+  {
+   "id": "DD-5ff76140",
+   "check": "env-undefined",
+   "confidence": "high",
+   "doc": "skills/printing-press/phases/01-preflight.md:298",
+   "doc_quote": "printf '%s\\n' \"${PP_GO_VERSION_INPUT:-}\" | sed -nE 's/.*go([0-9]+)\\.([0-9]+)(\\.([0-9]+))?.*/\\1.\\2.\\4/p' | sed -E 's/\\.$/.0/'",
+   "problem": "`PP_GO_VERSION_INPUT` is documented, but no non-doc file in the repository contains that name.",
+   "suggestion": "Remove `PP_GO_VERSION_INPUT` from the docs, or read it in the code.",
+   "also_at_lines": [
+    306,
+    307
+   ],
+   "name": "PP_GO_VERSION_INPUT",
+   "why": [
+    "the code reads 44 other variables starting with PP_ (e.g. PP_ADOPT_LEGACY)",
+    "`PP_GO_VERSION_INPUT` does not occur in any code, config or script file",
+    "no code builds variable names from that prefix dynamically"
+   ],
+   "what_this_check_means": "Docs name an environment variable that nothing in the code reads.",
+   "doc_lines": [
+    298,
+    306,
+    307
+   ]
+  },
+  {
+   "id": "DD-92d17e2a",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "skills/printing-press/phases/03-resolve-and-reuse.md:177",
+   "doc_quote": "Construct the prompt's \"what changed\" list from these category buckets — the categories are stable across versions; the specific machine deltas inside each category are not. Rea...",
+   "problem": "Docs refer to `docs/CHANGELOG.md`; the directory `docs/` exists but that file does not.",
+   "code": "CHANGELOG.md",
+   "suggestion": "A file named `CHANGELOG.md` exists at `CHANGELOG.md`; if it moved, update the reference.",
+   "name": "docs/CHANGELOG.md",
+   "why": [
+    "`docs/` is a top-level directory of the repository and `docs/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    177
+   ]
+  },
+  {
+   "id": "DD-4f523003",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "skills/printing-press/phases/10-generate.md:206",
+   "doc_quote": "`internal/config/config.go` Load and `internal/cli/doctor.go` env-var",
+   "problem": "Docs refer to `internal/cli/doctor.go`; the directory `internal/cli/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "name": "internal/cli/doctor.go",
+   "why": [
+    "`internal/` is a top-level directory of the repository and `internal/cli/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    206
+   ]
+  },
+  {
+   "id": "DD-9c7d939d",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "skills/printing-press/phases/10-generate.md:853",
+   "doc_quote": "(`description:`), `.goreleaser.yaml` (`brews:` description), `internal/cli/agent_context.go`",
+   "problem": "Docs refer to `internal/cli/agent_context.go`; the directory `internal/cli/` exists but that file does not.",
+   "code": "testdata/golden/expected/generate-golden-api-rich-auth/printing-press-rich-auth/internal/cli/agent_context.go",
+   "suggestion": "A file named `agent_context.go` exists at `testdata/golden/expected/generate-golden-api-rich-auth/printing-press-rich-auth/internal/cli/agent_context.go`; if it moved, update the reference.",
+   "name": "internal/cli/agent_context.go",
+   "why": [
+    "`internal/` is a top-level directory of the repository and `internal/cli/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    853
+   ]
+  },
+  {
+   "id": "DD-4a6ebea5",
+   "check": "cli-flag-undocumented",
+   "confidence": "medium",
+   "doc": "skills/printing-press/phases/11-build-the-goat.md:121",
+   "doc_quote": "11. **Per-command timeout boundary**: Hand-written novel commands that call a sibling typed HTTP client (`internal/<api>/`, `internal/source/<name>/`, `internal/recipes/`, etc.)...",
+   "problem": "`--store` is defined in internal/generator/device.go but no doc mentions it; 5 of the other 7 flags from that file are documented in skills/printing-press/phases/11-build-the-goat.md.",
+   "code": "internal/generator/device.go:469",
+   "code_quote": "rootCmd.PersistentFlags().StringVar(&flags.storePath, \"store\", \"\", \"Telemetry store path (default: user cache)\")",
+   "suggestion": "Document `--store` next to its siblings in skills/printing-press/phases/11-build-the-goat.md (around line 121).",
+   "name": "--store",
+   "why": [
+    "7 of 8 flags defined in internal/generator/device.go appear in the docs",
+    "this one appears in no doc file"
+   ],
+   "what_this_check_means": "The code defines a flag that the docs listing its siblings do not mention.",
+   "doc_lines": [
+    121
+   ]
+  },
+  {
+   "id": "DD-f9e4458d",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "skills/printing-press/phases/11-build-the-goat.md:245",
+   "doc_quote": "Use one of these shapes for every hand-written transcendence command. The generator emits the `dryRunOK` helper into `internal/cli/helpers.go`.",
+   "problem": "Docs refer to `internal/cli/helpers.go`; the directory `internal/cli/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "also_at_lines": [
+    411
+   ],
+   "name": "internal/cli/helpers.go",
+   "why": [
+    "`internal/` is a top-level directory of the repository and `internal/cli/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    245,
+    411
+   ]
+  },
+  {
+   "id": "DD-a35361bd",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "skills/printing-press/phases/14-agentic-skill-review.md:48",
+   "doc_quote": "`internal/cli/root.go` Highlights, `internal/cli/which.go`,",
+   "problem": "Docs refer to `internal/cli/which.go`; the directory `internal/cli/` exists but that file does not.",
+   "code": "testdata/golden/expected/generate-golden-api/printing-press-golden/internal/cli/which.go",
+   "suggestion": "A file named `which.go` exists at `testdata/golden/expected/generate-golden-api/printing-press-golden/internal/cli/which.go`; if it moved, update the reference.",
+   "name": "internal/cli/which.go",
+   "why": [
+    "`internal/` is a top-level directory of the repository and `internal/cli/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    48
+   ]
+  },
+  {
+   "id": "DD-7ee44b4f",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "skills/printing-press/phases/15-readme-skill-agents-correctness-audit.md:37",
+   "doc_quote": "`internal/cli/root.go` Highlights, `internal/cli/which.go`,",
+   "problem": "Docs refer to `internal/cli/which.go`; the directory `internal/cli/` exists but that file does not.",
+   "code": "testdata/golden/expected/generate-golden-api/printing-press-golden/internal/cli/which.go",
+   "suggestion": "A file named `which.go` exists at `testdata/golden/expected/generate-golden-api/printing-press-golden/internal/cli/which.go`; if it moved, update the reference.",
+   "name": "internal/cli/which.go",
+   "why": [
+    "`internal/` is a top-level directory of the repository and `internal/cli/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    37
+   ]
+  },
+  {
+   "id": "DD-2bb941cb",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "skills/printing-press/phases/17-local-code-review.md:15",
+   "doc_quote": "`internal/cli/root.go` Highlights, `internal/cli/which.go`, or",
+   "problem": "Docs refer to `internal/cli/which.go`; the directory `internal/cli/` exists but that file does not.",
+   "code": "testdata/golden/expected/generate-golden-api/printing-press-golden/internal/cli/which.go",
+   "suggestion": "A file named `which.go` exists at `testdata/golden/expected/generate-golden-api/printing-press-golden/internal/cli/which.go`; if it moved, update the reference.",
+   "name": "internal/cli/which.go",
+   "why": [
+    "`internal/` is a top-level directory of the repository and `internal/cli/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    15
+   ]
+  },
+  {
+   "id": "DD-aaf65bfc",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "skills/printing-press/references/scorecard-patterns.md:16",
+   "doc_quote": "| Auth | `internal/config/config.go` + file existence | `os.Getenv` count: 1 call = 5pts, 2+ calls = 8pts. `internal/cli/auth.go` exists = +2pts | 10 |",
+   "problem": "Docs refer to `internal/cli/auth.go`; the directory `internal/cli/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "name": "internal/cli/auth.go",
+   "why": [
+    "`internal/` is a top-level directory of the repository and `internal/cli/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    16
+   ]
+  },
+  {
+   "id": "DD-755eeb12",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "skills/printing-press/references/scorecard-patterns.md:17",
+   "doc_quote": "| Error Handling | `internal/cli/helpers.go` | `hint:` or `Hint:` present = +5. Count of `code:` occurrences (1pt each, max 5) | 10 |",
+   "problem": "Docs refer to `internal/cli/helpers.go`; the directory `internal/cli/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "also_at_lines": [
+    18
+   ],
+   "name": "internal/cli/helpers.go",
+   "why": [
+    "`internal/` is a top-level directory of the repository and `internal/cli/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    17,
+    18
+   ]
+  },
+  {
+   "id": "DD-dc37a496",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "skills/printing-press/references/scorecard-patterns.md:20",
+   "doc_quote": "| Doctor | `internal/cli/doctor.go` | Count HTTP patterns x2: `http.Get`, `http.Head`, `http.NewRequest`, `http.Client`, `httpClient.Get`, `httpClient.Head`, `httpClient.Do` | 10 |",
+   "problem": "Docs refer to `internal/cli/doctor.go`; the directory `internal/cli/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "name": "internal/cli/doctor.go",
+   "why": [
+    "`internal/` is a top-level directory of the repository and `internal/cli/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    20
+   ]
+  },
+  {
+   "id": "DD-cc48f953",
+   "check": "env-undefined",
+   "confidence": "high",
+   "doc": "skills/printing-press/references/setup-checks.md:94",
+   "doc_quote": "# PRINTING_PRESS_SKILL_UPDATE_START",
+   "problem": "`PRINTING_PRESS_SKILL_UPDATE_START` is documented, but no non-doc file in the repository contains that name.",
+   "code": "internal/pipeline/subprocess_env_test.go:146",
+   "code_quote": "t.Setenv(\"PRINTING_PRESS_RICH_DATA_DIR\", filepath.Join(poisoned, \"data\"))",
+   "suggestion": "Closest variable read by the code: `PRINTING_PRESS_RICH_DATA_DIR` (internal/pipeline/subprocess_env_test.go:146). If it was renamed, update the docs; otherwise remove `PRINTING_PRESS_SKILL_UPDATE_START` from the docs.",
+   "name": "PRINTING_PRESS_SKILL_UPDATE_START",
+   "why": [
+    "the code reads 39 other variables starting with PRINTING_ (e.g. PRINTING_PRESS_CLIENT_PROFILE)",
+    "`PRINTING_PRESS_SKILL_UPDATE_START` does not occur in any code, config or script file",
+    "no code builds variable names from that prefix dynamically"
+   ],
+   "what_this_check_means": "Docs name an environment variable that nothing in the code reads.",
+   "doc_lines": [
+    94
+   ]
+  },
+  {
+   "id": "DD-274fda16",
+   "check": "env-undefined",
+   "confidence": "high",
+   "doc": "skills/printing-press/references/setup-checks.md:105",
+   "doc_quote": "# PRINTING_PRESS_SKILL_UPDATE_END",
+   "problem": "`PRINTING_PRESS_SKILL_UPDATE_END` is documented, but no non-doc file in the repository contains that name.",
+   "code": "internal/pipeline/subprocess_env_test.go:146",
+   "code_quote": "t.Setenv(\"PRINTING_PRESS_RICH_DATA_DIR\", filepath.Join(poisoned, \"data\"))",
+   "suggestion": "Closest variable read by the code: `PRINTING_PRESS_RICH_DATA_DIR` (internal/pipeline/subprocess_env_test.go:146). If it was renamed, update the docs; otherwise remove `PRINTING_PRESS_SKILL_UPDATE_END` from the docs.",
+   "name": "PRINTING_PRESS_SKILL_UPDATE_END",
+   "why": [
+    "the code reads 39 other variables starting with PRINTING_ (e.g. PRINTING_PRESS_CLIENT_PROFILE)",
+    "`PRINTING_PRESS_SKILL_UPDATE_END` does not occur in any code, config or script file",
+    "no code builds variable names from that prefix dynamically"
+   ],
+   "what_this_check_means": "Docs name an environment variable that nothing in the code reads.",
+   "doc_lines": [
+    105
+   ]
+  }
+ ]
+}

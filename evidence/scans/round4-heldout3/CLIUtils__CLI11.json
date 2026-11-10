@@ -1,0 +1,43 @@
+{
+ "repo": "CLIUtils/CLI11",
+ "sha": "1764a057b760e8873eab03f4635b4aaed5303a04",
+ "cold_scan_s": 2.66,
+ "warm_rescan_s": 0.11,
+ "doc_files": 22,
+ "code_files": 287,
+ "incomplete": false,
+ "notes": [],
+ "not_reported": {
+  "link-to-generated-html": 3,
+  "option-list-not-ours": 1
+ },
+ "default_checks": [
+  "path-missing",
+  "cli-flag-undefined",
+  "env-undefined",
+  "default-mismatch",
+  "npm-script-missing",
+  "make-target-missing"
+ ],
+ "findings": [
+  {
+   "id": "DD-8cefb848",
+   "check": "path-missing",
+   "confidence": "high",
+   "doc": "book/chapters/formatting.md:45",
+   "doc_quote": "![example help output](help_output1.png)",
+   "problem": "Link target `help_output1.png` resolves to `book/chapters/help_output1.png`, which is not in the repository.",
+   "code": "book/images/help_output1.png",
+   "suggestion": "A file with the same name exists at `book/images/help_output1.png`; if it moved, update the link.",
+   "name": "book/chapters/help_output1.png",
+   "why": [
+    "the link is relative and stays inside the repository",
+    "the target is neither tracked, untracked-on-disk, git-ignored nor inside a submodule"
+   ],
+   "what_this_check_means": "A Markdown link or image points at a file that is not in the repository.",
+   "doc_lines": [
+    45
+   ]
+  }
+ ]
+}

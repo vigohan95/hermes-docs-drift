@@ -1,0 +1,59 @@
+{
+ "repo": "KKKKhazix/agent-autoloop",
+ "sha": "d6b2391293c66b3c219b6cfa3a4495772ad9c1a7",
+ "cold_scan_s": 3.45,
+ "warm_rescan_s": 0.06,
+ "doc_files": 25,
+ "code_files": 223,
+ "incomplete": false,
+ "notes": [],
+ "not_reported": {
+  "stale-context": 4
+ },
+ "default_checks": [
+  "path-missing",
+  "cli-flag-undefined",
+  "env-undefined",
+  "default-mismatch",
+  "npm-script-missing",
+  "make-target-missing"
+ ],
+ "findings": [
+  {
+   "id": "DD-906f3631",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "skills/agent-autoloop/SKILL.md:45",
+   "doc_quote": "- 项目里放两份文件：`docs/decisions.md` 记用户亲口定的事，`docs/declined.md` 记他拒绝过的，让 Agent 先读，定过的不再问。",
+   "problem": "Docs refer to `docs/decisions.md`; the directory `docs/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "name": "docs/decisions.md",
+   "why": [
+    "`docs/` is a top-level directory of the repository and `docs/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    45
+   ]
+  },
+  {
+   "id": "DD-c9656cee",
+   "check": "path-ref-missing",
+   "confidence": "medium",
+   "doc": "skills/agent-autoloop/SKILL.md:45",
+   "doc_quote": "- 项目里放两份文件：`docs/decisions.md` 记用户亲口定的事，`docs/declined.md` 记他拒绝过的，让 Agent 先读，定过的不再问。",
+   "problem": "Docs refer to `docs/declined.md`; the directory `docs/` exists but that file does not.",
+   "suggestion": "Update or remove the reference.",
+   "name": "docs/declined.md",
+   "why": [
+    "`docs/` is a top-level directory of the repository and `docs/` exists",
+    "the file is not tracked, not on disk and the sentence does not ask the reader to create it"
+   ],
+   "what_this_check_means": "A file path written in inline code does not exist in the repository.",
+   "doc_lines": [
+    45
+   ]
+  }
+ ]
+}

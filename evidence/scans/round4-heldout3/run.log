@@ -1,0 +1,16 @@
+scanner commit: 4a1d964 (docsdrift/ is unchanged since aacd813)
+scanned on 2026-11-10, once, in two calls of benchmarks/run_scans.py (the first eight, then the last four when their clones had finished)
+this file was written from the saved scan files after the run; the per-repository lines repeat what run_scans.py printed
+
+mvanhorn__cli-printing-press: 41 findings {'cli-flag-undocumented': 8, 'env-undocumented': 3, 'path-ref-missing': 20, 'cli-flag-undefined': 1, 'default-mismatch': 1, 'env-undefined': 7, 'path-missing': 1} docs=226 code=1762 cold=32.36s warm=0.45s  commit 7bf298bff3bb63b2e877e5e5e8856831e7c2254d
+red-data-tools__YouPlot: 0 findings {} docs=1 code=39 cold=0.63s warm=0.03s  commit 492d8864c22dbe2c50b089f5c79e840f07d49658
+carloscuesta__gitmoji-cli: 0 findings {} docs=2 code=85 cold=1.04s warm=0.03s  commit 8f370b30271e41d33cff531dbc5b6d15b70bf869
+Jia-Ethan__codex-keysmith: 1 findings {'cli-flag-undefined': 1} docs=41 code=227 cold=5.33s warm=0.23s  commit cfcd96eb727c324ee8649170c43aaa632ff53cb3
+speedyapply__JobSpy: 0 findings {} docs=2 code=45 cold=0.5s warm=0.04s  commit 68b88d6909a2342ad75fbb945c4204a3a7ed6665
+alexellis__arkade: 12 findings {'cli-flag-undocumented': 12} docs=6 code=1305 cold=15.36s warm=0.13s  commit a5f88e9316f954916ea8bf6fed53254417c2d9d6
+realiti4__claude-swap: 0 findings {} docs=7 code=112 cold=1.92s warm=0.04s  commit 5ac68bfbfb7f7ecfbf9f724d9bd82fcb5fcc022d
+tmux-python__tmuxp: 3 findings {'cli-flag-undocumented': 3} docs=78 code=300 cold=3.21s warm=0.07s  commit bf11ab25572ed400c224a01076139635919b75b0
+medialab__xan: 3 findings {'path-missing': 3} docs=90 code=207 cold=3.39s warm=0.14s  commit 6849efffb609c2806b6072af85c878c6246c977c
+CLIUtils__CLI11: 1 findings {'path-missing': 1} docs=22 code=287 cold=2.66s warm=0.11s  commit 1764a057b760e8873eab03f4635b4aaed5303a04
+six-ddc__plow: 0 findings {} docs=1 code=23 cold=0.39s warm=0.03s  commit b5afa2935ad47ca84afbb52b7b8c77bd77a58a8b
+KKKKhazix__agent-autoloop: 2 findings {'path-ref-missing': 2} docs=25 code=223 cold=3.45s warm=0.06s  commit d6b2391293c66b3c219b6cfa3a4495772ad9c1a7
