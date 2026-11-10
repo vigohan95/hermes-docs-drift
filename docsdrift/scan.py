@@ -340,6 +340,7 @@ class Scanner:
         "New" means: present in the working tree, absent when the files that
         differ from ``rev`` are replaced by their content at ``rev``.
         """
+        started = time.monotonic()
         self.repo.refresh()
         overlay = self.repo.changed_vs(rev)
         if overlay is None:
@@ -352,6 +353,7 @@ class Scanner:
             return current, [], None
         baseline = self.scan(overlay=overlay, refresh=False, **kw)
         current = self.scan(refresh=False, before=None if baseline.incomplete else baseline.index, **kw)
+        current.elapsed_ms = int((time.monotonic() - started) * 1000)   # both scans, not only the second
         if baseline.incomplete or current.incomplete:
             current.findings = []
             current.incomplete = True
