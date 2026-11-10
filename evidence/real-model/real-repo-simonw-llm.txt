@@ -1,0 +1,164 @@
+docs-drift run with a real model   2026-11-10T12:46:53Z
+run:      simonw/llm at 39d3254, with the plugin (default settings)
+hermes:   Hermes Agent vgit.b7db40d (2026.9.24) · stable · local b7db40d82568
+plugin:   docs-drift is installed in this Hermes home (enabled, 0.1.0)
+settings: defaults
+source:   docs-drift commit 4a1d964
+model:    glm-5.3 at https://api.vultrinference.com/v1, through demo/relay.py on 127.0.0.1:55435
+          (the relay forwards requests unchanged, adds the key and counts; Hermes has no key)
+project:  a local clone of https://github.com/simonw/llm.git at commit 39d3254
+prompt:   Rename the LLM_RAISE_ERRORS environment variable to LLM_DEBUG_ERRORS.
+toolsets: file
+
+--- 1. what Hermes did (the events it prints with --format stream-json) ---
+$ hermes chat -q "Rename the LLM_RAISE_ERRORS environment variable to LLM_DEBUG_ERRORS." --provider custom --base-url http://127.0.0.1:55435/v1 --api-key not-a-real-key -m glm-5.3 --yolo --format stream-json --max-turns 20 -t file
+[12:47:13Z] tool call    search_files {"pattern": "LLM_RAISE_ERRORS", "output_mode": "content"}
+[12:47:15Z] tool result  search_files (2256 ms)
+[12:47:20Z] tool call    search_files {"output_mode": "content", "pattern": "RAISE_ERRORS"}
+[12:47:21Z] tool result  search_files (981 ms)
+[12:47:24Z] tool call    read_file {"limit": 15, "offset": 1165, "path": "llm/cli.py"}
+[12:47:24Z] tool call    read_file {"limit": 15, "offset": 858, "path": "llm/default_plugins/openai_models.py"}
+[12:47:24Z] tool call    read_file {"limit": 20, "offset": 738, "path": "docs/plugins/advanced-model-plugins.md"}
+[12:47:24Z] tool call    read_file {"limit": 6, "offset": 318, "path": "README.md"}
+[12:47:25Z] tool result  read_file (1171 ms)
+[12:47:25Z] tool result  read_file (1178 ms)
+[12:47:25Z] tool result  read_file (1184 ms)
+[12:47:25Z] tool result  read_file (1191 ms)
+[12:47:34Z] tool call    search_files {"output_mode": "content", "pattern": "tutorial-model-plugin-raise-errors|llm-raise-errors"}
+[12:47:34Z] tool result  search_files (963 ms)
+[12:47:40Z] assistant    Now applying the rename in the code, docs, and README (leaving the historical changelog entry untouched):
+[12:47:40Z] tool call    patch {"new_string": "            \"LLM_DEBUG_ERRORS\", None", "old_string": "            \"LLM_RAISE_ERRORS\", None", "path": "llm/cli.py"}
+[12:47:40Z] tool call    patch {"new_string": "                \"LLM_DEBUG_ERRORS\"", "old_string": "                \"LLM_RAISE_ERRORS\"", "path": "llm/default_plugins/openai_models.py"}
+[12:47:40Z] tool call    patch {"new_string": "(tutorial-model-plugin-debug-errors)=\n\n## LLM_DEBUG_ERRORS\n\nWhile working on a plugin it can be useful to request that errors are raised instead of being caught and logged, so you can access them from the Python debugger.\n\nSet the `LLM_DEBUG_ERRORS` environment variable to enable this behavior, then run `llm` like this:\n\n```bash\nLLM_DEBUG_ERRORS=1 python -i -m llm ...", "old_string": "(tutorial-model-plugin-raise-errors)=\n\n## LLM_RAISE_ERRORS\n\nWhile working on a plugin it can be useful to request that errors are raised instead of being caught and logged, so you can access them from the Python debugger.\n\nSet the `LLM_RAISE_ERRORS` environment variable to enable this behavior, then run `llm` like this:\n\n```bash\nLLM_RAISE_ERRORS=1 python -i -m llm ...", "path": "docs/plugins/advanced-model-plugins.md"}
+[12:47:40Z] tool call    patch {"new_string": "    * [LLM_DEBUG_ERRORS](https://llm.datasette.io/en/stable/plugins/advanced-model-plugins.html#llm-debug-errors)", "old_string": "    * [LLM_RAISE_ERRORS](https://llm.datasette.io/en/stable/plugins/advanced-model-plugins.html#llm-raise-errors)", "path": "README.md"}
+[12:47:44Z] tool result  patch (4649 ms)
+             (fields from Hermes' own tool, not shown: _warning, diff, files_modified, lint, resolved_path, success)
+             (no docs_drift block: the edit caused no new drift and resolved none)
+[12:47:44Z] tool result  patch (4653 ms)
+             (fields from Hermes' own tool, not shown: _warning, diff, files_modified, lint, resolved_path, success)
+             (no docs_drift block: the edit caused no new drift and resolved none)
+[12:47:44Z] tool result  patch (4657 ms)
+             (fields from Hermes' own tool, not shown: _warning, diff, files_modified, lint, resolved_path, success)
+             (no docs_drift block: the edit caused no new drift and resolved none)
+[12:47:44Z] tool result  patch (4662 ms)
+             (fields from Hermes' own tool, not shown: _warning, diff, files_modified, lint, resolved_path, success)
+             (no docs_drift block: the edit caused no new drift and resolved none)
+[12:47:47Z] tool call    search_files {"output_mode": "content", "pattern": "LLM_RAISE_ERRORS"}
+[12:47:48Z] tool result  search_files (1095 ms)
+[12:47:50Z] tool call    tool_search {"queries": ["terminal run command shell"]}
+[12:47:50Z] tool result  tool_search (10 ms)
+[12:47:55Z] assistant    Renamed LLM_RAISE_ERRORS to LLM_DEBUG_ERRORS in all 4 live locations:
+             
+             - llm/cli.py:1173 and llm/default_plugins/openai_models.py:865 — the os.environ.get checks- docs/plugins/advanced-model-plugins.md — heading, body, example command, and the (tutorial-model-plugin-debug-errors)= anchor label
+             - README.md:321 — link text and its #llm-debug-errors anchor
+             
+             Both Python files pass the post-edit syntax check, and a repo-wide search confirms the only remaining LLM_RAISE_ERRORS reference is the historical release note in docs/changelog.md, which I left untouched since it documents a past release.
+[12:47:55Z] end of turn  exit_code 0, 51119 ms
+
+--- 2. what the model was sent and what it answered (the relay log, unedited) ---
+[12:47:11Z] request 1 to model glm-5.3: 2 messages, 7 tools offered
+docs_drift tools: listed inside another tool's description
+system prompt (13571 characters, not shown)
+user message:
+Rename the LLM_RAISE_ERRORS environment variable to LLM_DEBUG_ERRORS.
+[12:47:13Z] answer 1 (1.9 s, prompt 4983 / completion 32 tokens):
+tool call: search_files {"pattern": "LLM_RAISE_ERRORS", "output_mode": "content"}
+
+[12:47:15Z] request 2 to model glm-5.3: 4 messages, 7 tools offered
+assistant: (its own earlier tool call: search_files)
+tool result:
+{"total_count": 7, "matches_format": "path-grouped: each file path on its own line, followed by indented '<line>: <content>' rows for matches in that file", "matches_text": ".\\docs\\changelog.md\n  566: - Set the `LLM_RAISE_ERRORS=1` environment variable to raise errors during prompts rather than suppressing them, which means you can run `python -i -m llm 'prompt'` and then drop into a debugger on errors with `import pdb; pdb.pm()`. [#817](https://github.com/simonw/llm/issues/817)\n.\\docs\\plugins\\advanced-model-plugins.md\n  743: ## LLM_RAISE_ERRORS\n  747: Set the `LLM_RAISE_ERRORS` environment variable to enable this behavior, then run `llm` like this:\n  750: LLM_RAISE_ERRORS=1 python -i -m llm ...\n.\\llm\\cli.py\n  1173:             \"LLM_RAISE_ERRORS\", None\n.\\llm\\default_plugins\\openai_models.py\n  865:                 \"LLM_RAISE_ERRORS\"\n.\\README.md\n  321:     * [LLM_RAISE_ERRORS](https://llm.datasette.io/en/stable/plugins/advanced-model-plugins.html#llm-raise-errors)"}
+[12:47:20Z] answer 2 (5.1 s, prompt 5322 / completion 40 tokens):
+tool call: search_files {"output_mode": "content", "pattern": "RAISE_ERRORS"}
+
+[12:47:21Z] request 3 to model glm-5.3: 6 messages, 7 tools offered
+assistant: (its own earlier tool call: search_files)
+tool result:
+{"total_count": 7, "matches_format": "path-grouped: each file path on its own line, followed by indented '<line>: <content>' rows for matches in that file", "matches_text": ".\\llm\\cli.py\n  1173:             \"LLM_RAISE_ERRORS\", None\n.\\docs\\changelog.md\n  566: - Set the `LLM_RAISE_ERRORS=1` environment variable to raise errors during prompts rather than suppressing them, which means you can run `python -i -m llm 'prompt'` and then drop into a debugger on errors with `import pdb; pdb.pm()`. [#817](https://github.com/simonw/llm/issues/817)\n.\\README.md\n  321:     * [LLM_RAISE_ERRORS](https://llm.datasette.io/en/stable/plugins/advanced-model-plugins.html#llm-raise-errors)\n.\\llm\\default_plugins\\openai_models.py\n  865:                 \"LLM_RAISE_ERRORS\"\n.\\docs\\plugins\\advanced-model-plugins.md\n  743: ## LLM_RAISE_ERRORS\n  747: Set the `LLM_RAISE_ERRORS` environment variable to enable this behavior, then run `llm` like this:\n  750: LLM_RAISE_ERRORS=1 python -i -m llm ..."}
+[12:47:24Z] answer 3 (2.4 s, prompt 5669 / completion 176 tokens):
+tool call: read_file {"limit": 15, "offset": 1165, "path": "llm/cli.py"}
+tool call: read_file {"limit": 15, "offset": 858, "path": "llm/default_plugins/openai_models.py"}
+tool call: read_file {"limit": 20, "offset": 738, "path": "docs/plugins/advanced-model-plugins.md"}
+tool call: read_file {"limit": 6, "offset": 318, "path": "README.md"}
+
+[12:47:25Z] request 4 to model glm-5.3: 11 messages, 7 tools offered
+assistant: (its own earlier tool call: read_file) (its own earlier tool call: read_file) (its own earlier tool call: read_file) (its own earlier tool call: read_file)
+tool result:
+{"content": "1165|                if not json_output:\n1166|                    print(text)\n1167|    # List of exceptions that should never be raised in pytest:\n1168|    except (ValueError, NotImplementedError) as ex:\n1169|        raise click.ClickException(str(ex))\n1170|    except Exception as ex:\n1171|        # All other exceptions should raise in pytest, show to user otherwise\n1172|        if getattr(sys, \"_called_from_test\", False) or os.environ.get(\n1173|            \"LLM_RAISE_ERRORS\", None\n1174|        ):\n1175|            raise\n1176|        raise click.ClickException(str(ex))\n1177|\n1178|    if usage:\n1179|        _display_token_usage(response)", "total_lines": 4569, "file_size": 152712, "truncated": true, "hint": "Use offset=1180 to continue reading (showing 1165-1179 of 4569 lines)", "is_binary": false, "is_image": false, "not_found": false}
+tool result:
+{"content": "858|            click.echo()\n859|        except (click.Abort, click.ClickException):\n860|            raise\n861|        except (ValueError, NotImplementedError) as ex:\n862|            raise click.ClickException(str(ex))\n863|        except Exception as ex:\n864|            if getattr(sys, \"_called_from_test\", False) or os.environ.get(\n865|                \"LLM_RAISE_ERRORS\"\n866|            ):\n867|                raise\n868|            raise click.ClickException(str(ex))\n869|\n870|    @endpoint_.command(name=\"add\")\n871|    @click.argument(\"url\")\n872|    @click.option(", "total_lines": 3309, "file_size": 125237, "truncated": true, "hint": "Use offset=873 to continue reading (showing 858-872 of 3309 lines)", "is_binary": false, "is_image": false, "not_found": false}
+tool result:
+{"content": "738|```\n739|This string will be recorded in the database and shown in the output of `llm logs` and `llm logs --json`.\n740|\n741|(tutorial-model-plugin-raise-errors)=\n742|\n743|## LLM_RAISE_ERRORS\n744|\n745|While working on a plugin it can be useful to request that errors are raised instead of being caught and logged, so you can access them from the Python debugger.\n746|\n747|Set the `LLM_RAISE_ERRORS` environment variable to enable this behavior, then run `llm` like this:\n748|\n749|```bash\n750|LLM_RAISE_ERRORS=1 python -i -m llm ...\n751|```\n752|The `-i` option means Python will drop into an interactive shell if an error occurs. You can then open a debugger at the most recent error using:\n753|\n754|```python\n755|import pdb; pdb.pm()\n756|```", "total_lines": 756, "file_size": 37100, "truncated": false, "is_binary": false, "is_image": false, "not_found": false}
+tool result:
+{"content": "318|    * [Restoring opaque metadata on subsequent requests](https://llm.datasette.io/en/stable/plugins/advanced-model-plugins.html#restoring-opaque-metadata-on-subsequent-requests)\n319|    * [Tracking token usage](https://llm.datasette.io/en/stable/plugins/advanced-model-plugins.html#tracking-token-usage)\n320|    * [Tracking resolved model names](https://llm.datasette.io/en/stable/plugins/advanced-model-plugins.html#tracking-resolved-model-names)\n321|    * [LLM_RAISE_ERRORS](https://llm.datasette.io/en/stable/plugins/advanced-model-plugins.html#llm-raise-errors)\n322|  * [Utility functions for plugins](https://llm.datasette.io/en/stable/plugins/plugin-utilities.html)\n323|    * [llm.get_key()](https://llm.datasette.io/en/stable/plugins/plugin-utilities.html#llm-get-key)", "total_lines": 410, "file_size": 33324, "truncated": true, "hint": "Use offset=324 to continue reading (showing 318-323 of 410 lines)", "is_binary": false, "is_image": false, "not_found": false}
+[12:47:30Z] answer 4: the relay could not reach the endpoint (URLError)
+[12:47:30Z] request 5 to model glm-5.3: 11 messages, 7 tools offered
+[12:47:33Z] answer 5 (3.7 s, prompt 6898 / completion 93 tokens):
+tool call: search_files {"output_mode": "content", "pattern": "tutorial-model-plugin-raise-errors|llm-raise-errors"}
+
+[12:47:34Z] request 6 to model glm-5.3: 13 messages, 7 tools offered
+assistant: (its own earlier tool call: search_files)
+tool result:
+{"total_count": 2, "matches": [{"path": ".\\README.md", "line": 321, "content": "    * [LLM_RAISE_ERRORS](https://llm.datasette.io/en/stable/plugins/advanced-model-plugins.html#llm-raise-errors)\r"}, {"path": ".\\docs\\plugins\\advanced-model-plugins.md", "line": 741, "content": "(tutorial-model-plugin-raise-errors)="}]}
+[12:47:38Z] answer 6 (3.8 s, prompt 7092 / completion 397 tokens):
+text: Now applying the rename in the code, docs, and README (leaving the historical changelog entry untouched):
+tool call: patch {"new_string": "            \"LLM_DEBUG_ERRORS\", None", "old_string": "            \"LLM_RAISE_ERRORS\", None", "path": "llm/cli.py"}
+tool call: patch {"new_string": "                \"LLM_DEBUG_ERRORS\"", "old_string": "                \"LLM_RAISE_ERRORS\"", "path": "llm/default_plugins/openai_models.py"}
+tool call: patch {"new_string": "(tutorial-model-plugin-debug-errors)=\n\n## LLM_DEBUG_ERRORS\n\nWhile working on a plugin it can be useful to request that errors are raised instead of being caught and logged, so you can access them from the Python debugger.\n\nSet the `LLM_DEBUG_ERRORS` environment variable to enable this behavior, then run `llm` like this:\n\n```bash\nLLM_DEBUG_ERRORS=1 python -i -m llm ...", "old_string": "(tutorial-model-plugin-raise-errors)=\n\n## LLM_RAISE_ERRORS\n\nWhile working on a plugin it can be useful to request that errors are raised instead of being caught and logged, so you can access them from the Python debugger.\n\nSet the `LLM_RAISE_ERRORS` environment variable to enable  ... (144 more characters)
+tool call: patch {"new_string": "    * [LLM_DEBUG_ERRORS](https://llm.datasette.io/en/stable/plugins/advanced-model-plugins.html#llm-debug-errors)", "old_string": "    * [LLM_RAISE_ERRORS](https://llm.datasette.io/en/stable/plugins/advanced-model-plugins.html#llm-raise-errors)", "path": "README.md"}
+
+[12:47:44Z] request 7 to model glm-5.3: 18 messages, 7 tools offered
+assistant: Now applying the rename in the code, docs, and README (leaving the historical changelog entry untouched): (its own earlier tool call: patch) (its own earlier tool call: patch) (its own earlier tool call: patch) (its own earlier tool call: patch)
+tool result:
+{"success": true, "diff": "--- a/%TEMP%\\docs-drift-real-t8zf6yui\\simonw__llm\\llm\\cli.py\n+++ b/%TEMP%\\docs-drift-real-t8zf6yui\\simonw__llm\\llm\\cli.py\n@@ -1170,7 +1170,7 @@\n     except Exception as ex:\r\n         # All other exceptions should raise in pytest, show to user otherwise\r\n         if getattr(sys, \"_called_from_test\", False) or os.environ.get(\r\n-            \"LLM_RAISE_ERRORS\", None\r\n+            \"LLM_DEBUG_ERRORS\", None\r\n         ):\r\n             raise\r\n         raise click.ClickException(str(ex))\r\n", "files_modified": ["%TEMP%\\docs-drift-real-t8zf6yui\\simonw__llm\\llm\\cli.py"], "lint": {"status": "ok", "output": ""}, "_warning": "%TEMP%\\docs-drift-real-t8zf6yui\\simonw__llm\\llm\\cli.py was last read with offset/limit pagination (partial view). Read the remaining pages, or use patch, before overwriting it.", "resolved_path": "%TEMP%\\docs-drift-real-t8zf6yui\\simonw__llm\\llm\\cli.py"}
+tool result:
+{"success": true, "diff": "--- a/%TEMP%\\docs-drift-real-t8zf6yui\\simonw__llm\\llm\\default_plugins\\openai_models.py\n+++ b/%TEMP%\\docs-drift-real-t8zf6yui\\simonw__llm\\llm\\default_plugins\\openai_models.py\n@@ -862,7 +862,7 @@\n             raise click.ClickException(str(ex))\r\n         except Exception as ex:\r\n             if getattr(sys, \"_called_from_test\", False) or os.environ.get(\r\n-                \"LLM_RAISE_ERRORS\"\r\n+                \"LLM_DEBUG_ERRORS\"\r\n             ):\r\n                 raise\r\n             raise click.ClickException(str(ex))\r\n", "files_modified": ["%TEMP%\\docs-drift-real-t8zf6yui\\simonw__llm\\llm\\default_plugins\\openai_models.py"], "lint": {"status": "ok", "output": ""}, "_warning": "%TEMP%\\docs-drift-real-t8zf6yui\\simonw__llm\\llm\\default_plugins\\openai_models.py was last read with offset/limit pagination (partial view). Read the remaining pages, or use patch, before overwriting it.", "resolved_path": "%TEMP%\\docs-drift-real-t8zf6yui\\simonw__llm\\llm\\default_plugins\\openai_models.py"}
+tool result:
+{"success": true, "diff": "--- a/%TEMP%\\docs-drift-real-t8zf6yui\\simonw__llm\\docs\\plugins\\advanced-model-plugins.md\n+++ b/%TEMP%\\docs-drift-real-t8zf6yui\\simonw__llm\\docs\\plugins\\advanced-model-plugins.md\n@@ -738,16 +738,16 @@\n ```\r\n This string will be recorded in the database and shown in the output of `llm logs` and `llm logs --json`.\r\n \r\n-(tutorial-model-plugin-raise-errors)=\r\n-\r\n-## LLM_RAISE_ERRORS\r\n+(tutorial-model-plugin-debug-errors)=\r\n+\r\n+## LLM_DEBUG_ERRORS\r\n \r\n While working on a plugin it can be useful to request that errors are raised instead of being caught and logged, so you can access them from the Python debugger.\r\n \r\n-Set the `LLM_RAISE_ERRORS` environment variable to enable this behavior, then run `llm` like this:\r\n+Set the `LLM_DEBUG_ERRORS` environment variable to enable this behavior, then run `llm` like this:\r\n \r\n ```bash\r\n-LLM_RAISE_ERRORS=1 python -i -m llm ...\r\n+LLM_DEBUG_ERRORS=1 python -i -m llm ...\r\n ```\r\n The `-i` option means Python will drop into an interactive shell if an error occurs. You can then open a debugger at the most recent error using:\r\n \r\n", "files_modified": ["%TEMP%\\docs-drift-real-t8zf6yui\\simonw__llm\\docs\\plugins\\advanced-model-plugins.md"], "lint": {"status": "skipped", "mess ... (430 more characters)
+tool result:
+{"success": true, "diff": "--- a/%TEMP%\\docs-drift-real-t8zf6yui\\simonw__llm\\README.md\n+++ b/%TEMP%\\docs-drift-real-t8zf6yui\\simonw__llm\\README.md\n@@ -318,7 +318,7 @@\n     * [Restoring opaque metadata on subsequent requests](https://llm.datasette.io/en/stable/plugins/advanced-model-plugins.html#restoring-opaque-metadata-on-subsequent-requests)\r\n     * [Tracking token usage](https://llm.datasette.io/en/stable/plugins/advanced-model-plugins.html#tracking-token-usage)\r\n     * [Tracking resolved model names](https://llm.datasette.io/en/stable/plugins/advanced-model-plugins.html#tracking-resolved-model-names)\r\n-    * [LLM_RAISE_ERRORS](https://llm.datasette.io/en/stable/plugins/advanced-model-plugins.html#llm-raise-errors)\r\n+    * [LLM_DEBUG_ERRORS](https://llm.datasette.io/en/stable/plugins/advanced-model-plugins.html#llm-debug-errors)\r\n   * [Utility functions for plugins](https://llm.datasette.io/en/stable/plugins/plugin-utilities.html)\r\n     * [llm.get_key()](https://llm.datasette.io/en/stable/plugins/plugin-utilities.html#llm-get-key)\r\n     * [llm.user_dir()](https://llm.datasette.io/en/stable/plugins/plugin-utilities.html#llm-user-dir)\r\n", "files_modified": ["%TEMP%\\docs-drift-real-t8zf6yui\\simonw__llm\\README.md"], "lint": {"status": "skipped", "message":  ... (362 more characters)
+[12:47:47Z] answer 7 (3.0 s, prompt 9308 / completion 102 tokens):
+tool call: search_files {"output_mode": "content", "pattern": "LLM_RAISE_ERRORS"}
+
+[12:47:48Z] request 8 to model glm-5.3: 20 messages, 7 tools offered
+assistant: (its own earlier tool call: search_files)
+tool result:
+{"total_count": 1, "matches": [{"path": ".\\docs\\changelog.md", "line": 566, "content": "- Set the `LLM_RAISE_ERRORS=1` environment variable to raise errors during prompts rather than suppressing them, which means you can run `python -i -m llm 'prompt'` and then drop into a debugger on errors with `import pdb; pdb.pm()`. [#817](https://github.com/simonw/llm/issues/817)"}]}
+[12:47:50Z] request 9 to model glm-5.3: 22 messages, 7 tools offered
+assistant: (its own earlier tool call: tool_search)
+tool result:
+{"queries": ["terminal run command shell"], "total_available": 2, "results": [{"query": "terminal run command shell", "matches": [], "available_sources": [{"name": "docs_drift", "tool_count": 2}], "hint": "This query returned no lexical matches, but the sources above are connected and their tools remain available. Retry tool_search with the service name plus a concrete action or object before concluding the capability is unavailable."}], "tools": {}}
+[12:47:51Z] answer 8 (2.8 s, prompt 9524 / completion 64 tokens):
+tool call: tool_search {"queries": ["terminal run command shell"]}
+
+[12:47:55Z] answer 9 (4.1 s, prompt 9692 / completion 186 tokens):
+text: Renamed LLM_RAISE_ERRORS to LLM_DEBUG_ERRORS in all 4 live locations:
+
+- llm/cli.py:1173 and llm/default_plugins/openai_models.py:865 — the os.environ.get checks
+- docs/plugins/advanced-model-plugins.md — heading, body, example command, and the (tutorial-model-plugin-debug-errors)= anchor label
+- README.md:321 — link text and its #llm-debug-errors anchor
+
+Both Python files pass the post-edit syntax check, and a repo-wide search confirms the only remaining LLM_RAISE_ERRORS reference is the historical release note in docs/changelog.md, which I left untouched since it documents a past release.
+
+--- 3. afterwards ---
+Hermes exit_code: 0
+chat requests sent to the model: 9 (of which 0 side requests without tools)
+tokens reported by Hermes: {"input": 58488, "output": 1090, "total": 59578, "cache_read": 51712, "cache_write": 0}
+edit results that carried a docs_drift entry: 0 (0 findings reported in them)
+reminder before the end of the turn (pre_verify): not delivered
+
+$ git status --short
+ M README.md
+ M docs/plugins/advanced-model-plugins.md
+ M llm/cli.py
+ M llm/default_plugins/openai_models.py
+$ git grep -n -F -e "LLM_RAISE_ERRORS"        (where the old name is still written)
+docs/changelog.md:566:- Set the `LLM_RAISE_ERRORS=1` environment variable to raise errors during prompts rather than suppressing them, which means you can run `python -i -m llm 'prompt'` and then drop into a debugger on errors with `import pdb; pdb.pm()`. [#817](https://github.com/simonw/llm/issues/817)
+(1 of these lines are in a changelog or release notes and are not counted as stale docs)
+$ python -m docsdrift . --since HEAD        (the same scanner, run outside Hermes)
+docs-drift (new since HEAD): 0 findings (29 doc files checked against 92 code files, 883 ms)
+
+withheld as uncertain: 21 (stale-context: 21).
+note: Compared with HEAD: 4 changed file(s), 0 finding(s) already present before the change are not shown.
+
+OUTCOME: docs consistent (no doc file uses LLM_RAISE_ERRORS any more)

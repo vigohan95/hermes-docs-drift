@@ -1,0 +1,37 @@
+A code-only rename on a real repository, without a model   2026-11-10T12:55:24Z
+repository: https://github.com/simonw/llm.git at commit 39d3254
+scanner:    docs-drift commit 4a1d964
+
+$ git grep -n -F -e "LLM_RAISE_ERRORS"
+README.md:321:    * [LLM_RAISE_ERRORS](https://llm.datasette.io/en/stable/plugins/advanced-model-plugins.html#llm-raise-errors)
+docs/changelog.md:566:- Set the `LLM_RAISE_ERRORS=1` environment variable to raise errors during prompts rather than suppressing them, which means you can run `python -i -m llm 'prompt'` and then drop
+docs/plugins/advanced-model-plugins.md:743:## LLM_RAISE_ERRORS
+docs/plugins/advanced-model-plugins.md:747:Set the `LLM_RAISE_ERRORS` environment variable to enable this behavior, then run `llm` like this:
+docs/plugins/advanced-model-plugins.md:750:LLM_RAISE_ERRORS=1 python -i -m llm ...
+llm/cli.py:1173:            "LLM_RAISE_ERRORS", None
+llm/default_plugins/openai_models.py:865:                "LLM_RAISE_ERRORS"
+
+$ sed -i "s/LLM_RAISE_ERRORS/LLM_DEBUG_ERRORS/" llm/cli.py llm/default_plugins/openai_models.py
+$ git status --short
+ M llm/cli.py
+ M llm/default_plugins/openai_models.py
+
+$ python -m docsdrift . --since HEAD
+docs-drift (new since HEAD): 2 findings (29 doc files checked against 92 code files, 1925 ms)
+
+README.md:321  env-undefined  [high]  DD-1772fb33
+  `LLM_RAISE_ERRORS` is no longer read by the code after the edit, but the docs still name it.
+  docs: README.md:321  * [LLM_RAISE_ERRORS](https://llm.datasette.io/en/stable/plugins/advanced-model-plugins.html#llm-raise-errors)
+  code: llm/cli.py:1172  if getattr(sys, "_called_from_test", False) or os.environ.get(
+  fix:  The same edit made the code read `LLM_DEBUG_ERRORS` (llm/cli.py:1172). If this is a rename, replace `LLM_RAISE_ERRORS` with `LLM_DEBUG_ERRORS` in the docs.
+
+docs/plugins/advanced-model-plugins.md:743  env-undefined  [high]  DD-89a33444
+  `LLM_RAISE_ERRORS` is no longer read by the code after the edit, but the docs still name it.
+  docs: docs/plugins/advanced-model-plugins.md:743  ## LLM_RAISE_ERRORS
+  code: llm/cli.py:1172  if getattr(sys, "_called_from_test", False) or os.environ.get(
+  also at lines: 747, 750
+  fix:  The same edit made the code read `LLM_DEBUG_ERRORS` (llm/cli.py:1172). If this is a rename, replace `LLM_RAISE_ERRORS` with `LLM_DEBUG_ERRORS` in the docs.
+
+withheld as uncertain: 21 (stale-context: 21).
+note: Compared with HEAD: 2 changed file(s), 0 finding(s) already present before the change are not shown.
+(exit code 1)

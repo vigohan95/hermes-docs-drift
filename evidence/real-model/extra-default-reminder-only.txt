@@ -1,0 +1,111 @@
+docs-drift run with a real model   2026-11-10T12:53:27Z
+run:      default change, with the plugin (report_after_edit: false, reminder only) (extra session, not in the table)
+hermes:   Hermes Agent vgit.b7db40d (2026.9.24) · stable · local b7db40d82568
+plugin:   docs-drift is installed in this Hermes home (enabled, 0.1.0)
+settings: report_after_edit: false
+source:   docs-drift commit 4a1d964
+model:    glm-5.3 at https://api.vultrinference.com/v1, through demo/relay.py on 127.0.0.1:49945
+          (the relay forwards requests unchanged, adds the key and counts; Hermes has no key)
+project:  a fresh copy of examples/notesync with one commit
+prompt:   Change the default --timeout of notesync to 60 seconds.
+toolsets: file
+
+--- 1. what Hermes did (the events it prints with --format stream-json) ---
+$ hermes chat -q "Change the default --timeout of notesync to 60 seconds." --provider custom --base-url http://127.0.0.1:49945/v1 --api-key not-a-real-key -m glm-5.3 --yolo --format stream-json --max-turns 20 -t file
+[12:53:48Z] tool call    search_files {"pattern": "timeout", "target": "content"}
+[12:53:50Z] tool result  search_files (2138 ms)
+[12:53:52Z] tool call    read_file {"path": "notesync/cli.py"}
+[12:53:53Z] tool result  read_file (603 ms)
+[12:53:55Z] tool call    patch {"new_string": "default=60, help=\"seconds to wait for a locked file\"", "old_string": "default=30, help=\"seconds to wait for a locked file\"", "path": "notesync/cli.py"}
+[12:53:55Z] tool call    patch {"new_string": "| `--timeout` | `60` | seconds to wait for a locked file |", "old_string": "| `--timeout` | `30` | seconds to wait for a locked file |", "path": "README.md"}
+[12:53:58Z] tool result  patch (3495 ms)
+             (fields from Hermes' own tool, not shown: diff, files_modified, lint, resolved_path, success)
+             (no docs_drift block: the edit caused no new drift and resolved none)
+[12:53:58Z] tool result  patch (3498 ms)
+             (fields from Hermes' own tool, not shown: diff, files_modified, lint, resolved_path, success)
+             (no docs_drift block: the edit caused no new drift and resolved none)
+[12:54:01Z] tool call    tool_search {"queries": ["run terminal commands"]}
+[12:54:01Z] tool result  tool_search (10 ms)
+[12:54:05Z] tool call    tool_search {"queries": ["terminal execute shell command"]}
+[12:54:05Z] tool result  tool_search (9 ms)
+[12:54:07Z] assistant    Done. The --timeout default changed from 30 to 60 seconds:
+             
+             - notesync/cli.py:13 — `default=30` → `default=60`; patch's lint check passed.
+             - README.md:17 — options table updated to match.
+             
+             No terminal tool is available in this session, so I couldn't run `make test` myself; the lint check on cli.py passed automatically after the edit.
+[12:54:07Z] end of turn  exit_code 0, 29497 ms
+
+--- 2. what the model was sent and what it answered (the relay log, unedited) ---
+[12:53:46Z] request 1 to model glm-5.3: 2 messages, 7 tools offered
+docs_drift tools: listed inside another tool's description
+system prompt (12951 characters, not shown)
+user message:
+Change the default --timeout of notesync to 60 seconds.
+[12:53:48Z] answer 1 (1.7 s, prompt 4837 / completion 28 tokens):
+tool call: search_files {"pattern": "timeout", "target": "content"}
+
+[12:53:50Z] request 2 to model glm-5.3: 4 messages, 7 tools offered
+assistant: (its own earlier tool call: search_files)
+tool result:
+{"total_count": 2, "matches": [{"path": ".\\README.md", "line": 17, "content": "| `--timeout` | `30` | seconds to wait for a locked file |"}, {"path": ".\\notesync\\cli.py", "line": 13, "content": "    parser.add_argument(\"--timeout\", type=int, default=30, help=\"seconds to wait for a locked file\")"}]}
+[12:53:52Z] answer 2 (1.7 s, prompt 4963 / completion 15 tokens):
+tool call: read_file {"path": "notesync/cli.py"}
+
+[12:53:53Z] request 3 to model glm-5.3: 6 messages, 7 tools offered
+assistant: (its own earlier tool call: read_file)
+tool result:
+{"content": "1|\"\"\"notesync: copy Markdown notes to a folder, one file per note.\"\"\"\n2|\n3|import argparse\n4|import os\n5|import shutil\n6|from pathlib import Path\n7|\n8|\n9|def build_parser() -> argparse.ArgumentParser:\n10|    parser = argparse.ArgumentParser(prog=\"notesync\")\n11|    parser.add_argument(\"source\", help=\"folder with .md notes\")\n12|    parser.add_argument(\"--output-dir\", default=\"./out\", help=\"where the copies go\")\n13|    parser.add_argument(\"--timeout\", type=int, default=30, help=\"seconds to wait for a locked file\")\n14|    parser.add_argument(\"--dry-run\", action=\"store_true\", help=\"print what would be copied\")\n15|    return parser\n16|\n17|\n18|def main(argv=None) -> int:\n19|    args = build_parser().parse_args(argv)\n20|    token = os.environ.get(\"NOTESYNC_TOKEN\", \"\")\n21|    out = Path(args.output_dir)\n22|    for note in sorted(Path(args.source).glob(\"*.md\")):\n23|        if args.dry_run:\n24|            print(f\"would copy {note} -> {out / note.name}\")\n25|            continue\n26|        out.mkdir(parents=True, exist_ok=True)\n27|        shutil.copy2(note, out / note.name)\n28|    if token:\n29|        print(\"token set: remote upload is enabled\")\n30|    return 0\n31|\n32|\n33|if __name__ == \"__main__\":\n34|    raise SystemExit(main())", "total_lines": 34, "file_size": 1144, "truncated": false, "is_binary": fals ... (41 more characters)
+[12:53:55Z] answer 3 (2.1 s, prompt 5409 / completion 112 tokens):
+tool call: patch {"new_string": "default=60, help=\"seconds to wait for a locked file\"", "old_string": "default=30, help=\"seconds to wait for a locked file\"", "path": "notesync/cli.py"}
+tool call: patch {"new_string": "| `--timeout` | `60` | seconds to wait for a locked file |", "old_string": "| `--timeout` | `30` | seconds to wait for a locked file |", "path": "README.md"}
+
+[12:53:58Z] request 4 to model glm-5.3: 9 messages, 7 tools offered
+assistant: (its own earlier tool call: patch) (its own earlier tool call: patch)
+tool result:
+{"success": true, "diff": "--- a/%TEMP%\\docs-drift-real-6bd8kld0\\notesync\\notesync\\cli.py\n+++ b/%TEMP%\\docs-drift-real-6bd8kld0\\notesync\\notesync\\cli.py\n@@ -10,7 +10,7 @@\n     parser = argparse.ArgumentParser(prog=\"notesync\")\n     parser.add_argument(\"source\", help=\"folder with .md notes\")\n     parser.add_argument(\"--output-dir\", default=\"./out\", help=\"where the copies go\")\n-    parser.add_argument(\"--timeout\", type=int, default=30, help=\"seconds to wait for a locked file\")\n+    parser.add_argument(\"--timeout\", type=int, default=60, help=\"seconds to wait for a locked file\")\n     parser.add_argument(\"--dry-run\", action=\"store_true\", help=\"print what would be copied\")\n     return parser\n \n", "files_modified": ["%TEMP%\\docs-drift-real-6bd8kld0\\notesync\\notesync\\cli.py"], "lint": {"status": "ok", "output": ""}, "resolved_path": "%TEMP%\\docs-drift-real-6bd8kld0\\notesync\\notesync\\cli.py"}
+tool result:
+{"success": true, "diff": "--- a/%TEMP%\\docs-drift-real-6bd8kld0\\notesync\\README.md\n+++ b/%TEMP%\\docs-drift-real-6bd8kld0\\notesync\\README.md\n@@ -14,7 +14,7 @@\n | Option | Default | Meaning |\n | --- | --- | --- |\n | `--output-dir` | `./out` | where the copies go |\n-| `--timeout` | `30` | seconds to wait for a locked file |\n+| `--timeout` | `60` | seconds to wait for a locked file |\n | `--dry-run` | off | print what would be copied |\n \n Set `NOTESYNC_TOKEN` to enable the remote upload.\n", "files_modified": ["%TEMP%\\docs-drift-real-6bd8kld0\\notesync\\README.md"], "lint": {"status": "skipped", "message": "No linter for .md files"}, "resolved_path": "%TEMP%\\docs-drift-real-6bd8kld0\\notesync\\README.md"}
+[12:54:01Z] answer 4 (2.8 s, prompt 6145 / completion 21 tokens):
+tool call: tool_search {"queries": ["run terminal commands"]}
+
+[12:54:01Z] request 5 to model glm-5.3: 11 messages, 7 tools offered
+assistant: (its own earlier tool call: tool_search)
+tool result:
+{"queries": ["run terminal commands"], "total_available": 2, "results": [{"query": "run terminal commands", "matches": [], "available_sources": [{"name": "docs_drift", "tool_count": 2}], "hint": "This query returned no lexical matches, but the sources above are connected and their tools remain available. Retry tool_search with the service name plus a concrete action or object before concluding the capability is unavailable."}], "tools": {}}
+[12:54:03Z] answer 5 (1.8 s, prompt 6268 / completion 62 tokens):
+tool call: search_files {"pattern": "timeout|default", "target": "files
+
+[12:54:03Z] request 6 to model glm-5.3: 11 messages, 7 tools offered
+[12:54:05Z] answer 6 (1.6 s, prompt 6268 / completion 17 tokens):
+tool call: tool_search {"queries": ["terminal execute shell command"]}
+
+[12:54:05Z] request 7 to model glm-5.3: 13 messages, 7 tools offered
+assistant: (its own earlier tool call: tool_search)
+tool result:
+{"queries": ["terminal execute shell command"], "total_available": 2, "results": [{"query": "terminal execute shell command", "matches": [], "available_sources": [{"name": "docs_drift", "tool_count": 2}], "hint": "This query returned no lexical matches, but the sources above are connected and their tools remain available. Retry tool_search with the service name plus a concrete action or object before concluding the capability is unavailable."}], "tools": {}}
+[12:54:07Z] answer 7 (2.3 s, prompt 6389 / completion 103 tokens):
+text: Done. The --timeout default changed from 30 to 60 seconds:
+
+- notesync/cli.py:13 — `default=30` → `default=60`; patch's lint check passed.
+- README.md:17 — options table updated to match.
+
+No terminal tool is available in this session, so I couldn't run `make test` myself; the lint check on cli.py passed automatically after the edit.
+
+--- 3. afterwards ---
+Hermes exit_code: 0
+chat requests sent to the model: 7 (of which 0 side requests without tools)
+tokens reported by Hermes: {"input": 34011, "output": 296, "total": 34307, "cache_read": 30976, "cache_write": 0}
+edit results that carried a docs_drift entry: 0 (0 findings reported in them)
+reminder before the end of the turn (pre_verify): not delivered
+
+$ git status --short
+ M README.md
+ M notesync/cli.py
+$ git grep -n -F -e "| `--timeout` | `30` |"        (where the old name is still written)
+(nowhere)
+$ python -m docsdrift . --since HEAD        (the same scanner, run outside Hermes)
+docs-drift (new since HEAD): 0 findings (2 doc files checked against 4 code files, 127 ms)
+note: Compared with HEAD: 2 changed file(s), 0 finding(s) already present before the change are not shown.
+
+OUTCOME: docs consistent (no doc file uses | `--timeout` | `30` | any more)
