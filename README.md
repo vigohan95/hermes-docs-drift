@@ -17,28 +17,77 @@ Needs Hermes 0.21.6 or later. No Python packages are installed.
 
 ## Does it change what the agent does? Measured with a real model
 
-16 sessions in real Hermes with a real model (`glm-5.3` on Vultr Serverless Inference). The
-request was the same every time and says nothing about documentation:
-`Rename the --output-dir flag of notesync to --dest.` The project documents that flag in two
-Markdown files. A session counts as consistent when no doc file still contains the old flag
-afterwards.
+106 sessions in real Hermes with a real model, in two sets on 2026-11-10. Each session got
+one plain change request that says nothing about documentation, for example
+`Add a --dry-run flag that prints what would be copied.` Every request was run with the
+plugin installed (default settings) and without it, from the same starting files; nothing
+else differed. After each session a script read the files it left and decided whether the
+docs still agree with the code: after a rename, a removal or a changed default, no doc line
+still has the old name or value; after an addition, some doc file mentions the new name. The
+models are `glm-5.3` and the smaller `qwen3.8-27b`, both on Vultr Serverless Inference.
 
-| Hermes home | Sessions | Docs consistent with the code afterwards | Sessions in which the plugin told the model something |
-| --- | --- | --- | --- |
-| Plugin, default settings | 5 | 5 | 5 |
-| Plugin, reminder only (`report_after_edit: false`) | 5 | 5 | 0 |
-| No plugin | 6 | 6 | n/a |
+| Model | Request | Project | With the plugin: docs consistent / sessions | Without the plugin: docs consistent / sessions | Sessions with the plugin in which it told the model something |
+| --- | --- | --- | --- | --- | --- |
+| `glm-5.3` | add a flag, first batch | example | 5 / 5 | 2 / 5 | 5 |
+| `glm-5.3` | add a flag, second batch (a replication) | example | 5 / 5 | 0 / 5 | 4 |
+| `glm-5.3` | add a flag, both batches together | example | 10 / 10 | 2 / 10 | 9 |
+| `glm-5.3` | add a flag | encode/uvicorn | 5 / 5 | 1 / 5 | 5 |
+| `glm-5.3` | add an environment variable | example | 5 / 5 | 5 / 5 | 5 |
+| `glm-5.3` | change a default | example | 5 / 5 | 5 / 5 | 2 |
+| `glm-5.3` | remove a flag | example | 5 / 5 | 5 / 5 | 4 |
+| `glm-5.3` | remove an environment variable | example | 5 / 5 | 5 / 5 | 2 |
+| `glm-5.3` | rename a flag (first set) | example | 5 / 5 | 6 / 6 | 5 |
+| `qwen3.8-27b` | add a flag | example | 5 / 5 | 5 / 5 | 5 |
+| `qwen3.8-27b` | rename a flag | example | 5 / 5 | 5 / 5 | 5 |
 
-**The outcome was the same with and without the plugin.** This model searches for the old
-name before it edits, sees it in the docs, and updates the docs by itself. These runs are
-therefore not evidence that the plugin makes an agent fix docs it would otherwise have left.
-Three more sessions (another request, and a rename in simonw/llm) ended the same way.
+**The plugin changed the outcome for one kind of request with one of the two models:
+`glm-5.3` asked to add a flag.** Without the plugin this model added the flag to the code and
+usually stopped there. The new flag ended up in the docs in 2 of 10 sessions on the example
+project and in 1 of 5 on encode/uvicorn. With the plugin, the result of the code edit said
+that no doc mentions the new flag and where the other flags are documented, and the flag
+ended up in the docs in 10 of 10 and 5 of 5 sessions. In 14 of those 15 the model had not
+touched a doc file before the plugin's note; in the other one it documented the flag in the
+same answer as the code and the plugin had nothing to say.
 
-What the five sessions with default settings do show: with a real model, the result of the
-code edit carried the `docs_drift` entry naming both stale places, the model then edited
-those places, and the plugin reported them resolved. Transcripts, the plan written before
-the counted runs, and the per-session table are in
-[evidence/real-model/](evidence/real-model/README.md).
+**For every other request the outcome was the same with and without the plugin**, and so it
+was for the second model on both of its requests, the added flag included. In all 20
+`glm-5.3` sessions of the second set that ran those requests without the plugin, the first
+thing the model did was search the project for the name or value it had been asked about
+(`legacy-sync`, `retry`, `timeout`, `NOTESYNC_TOKEN_FILE`); the search showed the doc lines,
+and the model updated them itself. Those rows are not evidence that the plugin makes an
+agent fix docs it would otherwise have left.
+
+What to keep in mind about the one difference:
+
+- It is one model and one kind of request, in two projects, with 5 sessions per arm and
+  batch. `qwen3.8-27b` given the same request on the same project read the README before
+  editing and documented the flag itself in 5 of 5 sessions without the plugin.
+- The note about an added name was written on the day of the measurement, after the first
+  set had shown no difference and before the sessions that measure it. It is the newest and
+  least measured part of the plugin; see "Names an edit added" under
+  [What it adds to a session](#what-it-adds-to-a-session).
+- The example projects were written by the plugin's author. encode/uvicorn is the only real
+  repository, with one request, and is one of the 24 repositories the scanner was tuned on.
+- The second batch of five per arm was decided after the first had been seen (5 of 5 against
+  2 of 5 could have been chance). That decision was committed before the second batch ran,
+  and the table gives both batches separately.
+- The rule only asks whether a doc file mentions the new flag, not whether what the model
+  wrote about it is right.
+
+The first set also ran 5 sessions with the plugin in reminder-only mode
+(`report_after_edit: false`) on the rename: 5 of 5 consistent, and the plugin said nothing in
+any of them. In no session with the plugin, in either set, was the reminder before the end
+of a turn delivered, because no session reached the end of a turn with something still open.
+
+What the plugin is for does not depend on these numbers: the check runs on every edit
+whether or not the model thinks of the docs, it is the same check every time, and it costs
+no model call. Whether a given model needs it is what the table is about, and for most of
+the table the answer was no.
+
+Plans written before the counted sessions, every transcript and the per-session tables:
+[the first set](evidence/real-model/README.md) (16 counted sessions and 3 more, 148 chat
+requests) and [the second set](evidence/real-model/round3/README.md) (90 sessions, 777 chat
+requests).
 
 ## Limits, in short
 
@@ -542,7 +591,7 @@ the numbers of the code that is shipped.
   directive at build time, or when a page describes files of a program that the repository
   generates.
 - The reminder before the end of a turn was delivered in no session with a real model, in
-  either round, because none reached the end of a turn with drift or an undocumented new
+  either set, because none reached the end of a turn with drift or an undocumented new
   name still open. It is exercised by the scripted demo and by unit tests only.
 
 ## What it runs and reads
@@ -588,9 +637,12 @@ After the session the driver reads the files it left, prints `OUTCOME:` and one 
 line, and `python benchmarks/summarize_real.py <directory>` makes the tables from those
 lines.
 
-The recorded sessions (16 counted, 1 on simonw/llm, 2 extra; 148 chat requests in all,
-including a first trial session) are in [evidence/real-model/](evidence/real-model/README.md),
-with the result table at the top of this README. In the session on simonw/llm the model
+The recorded sessions of the first set (16 counted, 1 on simonw/llm, 2 extra; 148 chat
+requests in all, including a first trial session) are in
+[evidence/real-model/](evidence/real-model/README.md), and those of the second set (90
+sessions, 777 chat requests) in
+[evidence/real-model/round3/](evidence/real-model/round3/README.md). The result table of both
+is at the top of this README. In the session on simonw/llm the model
 changed the code and the docs in one batch of four patches, so nothing was stale after it
 and the plugin added nothing. The same rename applied to the code only, without a model,
 gives the 2 findings the plugin would have reported:
