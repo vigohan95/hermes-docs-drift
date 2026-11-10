@@ -33,8 +33,8 @@
       "reason": "Describes where the reader's own pages would be for the example nav configuration."
     },
     "psf/black|cli-flag-undocumented|--bind-host|docs/usage_and_configuration/black_as_a_server.md:63": {
-      "true": true,
-      "reason": "blackd defines --bind-host (src/blackd/__init__.py:73). The page documents its siblings --bind-port and --max-body-size and no doc mentions --bind-host."
+      "true": false,
+      "reason": "Corrected on 2026-11-10 (first labelled true). blackd defines --bind-host (src/blackd/__init__.py:73) and the page source never spells it, but line 26 of the page is a `{program-output} blackd --help` directive: the full help, with --bind-host, is put into the page when the docs are built. The published page documents the flag."
     },
     "casey/just|cli-flag-undefined|--file|README.md:1136": {
       "true": false,
