@@ -54,3 +54,19 @@ def test_no_echo_means_no_answer_rather_than_a_guess():
 def test_without_hermes_on_the_path_the_driver_skips(capsys):
     assert type_drift.main(["--hermes", "no-such-program-docs-drift"]) == 0
     assert capsys.readouterr().out.startswith("skipped:")
+
+
+def test_waiting_for_the_input_field_counts_only_what_came_after_the_start():
+    class Terminal:
+        def __init__(self):
+            # the placeholder in the field differs between starts; the status line is always there
+            self.chunks = [f"{ESC}[1m❯ {ESC}[0mFind and fix a failing test\r\n{ESC}[2m{STATUS}{ESC}[0m"]
+
+        def read(self, size):
+            if self.chunks:
+                return self.chunks.pop(0)
+            raise EOFError
+
+    reader = type_drift.Reader(Terminal())
+    assert reader.wait_for(type_drift.READY, 0, limit=5)
+    assert not reader.wait_for(type_drift.READY, len(reader.text()), limit=0.5)

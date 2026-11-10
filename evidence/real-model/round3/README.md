@@ -139,6 +139,8 @@ easily have been chance, which is why the second was run.
 - "Told the model something" counts what the plugin added to the result of an edit without
   being asked. In 15 of the 45 sessions with the plugin the model also called the plugin's
   `docs_drift_scan` tool by itself. In none of the 15 did a doc edit follow that call.
+- In one of the uvicorn sessions with the plugin, the plugin told the model that the note
+  was resolved when it was not. See "One wrong message from the plugin" at the end.
 
 ## How the round ran
 
@@ -325,3 +327,22 @@ Two more things a reader of the transcripts will come across. The header of each
 contain a fragment of a path outside the project that the model itself wrote in a shell
 command or that Hermes clipped (`~\AppData\Local\Te ...`, `$LOCALAPPDATA/Temp/...`,
 `C:\User ...`); none of them contains a user name.
+
+## One wrong message from the plugin
+
+`glm-5.3-uvicorn-add-flag-plugin-1.txt`. The plugin had told the model that `--quiet` was
+documented nowhere (15:05:52Z). The model's patch at 15:06:04Z broke the indentation of
+`uvicorn/main.py`, and the plugin added to the result of that patch
+`1 docs-drift finding(s) resolved by this edit; 0 still open.` That was false: the file no
+longer parsed, the plugin read no flag from it, and so it took the flag for gone. The model
+repaired the file at 15:06:10Z, the plugin reported the undocumented flag again, and the
+model documented it at 15:06:27Z. The session counts as consistent, and as one where the
+plugin spoke and the doc edit came after it. Had the model stopped after the false message,
+the plugin would have been the reason for a stale doc.
+
+This is the only one of the 45 sessions with the plugin in which a "resolved" message
+follows an edit of a file that is not a doc file. It was found by reading the transcript
+after the round. The plugin was changed afterwards (commit `9723303`): a Python file that
+does not parse keeps the flags that were read from it when it last did, as long as their
+names are still written in it. That change is covered by unit tests only
+(`tests/test_added.py`); no session here ran with it.

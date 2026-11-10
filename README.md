@@ -73,6 +73,13 @@ What to keep in mind about the one difference:
   and the table gives both batches separately.
 - The rule only asks whether a doc file mentions the new flag, not whether what the model
   wrote about it is right.
+- In one of the 5 uvicorn sessions with the plugin, the plugin told the model something
+  false. The model's patch had left `uvicorn/main.py` unparsable, the plugin could read no
+  flag from it, and it answered that the open note was resolved. The model repaired the
+  file, was told about the flag again and documented it, so the session counts as
+  consistent; had it stopped at the false message, the doc would have stayed stale because
+  of the plugin. The cause was fixed after the sessions and is covered by unit tests only;
+  see [One wrong message from the plugin](evidence/real-model/round3/README.md#one-wrong-message-from-the-plugin).
 
 The first set also ran 5 sessions with the plugin in reminder-only mode
 (`report_after_edit: false`) on the rename: 5 of 5 consistent, and the plugin said nothing in
@@ -214,7 +221,10 @@ rows of the table at the top of this README measure: on an example project writt
 purpose and, for the flag, on encode/uvicorn. How often it is wrong on other real
 repositories has not been measured. Two cases where it will be wrong are known: docs
 generated from the code at build time (the name is not in any file yet), and a flag that is
-meant to stay undocumented but is not marked hidden in the code.
+meant to stay undocumented but is not marked hidden in the code. A third was seen in one
+recorded session and fixed afterwards: an edit that left the Python file unparsable made
+the plugin call the open note resolved. Such a file now keeps the flags read from it when
+it last parsed, for as long as their names are still written in it.
 
 **Tools (the model calls them).**
 
@@ -662,6 +672,8 @@ hook sends it the list of open findings once. Recorded runs:
 pseudo-terminal, in a copy of `examples/notesync` in which the flag has been renamed in the
 code only, types `/drift` and `/drift --changed` one key at a time, presses Enter and prints
 what Hermes printed in answer. No model is contacted; Hermes handles slash commands itself.
+If the Hermes home has never been started, Hermes first asks whether usage data may be
+shared; the script answers no and waits for the input field.
 It needs the pseudo-terminal package Hermes depends on (pywinpty or ptyprocess), is not run
 in CI, and has been run on Windows only. Recorded run:
 [evidence/slash-command-typed.txt](evidence/slash-command-typed.txt). An earlier record, in
@@ -671,7 +683,7 @@ without a terminal, is [evidence/slash-command.txt](evidence/slash-command.txt).
 ## Development
 
 ```sh
-python -m pytest                      # 258 tests; needs pytest and nothing else
+python -m pytest                      # 261 tests; needs pytest and nothing else
 python -m docsdrift . --checks all    # this repository checks its own docs
 python benchmarks/run_scans.py <clones_dir> <out_dir> owner__name ...
 python benchmarks/precision.py evidence/scans evidence/labels.json

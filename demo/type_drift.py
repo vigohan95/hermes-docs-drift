@@ -49,6 +49,7 @@ CONTROL = re.compile(
 RULE = set("─━═-")
 CLOSED_PORT = "http://127.0.0.1:9/v1"
 QUESTION = "Help improve Hermes?"
+READY = "☤"        # the status line Hermes draws under its input field; the field's placeholder text varies
 
 
 def plain(raw: str) -> List[str]:
@@ -119,6 +120,15 @@ class Reader:
                 return
             time.sleep(0.2)
 
+    def wait_for(self, marker: str, start: int, limit: float) -> bool:
+        """Wait until ``marker`` has been printed after position ``start``, at most ``limit`` seconds."""
+        end = time.time() + limit
+        while time.time() < end:
+            if marker in CONTROL.sub("", self.text()[start:]):
+                return True
+            time.sleep(0.2)
+        return False
+
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
@@ -164,13 +174,25 @@ def main(argv=None) -> int:
 
     reader = Reader(proc)
     reader.settle(quiet=4, limit=90)
+    asked = 0
     if QUESTION in reader.text():           # first start of this Hermes home asks about usage data: decline
+        asked = len(reader.text())
         proc.write("2")
         time.sleep(0.5)
         proc.write("\r")
-        reader.settle(quiet=6, limit=120)
         print(f'(Hermes asked "{QUESTION}" on the first start of this home; answered 2, no)')
         print()
+    if not reader.wait_for(READY, asked, limit=240):
+        shown = [ln for ln in plain(reader.text()[asked:]) if ln.strip()]
+        print("(the last lines the terminal showed)")
+        for ln in shown[-12:]:
+            print("  " + ln[:160])
+        print()
+        print("RESULT: FAILED, Hermes did not show its input field")
+        proc.terminate(force=True)
+        shutil.rmtree(work, ignore_errors=True)
+        return 1
+    reader.settle(quiet=4, limit=60)
 
     ok = True
     for command in args.commands:
