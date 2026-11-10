@@ -160,10 +160,12 @@ same scan and the same time budget. `report_added: false` turns it off.
 This was added on 2026-11-10 after the measurements under "Measured precision" were made. It
 is not one of the nine checks and it is not part of any precision or injection number in this
 README: `docs_drift_scan` without a session edit, `/drift`, `changed_only` and the command
-line never report it. It has unit tests and the real-model sessions described above; how
-often it is wrong on real repositories has not been measured. Two cases where it will be
-wrong are known: docs generated from the code at build time (the name is not in any file
-yet), and a flag that is meant to stay undocumented but is not marked hidden in the code.
+line never report it. It has unit tests, and it is what the "add a flag" and "add a variable"
+rows of the table at the top of this README measure: on an example project written for that
+purpose and, for the flag, on encode/uvicorn. How often it is wrong on other real
+repositories has not been measured. Two cases where it will be wrong are known: docs
+generated from the code at build time (the name is not in any file yet), and a flag that is
+meant to stay undocumented but is not marked hidden in the code.
 
 **Tools (the model calls them).**
 
@@ -508,12 +510,24 @@ the numbers of the code that is shipped.
 - When a name is removed over several edits, the hooks report it only at the edit after
   which no non-doc file contains it. If one use is left in the code (a test, a comment, a
   string), nothing is reported at all.
-- A variable whose name starts with an underscore is not recognised as an environment
-  variable. In a copy of ajeetdsouza/zoxide, renaming `_ZO_MAXAGE` in the code gave no
-  finding, although `README.md:431` still names it. Man pages are not read as docs either.
-- An environment variable that `click` binds with `envvar=` is not reported. In a copy of
-  simonw/llm, renaming `LLM_TOOLS_DEBUG` in the code gave no finding for `docs/usage.md:134`;
-  it was counted as withheld (`env-maybe-derived-from-settings-field`).
+- A plain scan does not recognise a variable whose name starts with an underscore
+  (zoxide's `_ZO_MAXAGE`) or one that `click` or `typer` binds to an option with `envvar=`
+  (llm's `LLM_TOOLS_DEBUG`) as an environment variable of the program. Until 2026-11-10 the
+  edit-time path missed them as well: in copies of ajeetdsouza/zoxide and simonw/llm,
+  renaming those two names in the code gave no finding. The hooks, `--since` and
+  `/drift --changed` now report such a name when an edit takes it out of the code and the
+  docs still have it; the same two renames now give `env-undefined` at `README.md:431` and
+  at `docs/usage.md:134`. That change was made after every measurement in this README,
+  the real-model sessions included, and is covered by unit tests and those two checks only.
+  Man pages are still not read as docs.
+- A documented default is read in two places only: the `Default` column of a table row, and
+  the words "default", "defaults to" or "default is" followed directly by a number, a quoted
+  value, a code span or true/false, on a line that names exactly one option. Anything else
+  is not compared with the code. That includes the form encode/uvicorn uses,
+  `**Default:** *5*` at the end of a list item, where the emphasis marks stand between the
+  word and the value: in a clone of uvicorn, changing the default of
+  `--timeout-worker-healthcheck` from 5 to 15 in the code gave no finding, although
+  `docs/settings.md:79` still says 5.
 - Plain scans report variables that a bash snippet in the docs sets for itself, and comment
   markers in such snippets, as environment variables of the program (7 of the 13 false
   default findings on held-out 3).
@@ -527,9 +541,9 @@ the numbers of the code that is shipped.
   subcommand, and do not know when a page's option list is written by a Sphinx or MyST
   directive at build time, or when a page describes files of a program that the repository
   generates.
-- The reminder before the end of a turn was delivered in no session with a real model,
-  because none ended with drift open. It is exercised by the scripted demo and by unit
-  tests only.
+- The reminder before the end of a turn was delivered in no session with a real model, in
+  either round, because none reached the end of a turn with drift or an undocumented new
+  name still open. It is exercised by the scripted demo and by unit tests only.
 
 ## What it runs and reads
 
@@ -543,8 +557,8 @@ the numbers of the code that is shipped.
 
 ## The demos
 
-There are two drivers. Both run an unmodified Hermes (agent loop, `patch` tool, plugin
-loading, hooks) against a copy of `examples/notesync` and print a transcript.
+There are three drivers. Each runs an unmodified Hermes (agent loop, `patch` tool, plugin
+loading, hooks) against a copy of an example project and prints a transcript.
 
 **With a real model: `demo/run_real.py`.** The model is any OpenAI-compatible endpoint with
 tool calling, named by three environment variables. The script is not part of the tests or
@@ -565,6 +579,15 @@ with a placeholder key, so the real one cannot appear in Hermes' output or sessi
 `--project DIR --prompt TEXT --old NAME` runs another request on another checkout, and
 `--max-requests N` stops the relay after N requests.
 
+`--task NAME` runs one of the fixed requests of the measurement at the top of this README:
+`rename` on `examples/notesync`; `default`, `remove-flag`, `remove-env`, `add-flag` and
+`add-env` on `examples/notesync-tasks`, a second small project with docs in three files; and
+`uvicorn-add-flag`, which also needs `--project` with a checkout of encode/uvicorn at commit
+`a99c1b7`. The requests and the rule that decides the outcome of each are in `demo/tasks.py`.
+After the session the driver reads the files it left, prints `OUTCOME:` and one `SUMMARY:`
+line, and `python benchmarks/summarize_real.py <directory>` makes the tables from those
+lines.
+
 The recorded sessions (16 counted, 1 on simonw/llm, 2 extra; 148 chat requests in all,
 including a first trial session) are in [evidence/real-model/](evidence/real-model/README.md),
 with the result table at the top of this README. In the session on simonw/llm the model
@@ -583,19 +606,26 @@ hook sends it the list of open findings once. Recorded runs:
 [evidence/demo-rename.txt](evidence/demo-rename.txt) and
 [evidence/demo-forget.txt](evidence/demo-forget.txt).
 
-`/drift` was not typed in an interactive Hermes chat. The handler that Hermes registered for
-it was called through Hermes' plugin manager instead:
-[evidence/slash-command.txt](evidence/slash-command.txt).
+**Typed into the interactive chat: `demo/type_drift.py`.** Starts `hermes chat --cli` in a
+pseudo-terminal, in a copy of `examples/notesync` in which the flag has been renamed in the
+code only, types `/drift` and `/drift --changed` one key at a time, presses Enter and prints
+what Hermes printed in answer. No model is contacted; Hermes handles slash commands itself.
+It needs the pseudo-terminal package Hermes depends on (pywinpty or ptyprocess), is not run
+in CI, and has been run on Windows only. Recorded run:
+[evidence/slash-command-typed.txt](evidence/slash-command-typed.txt). An earlier record, in
+which the handler Hermes registered for `/drift` was called through Hermes' plugin manager
+without a terminal, is [evidence/slash-command.txt](evidence/slash-command.txt).
 
 ## Development
 
 ```sh
-python -m pytest                      # 199 tests; needs pytest and nothing else
+python -m pytest                      # 258 tests; needs pytest and nothing else
 python -m docsdrift . --checks all    # this repository checks its own docs
 python benchmarks/run_scans.py <clones_dir> <out_dir> owner__name ...
 python benchmarks/precision.py evidence/scans evidence/labels.json
 python benchmarks/inject.py <clones_dir> <out_dir> owner__name ...
 python benchmarks/summarize_inject.py evidence/injected/final-tuning
+python benchmarks/summarize_real.py evidence/real-model/round3
 ```
 
 `<clones_dir>` holds one clone per repository, named `owner__name`, checked out at the
@@ -605,7 +635,8 @@ says which file comes from which run.
 The output of `hermes plugins validate` is in [evidence/validate.txt](evidence/validate.txt).
 The workflow in `.github/workflows/ci.yml` runs the tests on Linux, macOS and Windows with
 Python 3.11, 3.12 and 3.14 and then, on Linux, validates and installs the plugin in a pinned
-Hermes checkout and runs both scripted demos. All ten jobs passed on commit `2eb97cd`. The
+Hermes checkout and runs both scripted demos. It does not run `demo/run_real.py` or
+`demo/type_drift.py`. All ten jobs passed on commit `2eb97cd`. The
 first run, on `35e6564`, failed in the nine test jobs: pytest imported the entry point under
 the name of the checkout directory, which is not a Python identifier there. That is fixed
 in `2eb97cd` and `tests/test_layout.py` guards it. The real-model sessions and the precision

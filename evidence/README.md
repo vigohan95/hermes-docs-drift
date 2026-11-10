@@ -38,12 +38,14 @@ The four sets and the commit each repository was scanned at are in `targets.txt`
 | `hermes-self/round3/hermes-agent.json` | Scan of Hermes Agent with scanner `8ff4f2c`, before the rules that followed from it. |
 | `hermes-self/final/hermes-agent.json` | Scan of Hermes Agent with scanner `b7ba05d`. |
 | `hermes-self/labels.json` | Hand labels for the 33 default-check findings of that final scan. Its opt-in findings are not labelled. |
-| `real-model/` | Sessions of Hermes with a real model (`glm-5.3` on Vultr Serverless Inference), with and without the plugin, written by `demo/run_real.py`. Its own `README.md` has the plan, the result table and the request count. |
+| `real-model/` | Round 2: sessions of Hermes with a real model (`glm-5.3` on Vultr Serverless Inference), with and without the plugin, on a rename. Written by `demo/run_real.py`. Its own `README.md` has the plan, the result table and the request count. |
+| `real-model/round3/` | Round 3: 90 sessions with and without the plugin on requests that are not renames (add, remove, change a default; one request in encode/uvicorn), and a second model (`qwen3.8-27b`). Written by `demo/run_real.py --task`. `PLAN.md` was committed before the first session and `PLAN-ADDENDUM.md` before the sessions each of its parts is about; `README.md` has the results, with the tables printed by `benchmarks/summarize_real.py`. |
 | `demo-rename.txt`, `demo-forget.txt` | Output of `python demo/run_demo.py rename` and `forget` against Hermes Agent `b7db40d` with the plugin installed from commit `2071824`. |
 | `demo-without-plugin.txt` | The `rename` script run against a Hermes home in which the plugin is not installed. The driver's checks fail, as they should; the file is kept for the timing of Hermes' `patch` tool without the hooks. The line `plugin:` at its top names the source checkout, not an installed copy. |
 | `validate.txt` | Output of `hermes plugins validate` for this repository. |
 | `requires-hermes.txt` | Why `requires_hermes` is `>=0.21.6`: what the source of each numbered Hermes release contains. A reading of the source at each tag, not a run. |
-| `slash-command.txt` | The `/drift` command was not typed in an interactive Hermes chat, because that needs a configured model provider. A short script asked Hermes' plugin manager (`hermes_cli.plugins`) for the handler the plugin registered for `/drift` and called it. The file has the script, quoted at the top, and its output. |
+| `slash-command-typed.txt` | Output of `python demo/type_drift.py`: `/drift` and `/drift --changed` typed into `hermes chat --cli` in a pseudo-terminal, and what Hermes printed in answer. No model was contacted. |
+| `slash-command.txt` | Recorded earlier, before `/drift` had been typed in an interactive chat: a short script asked Hermes' plugin manager (`hermes_cli.plugins`) for the handler the plugin registered for `/drift` and called it. The file has the script, quoted at the top, and its output. |
 
 ## Things to know when reading the files
 

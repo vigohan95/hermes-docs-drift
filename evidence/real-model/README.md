@@ -1,5 +1,8 @@
 # Sessions with a real model
 
+This page is round 2: one request, a rename. Round 3, with requests that are not renames and
+a second model, is in [round3/](round3/README.md).
+
 Every file here is the output of `demo/run_real.py` exactly as it was printed (paths under
 the temp directory and the Hermes home are replaced as they are printed, by `demo/scrub.py`).
 All sessions ran on 2026-11-10 with Hermes at commit `b7db40d` and docs-drift at commit
