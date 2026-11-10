@@ -56,8 +56,11 @@ def _candidates():
     return temp, home
 
 
-def scrub(text: str, secrets=(), temp_dirs=None, home_dirs=None, user=None) -> str:
-    """Return ``text`` without temp-directory and home-directory prefixes and without ``secrets``."""
+def scrub(text: str, secrets=(), temp_dirs=None, home_dirs=None, user=None, named=()) -> str:
+    """Return ``text`` without temp-directory and home-directory prefixes and without ``secrets``.
+
+    ``named`` is a list of ``(directory, token)`` pairs for other directories to replace.
+    """
     if temp_dirs is None or home_dirs is None:
         found_temp, found_home = _candidates()
         temp_dirs = found_temp if temp_dirs is None else temp_dirs
@@ -65,7 +68,7 @@ def scrub(text: str, secrets=(), temp_dirs=None, home_dirs=None, user=None) -> s
     for secret in secrets:
         if secret and len(secret) >= 6:
             text = text.replace(secret, "<redacted>")
-    rules = [(p, "%TEMP%") for p in temp_dirs] + [(p, "~") for p in home_dirs]
+    rules = [(p, "%TEMP%") for p in temp_dirs] + [(p, "~") for p in home_dirs] + [(p, t) for p, t in named if p]
     # longest first, so the temp directory wins over the home directory that contains it
     rules.sort(key=lambda r: -len(r[0]))
     seen = set()
@@ -112,9 +115,9 @@ class ScrubbedStream:
         return getattr(self._stream, name)
 
 
-def install(secrets=()) -> None:
+def install(secrets=(), **kwargs) -> None:
     """Route ``sys.stdout`` through ``scrub``. Safe to call twice."""
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8", line_buffering=True)
     if not isinstance(sys.stdout, ScrubbedStream):
-        sys.stdout = ScrubbedStream(sys.stdout, secrets)
+        sys.stdout = ScrubbedStream(sys.stdout, secrets, **kwargs)

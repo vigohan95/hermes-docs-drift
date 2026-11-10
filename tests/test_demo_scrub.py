@@ -142,3 +142,9 @@ def test_real_model_driver_is_skipped_without_a_key():
                           capture_output=True, text=True, timeout=60)
     assert proc.returncode == 0
     assert proc.stdout.startswith("skipped: DOCS_DRIFT_API_KEY is not set")
+
+
+def test_named_directories_are_replaced_in_every_spelling():
+    out = scrub(r"D:\work\hermes-home\plugins and D:/work/hermes-home/logs",
+                named=[(r"D:\work\hermes-home", "$HERMES_HOME")], temp_dirs=[], home_dirs=[], user="")
+    assert out == r"$HERMES_HOME\plugins and $HERMES_HOME/logs"

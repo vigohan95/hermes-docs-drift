@@ -1,6 +1,6 @@
 """Run one session with a real language model in a real Hermes and print a transcript.
 
-    python demo/run_real.py [--hermes "hermes"] [--label TEXT]
+    python demo/run_real.py [--hermes "hermes"] [--label TEXT] [--toolsets file]
                             [--project DIR --prompt TEXT --old NAME] [--keep]
 
 The model is any OpenAI-compatible endpoint with tool calling, named by three
@@ -54,11 +54,30 @@ from run_demo import PROMPT, REMINDER, copy_example, free_port, indent, run, sho
 
 DOC_SUFFIXES = (".md", ".mdx", ".markdown", ".rst", ".txt", ".adoc")
 DOC_DIRS = ("docs/", "doc/", "documentation/", "website/", "man/")
+HISTORY = ("changelog", "changes", "history", "news", "release")   # a record of the past: old names belong there
+EDIT_TOOLS = ("write_file", "patch")
 
 
 def is_doc(rel: str) -> bool:
     low = rel.replace("\\", "/").lower()
     return low.endswith(DOC_SUFFIXES) or low.startswith(DOC_DIRS)
+
+
+def is_history(rel: str) -> bool:
+    return os.path.basename(rel.replace("\\", "/")).lower().startswith(HISTORY)
+
+
+def show_result(event: dict) -> None:
+    """Like ``run_demo.show``, but says "no docs_drift block" only for edits."""
+    name = str(event.get("name", ""))
+    try:
+        out = json.loads(event.get("output") or "")
+    except ValueError:
+        out = None
+    if name in EDIT_TOOLS or name.startswith("docs_drift") or (isinstance(out, dict) and "docs_drift" in out):
+        show(event)
+        return
+    print(f"[{stamp(event.get('timestamp'))}] tool result  {name} ({event.get('duration_ms')} ms)")
 
 
 def clone_project(src: str, dest: str) -> str:
@@ -80,16 +99,24 @@ def plugin_settings() -> str:
     home = os.environ.get("HERMES_HOME") or os.path.join(os.path.expanduser("~"), ".hermes")
     path = os.path.join(home, "config.yaml")
     try:
-        import yaml
         with open(path, encoding="utf-8") as fh:
-            config = yaml.safe_load(fh) or {}
-    except ImportError:
-        return "(not read: PyYAML is not installed for this Python)"
+            lines = fh.read().splitlines()
     except OSError:
         return "defaults (no config.yaml)"
-    entry = (((config.get("plugins") or {}).get("entries") or {}).get("docs-drift") or {})
-    settings = entry.get("settings") or entry.get("config") or {}
-    return json.dumps(settings) if settings else "defaults"
+    # The few lines under plugins.entries.docs-drift.settings, read without a YAML library.
+    stack, found = [], []
+    for raw in lines:
+        if not raw.strip() or raw.lstrip().startswith("#") or ":" not in raw:
+            continue
+        depth = len(raw) - len(raw.lstrip())
+        key, _, value = raw.strip().partition(":")
+        while stack and stack[-1][0] >= depth:
+            stack.pop()
+        where = [k for _d, k in stack]
+        if where == ["plugins", "entries", "docs-drift", "settings"] and value.strip():
+            found.append(f"{key.strip()}: {value.strip()}")
+        stack.append((depth, key.strip()))
+    return ", ".join(found) if found else "defaults"
 
 
 def old_name_lines(repo: str, old: str):
@@ -99,7 +126,8 @@ def old_name_lines(repo: str, old: str):
     docs, other = [], []
     for line in out.splitlines():
         rel = line.split(":", 1)[0]
-        (docs if is_doc(rel) else other).append(line.strip())
+        # a changelog or release notes file counts as "other": the old name is correct there
+        (docs if is_doc(rel) and not is_history(rel) else other).append(line.strip())
     return docs, other
 
 
@@ -112,6 +140,7 @@ def main(argv=None) -> int:
     ap.add_argument("--old", default="--output-dir", help="the name the request removes; looked for afterwards")
     ap.add_argument("--label", default="", help="free text for the transcript header")
     ap.add_argument("--keep", action="store_true", help="keep the temporary project directory")
+    ap.add_argument("--toolsets", default="", help="passed to hermes chat -t (default: Hermes' own default)")
     ap.add_argument("--max-turns", type=int, default=20)
     ap.add_argument("--max-requests", type=int, default=20, help="chat requests the relay lets through")
     args = ap.parse_args(argv)
@@ -126,7 +155,8 @@ def main(argv=None) -> int:
         print("DOCS_DRIFT_BASE_URL and DOCS_DRIFT_MODEL must be set as well")
         return 2
     # Everything printed from here on has the key and the temp and home directory prefixes replaced.
-    scrub.install(secrets=[key])
+    home = os.environ.get("HERMES_HOME") or os.path.join(os.path.expanduser("~"), ".hermes")
+    scrub.install(secrets=[key], named=[(os.path.abspath(home), "$HERMES_HOME"), (ROOT, "<docs-drift>")])
 
     hermes = shlex.split(args.hermes, posix=(os.name != "nt"))
     work = tempfile.mkdtemp(prefix="docs-drift-real-")
@@ -162,6 +192,7 @@ def main(argv=None) -> int:
     print("          (the relay forwards requests unchanged, adds the key and counts; Hermes has no key)")
     print("project:  " + project)
     print("prompt:   " + args.prompt)
+    print("toolsets: " + (args.toolsets or "Hermes' default"))
     print()
 
     relay = subprocess.Popen([sys.executable, os.path.join(HERE, "relay.py"), "--port", str(port), "--log", relay_log,
@@ -177,6 +208,8 @@ def main(argv=None) -> int:
         cmd = hermes + ["chat", "-q", args.prompt, "--provider", "custom", "--base-url", f"http://127.0.0.1:{port}/v1",
                         "--api-key", "not-a-real-key", "-m", model, "--yolo",
                         "--format", "stream-json", "--max-turns", str(args.max_turns)]
+        if args.toolsets:
+            cmd += ["-t", args.toolsets]
         shown = " ".join(shlex.quote(c) if os.name != "nt" else (f'"{c}"' if " " in c else c) for c in cmd)
         print("--- 1. what Hermes did (the events it prints with --format stream-json) ---")
         print("$ " + shown)
@@ -206,7 +239,10 @@ def main(argv=None) -> int:
                 said.append(str(event.get("text", "")))
                 continue
             flush_text(event.get("timestamp"))
-            show(event)
+            if event.get("type") == "tool_result":
+                show_result(event)
+            else:
+                show(event)
         flush_text()
         proc.wait()
     finally:
@@ -254,6 +290,9 @@ def main(argv=None) -> int:
     docs_left, other_left = old_name_lines(repo, args.old)
     print(f'$ git grep -n -F -e "{args.old}"        (where the old name is still written)')
     print("\n".join(docs_left + other_left) or "(nowhere)")
+    history = [ln for ln in other_left if is_doc(ln.split(":", 1)[0])]
+    if history:
+        print(f"({len(history)} of these lines are in a changelog or release notes and are not counted as stale docs)")
     print("$ python -m docsdrift . --since HEAD        (the same scanner, run outside Hermes)")
     print(run([sys.executable, "-m", "docsdrift", repo, "--since", "HEAD"], env=dict(env, PYTHONPATH=ROOT)).replace(repo, "."))
     print()
