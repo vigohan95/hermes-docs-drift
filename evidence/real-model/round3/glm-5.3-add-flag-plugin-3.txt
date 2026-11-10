@@ -1,0 +1,202 @@
+docs-drift run with a real model   2026-11-10T14:41:37Z
+run:      round 3, add-flag, with the plugin (default settings), session 3
+hermes:   Hermes Agent vgit.b7db40d (2026.9.24) · stable · local b7db40d82568
+plugin:   docs-drift is installed in this Hermes home (enabled, 0.1.0)
+settings: defaults
+source:   docs-drift commit c07bd2d
+model:    glm-5.3 at https://api.vultrinference.com/v1, through demo/relay.py on 127.0.0.1:56583
+          (the relay forwards requests unchanged, adds the key and counts; Hermes has no key)
+project:  a fresh copy of examples/notesync-tasks with one commit
+task:     add-flag
+prompt:   Add a --dry-run flag that prints what would be copied.
+toolsets: file
+
+--- 1. what Hermes did (the events it prints with --format stream-json) ---
+$ hermes chat -q "Add a --dry-run flag that prints what would be copied." --provider custom --base-url http://127.0.0.1:56583/v1 --api-key not-a-real-key -m glm-5.3 --yolo --format stream-json --max-turns 20 -t file
+[14:42:06Z] tool call    search_files {"pattern": "*.py", "target": "files"}
+[14:42:06Z] tool call    search_files {"pattern": "argparse|click|typer|sys.argv", "target": "content"}
+[14:42:13Z] tool result  search_files (6946 ms)
+[14:42:13Z] tool result  search_files (6954 ms)
+[14:42:16Z] tool call    read_file {"path": ".\\notesync\\cli.py"}
+[14:42:16Z] tool call    read_file {"path": ".\\notesync\\sync.py"}
+[14:42:17Z] tool result  read_file (897 ms)
+[14:42:17Z] tool result  read_file (903 ms)
+[14:42:21Z] tool call    patch {"path": ".\\notesync\\sync.py", "old_string": "def copy_notes(source: Path, dest: Path, one_by_one: bool = False) -> List[Path]:", "new_string": "def plan_notes(source: Path, dest: Path) -> List[Path]:\n    \"\"\"Return the list of targets a copy of every .md file in ``source`` would create.\"\"\"\n    return [dest / note.name for note in sorted(source.glob(\"*.md\"))]\n\n\ndef copy_notes(source: Path, dest: Path, one_by_one: bool = False) -> List[Path]:"}
+[14:42:21Z] tool call    patch {"path": ".\\notesync\\cli.py", "old_string": "    parser.add_argument(\"--legacy-sync\", action=\"store_true\",\n                        help=\"deprecated: copy the files one by one, as version 0.2 did\")\n    return parser", "new_string": "    parser.add_argument(\"--legacy-sync\", action=\"store_true\",\n                        help=\"deprecated: copy the files one by one, as version 0.2 did\")\n    parser.add_argument(\"--dry-run\", action=\"store_true\",\n                        help=\"print what would be copied, without copying or uploading\")\n    return parser"}
+[14:42:25Z] tool result  patch (4087 ms)
+             (fields from Hermes' own tool, not shown: _warning, diff, files_modified, lint, resolved_path, success)
+             (no docs_drift block: the edit caused no new drift and resolved none)
+[14:42:25Z] tool result  patch (4094 ms)
+             (fields from Hermes' own tool, not shown: diff, files_modified, lint, resolved_path, success)
+             "docs_drift": {
+               "note": "This edit added 1 name(s) that no doc mentions. Document them where their siblings are documented before finishing, unless they are meant to stay undocumented.",
+               "added": [
+                 {
+                   "id": "DD-d192a3a7",
+                   "check": "added-flag-undocumented",
+                   "confidence": "medium",
+                   "doc": "README.md:19",
+                   "doc_quote": "| `--legacy-sync` | off | deprecated: copy the files one by one |",
+                   "problem": "This session's edits added `--dry-run` (notesync/cli.py:18); no doc mentions it. README.md documents `--legacy-sync` and 3 other flag(s) of the project.",
+                   "code": "notesync/cli.py:18",
+                   "code_quote": "parser.add_argument(\"--dry-run\", action=\"store_true\",",
+                   "suggestion": "Document `--dry-run` in README.md (the other flags are around line 19), or leave it out on purpose."
+                 }
+               ],
+               "still_open": 1
+             }
+[14:42:29Z] tool call    patch {"new_string": "from .sync import copy_notes, plan_notes", "old_string": "from .sync import copy_notes", "path": ".\\notesync\\cli.py"}
+[14:42:32Z] tool result  patch (2874 ms)
+             (fields from Hermes' own tool, not shown: diff, files_modified, lint, resolved_path, success)
+             (no docs_drift block: the edit caused no new drift and resolved none)
+[14:42:34Z] tool call    patch {"new_string": "    args = build_parser().parse_args(argv)\n    if args.dry_run:\n        planned = plan_notes(Path(args.source), Path(args.output_dir))\n        for target in planned:\n            print(f\"would copy {target}\")\n        print(f\"{len(planned)} notes to copy\")\n        return 0\n    copied = copy_notes(Path(args.source), Path(args.output_dir), one_by_one=args.legacy_sync)", "old_string": "    args = build_parser().parse_args(argv)\n    copied = copy_notes(Path(args.source), Path(args.output_dir), one_by_one=args.legacy_sync)", "path": ".\\notesync\\cli.py"}
+[14:42:37Z] tool result  patch (3182 ms)
+             (fields from Hermes' own tool, not shown: diff, files_modified, lint, resolved_path, success)
+             (no docs_drift block: the edit caused no new drift and resolved none)
+[14:42:42Z] tool call    read_file {"path": ".\\README.md"}
+[14:42:42Z] tool result  read_file (796 ms)
+[14:42:51Z] tool call    patch {"new_string": "| `--legacy-sync` | off | deprecated: copy the files one by one |\n| `--dry-run` | off | print what would be copied, without copying or uploading |", "old_string": "| `--legacy-sync` | off | deprecated: copy the files one by one |", "path": ".\\README.md"}
+[14:42:54Z] tool result  patch (2991 ms)
+             (fields from Hermes' own tool, not shown: _warning, diff, files_modified, lint, resolved_path, success)
+             "docs_drift": {
+               "note": "1 docs-drift finding(s) resolved by this edit; 0 still open.",
+               "resolved": [
+                 "DD-d192a3a7"
+               ],
+               "still_open": 0
+             }
+[14:43:32Z] assistant    Done. Changes:
+             
+             - notesync/sync.py:8 — new `plan_notes(source, dest)` returning the targets a copy would create (same sorting/glob as `copy_notes`).
+             - notesync/cli.py:18 — new `--dry-run` flag; in `main` it prints one `would copy <target>` line per note plus a `N notes to copy` summary, and returns 0 before any copying, token read, or upload happens. The output dir is not created in dry-run mode.
+             - README.md:20 — documented the flag in the options table (docs-drift check now clean).
+             
+             Syntax/lint checks on both Python edits passed. I couldn't run `make test` — this session has no terminal-execution tool available, only file read/edit/search. Worth running `make test` yourself to confirm.
+[14:43:32Z] end of turn  exit_code 0, 106255 ms
+
+--- 2. what the model was sent and what it answered (the relay log, unedited) ---
+[14:41:56Z] request 1 to model glm-5.3: 2 messages, 7 tools offered
+docs_drift tools: listed inside another tool's description
+system prompt (12951 characters, not shown)
+user message:
+Add a --dry-run flag that prints what would be copied.
+[14:42:06Z] answer 1 (9.8 s, prompt 4835 / completion 59 tokens):
+tool call: search_files {"pattern": "*.py", "target": "files"}
+tool call: search_files {"pattern": "argparse|click|typer|sys.argv", "target": "content"}
+
+[14:42:13Z] request 2 to model glm-5.3: 5 messages, 7 tools offered
+assistant: (its own earlier tool call: search_files) (its own earlier tool call: search_files)
+tool result:
+{"total_count": 5, "files": ["./.git", ".\\notesync\\__init__.py", ".\\notesync\\upload.py", ".\\notesync\\sync.py", ".\\notesync\\cli.py"]}
+tool result:
+{"total_count": 3, "matches": [{"path": ".\\notesync\\cli.py", "line": 3, "content": "import argparse"}, {"path": ".\\notesync\\cli.py", "line": 10, "content": "def build_parser() -> argparse.ArgumentParser:"}, {"path": ".\\notesync\\cli.py", "line": 11, "content": "    parser = argparse.ArgumentParser(prog=\"notesync\")"}]}
+[14:42:16Z] answer 2 (3.1 s, prompt 5046 / completion 32 tokens):
+tool call: read_file {"path": ".\\notesync\\cli.py"}
+tool call: read_file {"path": ".\\notesync\\sync.py"}
+
+[14:42:17Z] request 3 to model glm-5.3: 8 messages, 7 tools offered
+assistant: (its own earlier tool call: read_file) (its own earlier tool call: read_file)
+tool result:
+{"content": "1|\"\"\"notesync: copy Markdown notes to a folder and upload them.\"\"\"\n2|\n3|import argparse\n4|from pathlib import Path\n5|\n6|from .sync import copy_notes\n7|from .upload import read_token, upload\n8|\n9|\n10|def build_parser() -> argparse.ArgumentParser:\n11|    parser = argparse.ArgumentParser(prog=\"notesync\")\n12|    parser.add_argument(\"source\", help=\"folder with .md notes\")\n13|    parser.add_argument(\"--output-dir\", default=\"./out\", help=\"where the copies go\")\n14|    parser.add_argument(\"--timeout\", type=int, default=30, help=\"seconds to wait for the server\")\n15|    parser.add_argument(\"--retries\", type=int, default=3, help=\"how often a failed upload is tried again\")\n16|    parser.add_argument(\"--legacy-sync\", action=\"store_true\",\n17|                        help=\"deprecated: copy the files one by one, as version 0.2 did\")\n18|    return parser\n19|\n20|\n21|def main(argv=None) -> int:\n22|    args = build_parser().parse_args(argv)\n23|    copied = copy_notes(Path(args.source), Path(args.output_dir), one_by_one=args.legacy_sync)\n24|    token = read_token()\n25|    if token:\n26|        upload(copied, token, timeout=args.timeout, retries=args.retries)\n27|    print(f\"{len(copied)} notes copied\")\n28|    return 0\n29|\n30|\n31|if __name__ == \"__main__\":\n32|    raise SystemExit(main())", "total_lines": 32, "file_size": 119 ... (81 more characters)
+tool result:
+{"content": "1|\"\"\"Copying the notes.\"\"\"\n2|\n3|import shutil\n4|from pathlib import Path\n5|from typing import List\n6|\n7|\n8|def copy_notes(source: Path, dest: Path, one_by_one: bool = False) -> List[Path]:\n9|    \"\"\"Copy every .md file in ``source`` to ``dest`` and return the copies.\"\"\"\n10|    notes = sorted(source.glob(\"*.md\"))\n11|    dest.mkdir(parents=True, exist_ok=True)\n12|    copied = []\n13|    if one_by_one:\n14|        # the 0.2 way: open, read and write each file, flushing after every one\n15|        for note in notes:\n16|            target = dest / note.name\n17|            with open(note, \"rb\") as src, open(target, \"wb\") as out:\n18|                out.write(src.read())\n19|                out.flush()\n20|            copied.append(target)\n21|        return copied\n22|    for note in notes:\n23|        copied.append(Path(shutil.copy2(note, dest / note.name)))\n24|    return copied", "total_lines": 24, "file_size": 814, "truncated": false, "is_binary": false, "is_image": false, "not_found": false}
+[14:42:21Z] answer 3 (3.9 s, prompt 5826 / completion 284 tokens):
+tool call: patch {"path": ".\\notesync\\sync.py", "old_string": "def copy_notes(source: Path, dest: Path, one_by_one: bool = False) -> List[Path]:", "new_string": "def plan_notes(source: Path, dest: Path) -> List[Path]:\n    \"\"\"Return the list of targets a copy of every .md file in ``source`` would create.\"\"\"\n    return [dest / note.name for note in sorted(source.glob(\"*.md\"))]\n\n\ndef copy_notes(source: Path, dest: Path, one_by_one: bool = False) -> List[Path]:"}
+tool call: patch {"path": ".\\notesync\\cli.py", "old_string": "    parser.add_argument(\"--legacy-sync\", action=\"store_true\",\n                        help=\"deprecated: copy the files one by one, as version 0.2 did\")\n    return parser", "new_string": "    parser.add_argument(\"--legacy-sync\", action=\"store_true\",\n                        help=\"deprecated: copy the files one by one, as version 0.2 did\")\n    parser.add_argument(\"--dry-run\", action=\"store_true\",\n                        help=\"print what would be copied, without copying or uploading\")\n    return parser"}
+
+[14:42:25Z] request 4 to model glm-5.3: 11 messages, 7 tools offered
+assistant: (its own earlier tool call: patch) (its own earlier tool call: patch)
+tool result:
+{"success": true, "diff": "--- a/%TEMP%\\docs-drift-real-b4pg1mjv\\notesync\\notesync\\sync.py\n+++ b/%TEMP%\\docs-drift-real-b4pg1mjv\\notesync\\notesync\\sync.py\n@@ -3,6 +3,11 @@\n import shutil\n from pathlib import Path\n from typing import List\n+\n+\n+def plan_notes(source: Path, dest: Path) -> List[Path]:\n+    \"\"\"Return the list of targets a copy of every .md file in ``source`` would create.\"\"\"\n+    return [dest / note.name for note in sorted(source.glob(\"*.md\"))]\n \n \n def copy_notes(source: Path, dest: Path, one_by_one: bool = False) -> List[Path]:\n", "files_modified": ["%TEMP%\\docs-drift-real-b4pg1mjv\\notesync\\notesync\\sync.py"], "lint": {"status": "ok", "output": ""}, "_warning": "%TEMP%\\docs-drift-real-b4pg1mjv\\notesync\\notesync\\sync.py was last read with offset/limit pagination (partial view). Read the remaining pages, or use patch, before overwriting it.", "resolved_path": "%TEMP%\\docs-drift-real-b4pg1mjv\\notesync\\notesync\\sync.py"}
+tool result:
+(other fields, not shown: diff, files_modified, lint, resolved_path, success)
+"docs_drift": {
+  "note": "This edit added 1 name(s) that no doc mentions. Document them where their siblings are documented before finishing, unless they are meant to stay undocumented.",
+  "added": [
+    {
+      "id": "DD-d192a3a7",
+      "check": "added-flag-undocumented",
+      "confidence": "medium",
+      "doc": "README.md:19",
+      "doc_quote": "| `--legacy-sync` | off | deprecated: copy the files one by one |",
+      "problem": "This session's edits added `--dry-run` (notesync/cli.py:18); no doc mentions it. README.md documents `--legacy-sync` and 3 other flag(s) of the project.",
+      "code": "notesync/cli.py:18",
+      "code_quote": "parser.add_argument(\"--dry-run\", action=\"store_true\",",
+      "suggestion": "Document `--dry-run` in README.md (the other flags are around line 19), or leave it out on purpose."
+    }
+  ],
+  "still_open": 1
+}
+[14:42:29Z] answer 4 (3.4 s, prompt 6988 / completion 43 tokens):
+tool call: patch {"new_string": "from .sync import copy_notes, plan_notes", "old_string": "from .sync import copy_notes", "path": ".\\notesync\\cli.py"}
+
+[14:42:32Z] request 5 to model glm-5.3: 13 messages, 7 tools offered
+assistant: (its own earlier tool call: patch)
+tool result:
+{"success": true, "diff": "--- a/%TEMP%\\docs-drift-real-b4pg1mjv\\notesync\\notesync\\cli.py\n+++ b/%TEMP%\\docs-drift-real-b4pg1mjv\\notesync\\notesync\\cli.py\n@@ -3,7 +3,7 @@\n import argparse\n from pathlib import Path\n \n-from .sync import copy_notes\n+from .sync import copy_notes, plan_notes\n from .upload import read_token, upload\n \n \n", "files_modified": ["%TEMP%\\docs-drift-real-b4pg1mjv\\notesync\\notesync\\cli.py"], "lint": {"status": "ok", "output": ""}, "resolved_path": "%TEMP%\\docs-drift-real-b4pg1mjv\\notesync\\notesync\\cli.py"}
+[14:42:34Z] answer 5 (2.0 s, prompt 7261 / completion 145 tokens):
+tool call: patch {"new_string": "    args = build_parser().parse_args(argv)\n    if args.dry_run:\n        planned = plan_notes(Path(args.source), Path(args.output_dir))\n        for target in planned:\n            print(f\"would copy {target}\")\n        print(f\"{len(planned)} notes to copy\")\n        return 0\n    copied = copy_notes(Path(args.source), Path(args.output_dir), one_by_one=args.legacy_sync)", "old_string": "    args = build_parser().parse_args(argv)\n    copied = copy_notes(Path(args.source), Path(args.output_dir), one_by_one=args.legacy_sync)", "path": ".\\notesync\\cli.py"}
+
+[14:42:37Z] request 6 to model glm-5.3: 15 messages, 7 tools offered
+assistant: (its own earlier tool call: patch)
+tool result:
+{"success": true, "diff": "--- a/%TEMP%\\docs-drift-real-b4pg1mjv\\notesync\\notesync\\cli.py\n+++ b/%TEMP%\\docs-drift-real-b4pg1mjv\\notesync\\notesync\\cli.py\n@@ -22,6 +22,12 @@\n \n def main(argv=None) -> int:\n     args = build_parser().parse_args(argv)\n+    if args.dry_run:\n+        planned = plan_notes(Path(args.source), Path(args.output_dir))\n+        for target in planned:\n+            print(f\"would copy {target}\")\n+        print(f\"{len(planned)} notes to copy\")\n+        return 0\n     copied = copy_notes(Path(args.source), Path(args.output_dir), one_by_one=args.legacy_sync)\n     token = read_token()\n     if token:\n", "files_modified": ["%TEMP%\\docs-drift-real-b4pg1mjv\\notesync\\notesync\\cli.py"], "lint": {"status": "ok", "output": ""}, "resolved_path": "%TEMP%\\docs-drift-real-b4pg1mjv\\notesync\\notesync\\cli.py"}
+[14:42:42Z] answer 6 (4.6 s, prompt 7721 / completion 170 tokens):
+tool call: read_file {"path": ".\\README.md"}
+
+[14:42:42Z] request 7 to model glm-5.3: 17 messages, 7 tools offered
+assistant: (its own earlier tool call: read_file)
+tool result:
+{"content": "1|# notesync\n2|\n3|Copies Markdown notes to a folder, one file per note, and uploads the copies when a token\n4|is set.\n5|\n6|## Usage\n7|\n8|```sh\n9|notesync ./notes --output-dir ./backup\n10|```\n11|\n12|## Options\n13|\n14|| Option | Default | Meaning |\n15|| --- | --- | --- |\n16|| `--output-dir` | `./out` | where the copies go |\n17|| `--timeout` | `30` | seconds to wait for the server |\n18|| `--retries` | `3` | how often a failed upload is tried again |\n19|| `--legacy-sync` | off | deprecated: copy the files one by one |\n20|\n21|A failed upload is tried again 3 times before notesync gives up on that file.\n22|\n23|## Upload\n24|\n25|Set `NOTESYNC_TOKEN` to enable the upload. More in\n26|[the configuration guide](docs/configuration.md); if something goes wrong, see\n27|[troubleshooting](docs/troubleshooting.md).\n28|\n29|## Development\n30|\n31|```sh\n32|make test\n33|```", "total_lines": 33, "file_size": 774, "truncated": false, "is_binary": false, "is_image": false, "not_found": false}
+[14:42:51Z] answer 7 (8.2 s, prompt 8224 / completion 81 tokens):
+tool call: patch {"new_string": "| `--legacy-sync` | off | deprecated: copy the files one by one |\n| `--dry-run` | off | print what would be copied, without copying or uploading |", "old_string": "| `--legacy-sync` | off | deprecated: copy the files one by one |", "path": ".\\README.md"}
+
+[14:42:54Z] request 8 to model glm-5.3: 19 messages, 7 tools offered
+assistant: (its own earlier tool call: patch)
+tool result:
+(other fields, not shown: _warning, diff, files_modified, lint, resolved_path, success)
+"docs_drift": {
+  "note": "1 docs-drift finding(s) resolved by this edit; 0 still open.",
+  "resolved": [
+    "DD-d192a3a7"
+  ],
+  "still_open": 0
+}
+[14:43:32Z] answer 8 (38.7 s, prompt 8698 / completion 262 tokens):
+text: Done. Changes:
+
+- notesync/sync.py:8 — new `plan_notes(source, dest)` returning the targets a copy would create (same sorting/glob as `copy_notes`).
+- notesync/cli.py:18 — new `--dry-run` flag; in `main` it prints one `would copy <target>` line per note plus a `N notes to copy` summary, and returns 0 before any copying, token read, or upload happens. The output dir is not created in dry-run mode.
+- README.md:20 — documented the flag in the options table (docs-drift check now clean).
+
+Syntax/lint checks on both Python edits passed. I couldn't run `make test` — this session has no terminal-execution tool available, only file read/edit/search. Worth running `make test` yourself to confirm.
+
+--- 3. afterwards ---
+Hermes exit_code: 0
+chat requests sent to the model: 8 (of which 0 side requests without tools)
+tokens reported by Hermes: {"input": 54599, "output": 1076, "total": 55675, "cache_read": 48896, "cache_write": 0}
+edit results that carried a docs_drift entry: 2 (1 findings reported in them)
+reminder before the end of the turn (pre_verify): not delivered
+the plugin told the model something: yes, first in request 4 (edit result)
+edits of doc files the model issued before that request: 0; in answer to it or later: 1
+
+$ git status --short
+ M README.md
+ M notesync/cli.py
+ M notesync/sync.py
+$ git diff --stat
+ README.md        |  1 +
+ notesync/cli.py  | 10 +++++++++-
+ notesync/sync.py |  5 +++++
+ 3 files changed, 15 insertions(+), 1 deletion(-)
+$ python -m docsdrift . --since HEAD        (the same scanner, run outside Hermes)
+docs-drift (new since HEAD): 0 findings (3 doc files checked against 6 code files, 221 ms)
+
+withheld as uncertain: 1 (stale-context: 1).
+note: Compared with HEAD: 3 changed file(s), 0 finding(s) already present before the change are not shown.
+
+rule:     at least one doc file contains --dry-run (changelogs not counted); checked by demo/tasks.py
+code:     the requested change is in the code
+mentions: README.md:20:| `--dry-run` | off | print what would be copied, without copying or uploading |
+OUTCOME: docs consistent
+SUMMARY: {"doc_edits_after": 1, "doc_edits_before": 0, "entries": 2, "entries_with_findings": 1, "exit_code": 0, "findings_reported": 1, "model": "glm-5.3", "plugin": true, "reminder": false, "requests": 8, "settings": "defaults", "spoke": true, "spoke_how": "edit result", "stale_lines": 0, "task": "add-flag", "verdict": "docs consistent"}
