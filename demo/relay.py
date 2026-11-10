@@ -1,6 +1,6 @@
 """Pass chat requests from Hermes to a real OpenAI-compatible endpoint, and keep a log.
 
-    python demo/relay.py --port 8123 --log relay.log [--max-requests 40]
+    python demo/relay.py --port 8123 --log relay.log [--max-requests 40] [--trace trace.jsonl]
 
 Reads the endpoint from the environment:
 
@@ -20,6 +20,11 @@ reasons:
   ``docs_drift`` entry.
 
 The log never contains request headers. The system prompt is not logged.
+
+``--trace`` writes a second file for scripts, one JSON object per line: for each
+request of the conversation whether it carried something the plugin wrote (a
+``docs_drift`` entry with new findings in an edit result, or the reminder), and
+for each answer the tool calls in it with their full arguments.
 """
 
 from __future__ import annotations
@@ -35,6 +40,24 @@ import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 SHOWN = 1400
+REMINDER = "docs-drift: your edits in this session"
+
+
+def told_by_plugin(messages) -> dict:
+    """Does this request carry a docs_drift entry with new findings in a tool result, or the reminder."""
+    edit = reminder = False
+    for message in messages or []:
+        role, text = message.get("role"), _text_of(message.get("content"))
+        if role == "tool" and '"docs_drift"' in text:
+            try:
+                entry = (json.loads(text) or {}).get("docs_drift")
+            except (ValueError, AttributeError):
+                entry = None
+            if isinstance(entry, dict) and (entry.get("new") or entry.get("added")):
+                edit = True
+        elif role != "system" and REMINDER in text:
+            reminder = True
+    return {"told_edit": edit, "told_reminder": reminder}
 
 
 def _now() -> str:
@@ -131,6 +154,7 @@ class Relay(BaseHTTPRequestHandler):
     base_url = ""
     api_key = ""
     log_path = None
+    trace_path = None
     max_requests = 40
     lock = threading.Lock()
     count = 0
@@ -144,6 +168,12 @@ class Relay(BaseHTTPRequestHandler):
             with self.lock:
                 with open(self.log_path, "a", encoding="utf-8", newline="\n") as fh:
                     fh.write(text + "\n")
+
+    def _trace(self, record: dict) -> None:
+        if self.trace_path:
+            with self.lock:
+                with open(self.trace_path, "a", encoding="utf-8", newline="\n") as fh:
+                    fh.write(json.dumps(record, ensure_ascii=False) + "\n")
 
     def _json(self, code: int, body: dict) -> None:
         raw = json.dumps(body).encode("utf-8")
@@ -252,6 +282,8 @@ class Relay(BaseHTTPRequestHandler):
         if not lines:
             lines.append("(empty)")
         self._log(head + ":\n" + "\n".join(lines) + "\n")
+        if body.get("tools"):
+            self._trace({"answer": number, "calls": answer["calls"]})
 
     def _log_request(self, number: int, body: dict) -> None:
         messages = body.get("messages") or []
@@ -260,6 +292,7 @@ class Relay(BaseHTTPRequestHandler):
             self._log(f"[{_now()}] request {number}: a side request from Hermes without tools "
                       f"({len(messages)} messages, such as the session title); not part of the conversation")
             return
+        self._trace(dict({"request": number}, **told_by_plugin(messages)))
         names = sorted((t.get("function") or {}).get("name", "") for t in tools)
         head = f"[{_now()}] request {number} to model {body.get('model')}: {len(messages)} messages, {len(names)} tools offered"
         with self.lock:
@@ -286,6 +319,7 @@ def main(argv=None) -> int:
     ap.add_argument("--port", type=int, required=True)
     ap.add_argument("--log", required=True)
     ap.add_argument("--max-requests", type=int, default=40)
+    ap.add_argument("--trace", default="", help="also write one JSON line per request and answer to this file")
     args = ap.parse_args(argv)
     Relay.base_url = os.environ.get("DOCS_DRIFT_BASE_URL", "")
     Relay.api_key = os.environ.get("DOCS_DRIFT_API_KEY", "")
@@ -293,6 +327,7 @@ def main(argv=None) -> int:
         print("relay: DOCS_DRIFT_BASE_URL and DOCS_DRIFT_API_KEY must be set", flush=True)
         return 2
     Relay.log_path = args.log
+    Relay.trace_path = args.trace or None
     Relay.max_requests = args.max_requests
     server = ThreadingHTTPServer(("127.0.0.1", args.port), Relay)
     print(f"relay on 127.0.0.1:{args.port}", flush=True)

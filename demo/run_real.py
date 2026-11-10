@@ -1,7 +1,11 @@
 """Run one session with a real language model in a real Hermes and print a transcript.
 
     python demo/run_real.py [--hermes "hermes"] [--label TEXT] [--toolsets file]
-                            [--project DIR --prompt TEXT --old NAME] [--keep]
+                            [--task NAME | --project DIR --prompt TEXT --old NAME] [--keep]
+
+``--task`` picks one of the requests in ``demo/tasks.py`` (rename, default,
+remove-flag, remove-env, add-flag, add-env): the example project, the prompt and
+the rule by which the outcome is decided afterwards.
 
 The model is any OpenAI-compatible endpoint with tool calling, named by three
 environment variables:
@@ -51,20 +55,9 @@ ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
 import scrub  # noqa: E402  (demo/scrub.py)
 from run_demo import NO_BLOCK, PROMPT, REMINDER, copy_example, free_port, indent, run, show, stamp  # noqa: E402
+from tasks import TASKS, is_doc, is_history, judge, ordering  # noqa: E402  (demo/tasks.py)
 
-DOC_SUFFIXES = (".md", ".mdx", ".markdown", ".rst", ".txt", ".adoc")
-DOC_DIRS = ("docs/", "doc/", "documentation/", "website/", "man/")
-HISTORY = ("changelog", "changes", "history", "news", "release")   # a record of the past: old names belong there
 EDIT_TOOLS = ("write_file", "patch")
-
-
-def is_doc(rel: str) -> bool:
-    low = rel.replace("\\", "/").lower()
-    return low.endswith(DOC_SUFFIXES) or low.startswith(DOC_DIRS)
-
-
-def is_history(rel: str) -> bool:
-    return os.path.basename(rel.replace("\\", "/")).lower().startswith(HISTORY)
 
 
 def no_block_reason(plugin: str, settings: str) -> str:
@@ -144,6 +137,8 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description="Run one docs-drift session with a real model in a real Hermes.")
     ap.add_argument("--hermes", default=os.environ.get("HERMES_CMD", "hermes"),
                     help="command that starts Hermes (default: hermes, or $HERMES_CMD)")
+    ap.add_argument("--task", default="", choices=[""] + sorted(TASKS),
+                    help="one of the requests in demo/tasks.py; sets the project, the prompt and the outcome rule")
     ap.add_argument("--project", default="", help="project to copy (default: examples/notesync)")
     ap.add_argument("--prompt", default=PROMPT, help="the request given to the agent")
     ap.add_argument("--old", default="--output-dir", help="the name the request removes; looked for afterwards")
@@ -153,6 +148,11 @@ def main(argv=None) -> int:
     ap.add_argument("--max-turns", type=int, default=20)
     ap.add_argument("--max-requests", type=int, default=20, help="chat requests the relay lets through")
     args = ap.parse_args(argv)
+    task = TASKS.get(args.task)
+    if task:
+        if args.project:
+            ap.error("--task brings its own project; do not pass --project as well")
+        args.prompt = task["prompt"]
 
     key = os.environ.get("DOCS_DRIFT_API_KEY", "")
     base_url = os.environ.get("DOCS_DRIFT_BASE_URL", "")
@@ -170,6 +170,7 @@ def main(argv=None) -> int:
     hermes = shlex.split(args.hermes, posix=(os.name != "nt"))
     work = tempfile.mkdtemp(prefix="docs-drift-real-")
     relay_log = os.path.join(work, "relay.log")
+    relay_trace = os.path.join(work, "relay-trace.jsonl")
     port = free_port()
 
     # Hermes and everything it starts run without the key.
@@ -185,10 +186,11 @@ def main(argv=None) -> int:
         origin = run(["git", "-C", src, "remote", "get-url", "origin"]).splitlines()
         project = f"a local clone of {origin[0] if origin else os.path.basename(src)} at commit {commit}"
     else:
+        example = task["example"] if task else "notesync"
         repo = os.path.join(work, "notesync")
         os.makedirs(repo)
-        copy_example(repo)
-        project = "a fresh copy of examples/notesync with one commit"
+        copy_example(repo, example)
+        project = f"a fresh copy of examples/{example} with one commit"
 
     print(f"docs-drift run with a real model   {time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())}")
     if args.label:
@@ -202,12 +204,14 @@ def main(argv=None) -> int:
     print(f"model:    {model} at {base_url}, through demo/relay.py on 127.0.0.1:{port}")
     print("          (the relay forwards requests unchanged, adds the key and counts; Hermes has no key)")
     print("project:  " + project)
+    if task:
+        print("task:     " + args.task)
     print("prompt:   " + args.prompt)
     print("toolsets: " + (args.toolsets or "Hermes' default"))
     print()
 
     relay = subprocess.Popen([sys.executable, os.path.join(HERE, "relay.py"), "--port", str(port), "--log", relay_log,
-                              "--max-requests", str(args.max_requests)],
+                              "--max-requests", str(args.max_requests), "--trace", relay_trace],
                              stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
     events = []
     raw_lines = []
@@ -281,7 +285,13 @@ def main(argv=None) -> int:
             except ValueError:
                 outputs.append((e.get("name"), {}))
     blocks = [o["docs_drift"] for _n, o in outputs if isinstance(o, dict) and "docs_drift" in o]
-    reported = sum(len(b.get("new") or []) for b in blocks)
+    reported = sum(len(b.get("new") or []) + len(b.get("added") or []) for b in blocks)
+    spoke_blocks = sum(1 for b in blocks if b.get("new") or b.get("added"))
+    trace = []
+    if os.path.exists(relay_trace):
+        with open(relay_trace, encoding="utf-8") as fh:
+            trace = [json.loads(ln) for ln in fh if ln.strip()]
+    order = ordering(trace)
     end = [e for e in events if e.get("type") == "result"]
     exit_code = end[-1].get("exit_code") if end else None
     requests = log_text.count("] request ") - log_text.count("refused by the relay")
@@ -291,13 +301,53 @@ def main(argv=None) -> int:
     if end:
         print("tokens reported by Hermes: " + json.dumps(end[-1].get("tokens")))
     print(f"edit results that carried a docs_drift entry: {len(blocks)} ({reported} findings reported in them)")
-    print("reminder before the end of the turn (pre_verify): " + ("delivered" if REMINDER in log_text else "not delivered"))
+    reminded = REMINDER in log_text
+    print("reminder before the end of the turn (pre_verify): " + ("delivered" if reminded else "not delivered"))
+    if order["spoke"]:
+        print(f"the plugin told the model something: yes, first in request {order['first_request']} ({order['how']})")
+        print(f"edits of doc files the model issued before that request: {order['doc_edits_before']}; "
+              f"in answer to it or later: {order['doc_edits_after']}")
+    else:
+        print("the plugin told the model something: no")
+        print(f"edits of doc files the model issued: {order['doc_edits_before']}")
     print()
     print("$ git status --short")
     status = run(["git", "status", "--short"], cwd=repo)
     print(status or "(no changes)")
     changed = [ln[3:].strip().strip('"') for ln in status.splitlines() if len(ln) > 3]
     code_changed = [c for c in changed if not is_doc(c)]
+    if task:
+        print("$ git diff --stat")
+        print(run(["git", "-c", "core.autocrlf=false", "-c", "core.safecrlf=false", "diff", "--stat"], cwd=repo) or "(nothing)")
+        print("$ python -m docsdrift . --since HEAD        (the same scanner, run outside Hermes)")
+        print(run([sys.executable, "-m", "docsdrift", repo, "--since", "HEAD"],
+                  env=dict(env, PYTHONPATH=ROOT)).replace(repo, "."))
+        print()
+        result = judge(task, repo)
+        print("rule:     " + result["rule"] + " (changelogs not counted); checked by demo/tasks.py")
+        print("code:     " + ("the requested change is in the code" if result["code_done"]
+                              else "the requested change is NOT in the code"))
+        for line in result["stale"]:
+            print("stale:    " + line)
+        for line in result["mentions"]:
+            print("mentions: " + line)
+        print("OUTCOME: " + result["verdict"])
+        summary = {"task": args.task, "model": model, "plugin": "NOT installed" not in plugin, "settings": settings,
+                   "exit_code": exit_code, "requests": requests, "verdict": result["verdict"],
+                   "stale_lines": len(result["stale"]), "entries": len(blocks), "entries_with_findings": spoke_blocks,
+                   "findings_reported": reported, "reminder": reminded, "spoke": order["spoke"],
+                   "spoke_how": order["how"], "doc_edits_before": order["doc_edits_before"],
+                   "doc_edits_after": order["doc_edits_after"]}
+        print("SUMMARY: " + json.dumps(summary, sort_keys=True))
+        if raw_lines and exit_code != 0:
+            print("other output from Hermes:")
+            print(indent("\n".join(raw_lines[-20:]), "  "))
+        if args.keep:
+            print(f"kept: {work}")
+            print(f"kept (real path, standard error only): {work}", file=sys.stderr)
+        else:
+            shutil.rmtree(work, ignore_errors=True)
+        return 0 if exit_code == 0 else 1
     docs_left, other_left = old_name_lines(repo, args.old)
     print(f'$ git grep -n -F -e "{args.old}"        (where the old name is still written)')
     print("\n".join(docs_left + other_left) or "(nowhere)")

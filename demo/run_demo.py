@@ -45,7 +45,7 @@ sys.path.insert(0, HERE)
 import scrub  # noqa: E402  (demo/scrub.py)
 
 PROMPT = "Rename the --output-dir flag of notesync to --dest."
-REMINDER = "docs-drift: your edits in this session left"
+REMINDER = "docs-drift: your edits in this session"
 
 
 def stamp(ms=None) -> str:
@@ -58,8 +58,8 @@ def run(cmd, cwd=None, env=None) -> str:
     return (out.stdout + out.stderr).rstrip()
 
 
-def copy_example(dest: str) -> None:
-    src = os.path.join(ROOT, "examples", "notesync")
+def copy_example(dest: str, example: str = "notesync") -> None:
+    src = os.path.join(ROOT, "examples", example)
     for base, dirs, files in os.walk(src):
         dirs[:] = [d for d in dirs if d not in ("__pycache__", ".git")]
         for name in files:
