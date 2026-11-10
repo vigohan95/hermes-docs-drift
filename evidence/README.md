@@ -1,7 +1,9 @@
 # Evidence
 
 Everything here was produced by running the code in this repository on one Windows 11
-machine on 2026-11-10. Nothing was edited afterwards except where a file says so.
+machine on 2026-11-10. Nothing was edited afterwards except where a file says so. The test
+suite and the scripted example sessions also run in CI (Linux, macOS and Windows for the
+tests; Linux for Hermes); no file in this directory comes from CI.
 
 ## Which run is which
 
@@ -68,6 +70,13 @@ The four sets and the commit each repository was scanned at are in `targets.txt`
 - In `recall.txt`, "findings after an injection that were about something else" lists 10
   findings in nektos/act after its Makefile was removed. They are correct: the docs run
   `make` targets that no longer exist once the file is gone.
+- Up to and including the `final-*` runs, `benchmarks/inject.py` kept only the first ten
+  entries of `other_new_findings` per injection, so that "10" may be a cut-off list. The
+  cut was removed before `injected/round5-heldout3/` was run; that run records every one,
+  and has none.
+- `injected/round5-heldout3/` is the injection run on held-out 3: scanner commit `35e6564`,
+  run once on 2026-11-10 after all the other runs. `READING.md` in that directory says what
+  was read by hand afterwards and what was not.
 - The `run.log` files of round 1, and of round 2 for the tuning set and held-out 1, do not
   name a scanner commit, because the scripts did not write that line yet. Round 1 ran on
   commit `974f7f2`. Those two round 2 runs ran on the working tree that was then committed

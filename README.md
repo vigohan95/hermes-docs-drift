@@ -52,9 +52,19 @@ the counted runs, and the per-session table are in
   without `--since`) is often wrong on a repository it was not tuned on: 15 findings, 2 of
   them true, on 12 repositories it had never seen. The hooks do not work that way; they
   report only what an edit changed.
+- The edit-time path was measured on the same 12 repositories with changes made by a
+  script (a flag, variable, script or target renamed, a linked file removed; the docs left
+  alone): 211 of 221 such changes were reported, and no finding was about anything other
+  than the changed item. Of the 131 flag and variable reports, the first doc line of each
+  was read: 5 are lines that use the same name for something else (the shell's `PATH`, an
+  example in a note). Scripted renames are not the edits a person or a model makes; see
+  [Injected drift](#injected-drift).
 - Documentation generated when the docs are built (Sphinx directives, embedded `--help`
   output), man pages and reStructuredText are not read.
-- Everything was run on one Windows machine, with one model.
+- The test suite passes in CI on Linux, macOS and Windows with Python 3.11, 3.12 and 3.14,
+  and the validator, the install and both scripted example sessions pass in real Hermes on
+  Linux in CI. The real-model sessions and the precision and injection measurements were
+  run on one Windows machine.
 
 The longer list is under [What it does not do](#what-it-does-not-do).
 
@@ -343,9 +353,12 @@ not.
 | final | `b7ba05d` | held-out 1 | 165 | 147 (89.1%) | 47 (28.5%) |
 | final | `b7ba05d` | held-out 2 | 121 | 118 (97.5%) | 54 (44.6%) |
 | final | `b7ba05d` | all 24 | 534 | 503 (94.2%) | 182 (34.1%) |
+| round 5 | `35e6564` | held-out 3, unseen | 221 | 211 (95.5%) | 83 (37.6%) |
 
-All runs are in [evidence/recall.txt](evidence/recall.txt). The injection was not run on
-held-out 3.
+All runs are in [evidence/recall.txt](evidence/recall.txt). The last row was run once, on
+the 12 repositories of held-out 3, after everything above it, and nothing in the scanner was
+changed because of it. Three of those 12 repositories gave no candidate (no name that both
+the code and a checked doc contain), so the 221 come from 9.
 
 "Edit-aware" is what the hooks and `changed_only` do. "Plain scan" is a whole-repository
 scan of the changed tree with no knowledge of the edit. The gap between the two columns is
@@ -356,7 +369,19 @@ code.
 
 In the final run no injection produced a finding about an unrelated item, with one
 exception that is correct: removing the Makefile of nektos/act made 10 `make` commands in
-its docs point at targets that no longer exist.
+its docs point at targets that no longer exist. (Those runs recorded at most ten such
+findings per injection, so "10" there may be a cut-off list. The round 5 run records all of
+them.)
+
+On held-out 3 the count of findings about an unrelated item is 0 in all 221 injections. The
+211 detections came with 455 findings, since a renamed name is usually on several doc lines;
+all 455 name the changed item. A finding with the right name is still not always a useful
+message. The first doc line of each of the 131 flag and variable detections was read: for
+the 93 flag detections every one is the project's own command or flag description; of the
+38 variable detections, 5 point at a line that uses the name for something else (`PATH` of
+the user's shell three times, a shell test in a skill file, an example error message in a
+requirements note). The remaining lines of the 455 were not read. The notes are in
+[evidence/injected/round5-heldout3/READING.md](evidence/injected/round5-heldout3/READING.md).
 
 The misses are listed by `python benchmarks/summarize_inject.py <dir> --misses`.
 
@@ -559,10 +584,13 @@ commit in [evidence/targets.txt](evidence/targets.txt). [evidence/README.md](evi
 says which file comes from which run.
 
 The output of `hermes plugins validate` is in [evidence/validate.txt](evidence/validate.txt).
-The workflow in `.github/workflows/ci.yml` is written to run the tests on three operating
-systems and then, on Linux, to validate and install the plugin in a pinned Hermes checkout
-and run both scripted demos. It had not run on GitHub when this README was written;
-everything reported here was run on one Windows machine.
+The workflow in `.github/workflows/ci.yml` runs the tests on Linux, macOS and Windows with
+Python 3.11, 3.12 and 3.14 and then, on Linux, validates and installs the plugin in a pinned
+Hermes checkout and runs both scripted demos. All ten jobs passed on commit `2eb97cd`. The
+first run, on `35e6564`, failed in the nine test jobs: pytest imported the entry point under
+the name of the checkout directory, which is not a Python identifier there. That is fixed
+in `2eb97cd` and `tests/test_layout.py` guards it. The real-model sessions and the precision
+and injection measurements were run on one Windows machine and nowhere else.
 
 ## License
 

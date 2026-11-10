@@ -1,0 +1,15 @@
+{
+ "candidates_available": {
+  "flag": 0,
+  "env": 0,
+  "npm": 0,
+  "make": 0,
+  "path": 0
+ },
+ "baseline_findings": 0,
+ "rows": [],
+ "repo": "carloscuesta/gitmoji-cli",
+ "sha": "8f370b30271e41d33cff531dbc5b6d15b70bf869",
+ "per_kind_limit": 12,
+ "seed": 20261110
+}

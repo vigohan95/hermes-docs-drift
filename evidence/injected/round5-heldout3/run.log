@@ -1,0 +1,14 @@
+code: 35e65643ad0b7cd271e6dda5238869702ec5a55f started 2026-11-10T13:49:38Z set: third held-out (12 repositories), run once
+mvanhorn__cli-printing-press {'flag': 100, 'env': 18, 'npm': 0, 'make': 0, 'path': 96} {'flag/refactor': 'edit-aware 11/12, plain scan 0/12', 'env': 'edit-aware 12/12, plain scan 0/12', 'path': 'edit-aware 12/12, plain scan 12/12'}
+red-data-tools__YouPlot {'flag': 0, 'env': 0, 'npm': 0, 'make': 0, 'path': 0} {}
+carloscuesta__gitmoji-cli {'flag': 0, 'env': 0, 'npm': 0, 'make': 0, 'path': 0} {}
+Jia-Ethan__codex-keysmith {'flag': 30, 'env': 11, 'npm': 0, 'make': 0, 'path': 9} {'flag/literal': 'edit-aware 12/12, plain scan 0/12', 'flag/refactor': 'edit-aware 12/12, plain scan 0/12', 'env': 'edit-aware 9/11, plain scan 3/11', 'path': 'edit-aware 9/9, plain scan 9/9'}
+speedyapply__JobSpy {'flag': 0, 'env': 0, 'npm': 0, 'make': 0, 'path': 0} {}
+alexellis__arkade {'flag': 28, 'env': 3, 'npm': 0, 'make': 2, 'path': 2} {'flag/refactor': 'edit-aware 12/12, plain scan 2/12', 'env': 'edit-aware 2/3, plain scan 0/3', 'make': 'edit-aware 1/2, plain scan 0/2', 'path': 'edit-aware 2/2, plain scan 2/2'}
+realiti4__claude-swap {'flag': 27, 'env': 3, 'npm': 0, 'make': 0, 'path': 5} {'flag/literal': 'edit-aware 11/12, plain scan 0/12', 'flag/refactor': 'edit-aware 11/12, plain scan 0/12', 'env': 'edit-aware 3/3, plain scan 0/3', 'path': 'edit-aware 5/5, plain scan 5/5'}
+tmux-python__tmuxp {'flag': 18, 'env': 8, 'npm': 0, 'make': 0, 'path': 8} {'flag/literal': 'edit-aware 12/12, plain scan 0/12', 'flag/refactor': 'edit-aware 12/12, plain scan 0/12', 'env': 'edit-aware 7/8, plain scan 0/8', 'path': 'edit-aware 7/8, plain scan 6/8'}
+medialab__xan {'flag': 0, 'env': 2, 'npm': 0, 'make': 0, 'path': 112} {'env': 'edit-aware 2/2, plain scan 0/2', 'path': 'edit-aware 12/12, plain scan 12/12'}
+CLIUtils__CLI11 {'flag': 0, 'env': 0, 'npm': 0, 'make': 0, 'path': 20} {'path': 'edit-aware 12/12, plain scan 12/12'}
+six-ddc__plow {'flag': 0, 'env': 0, 'npm': 0, 'make': 0, 'path': 1} {'path': 'edit-aware 1/1, plain scan 1/1'}
+KKKKhazix__agent-autoloop {'flag': 0, 'env': 4, 'npm': 7, 'make': 0, 'path': 39} {'env': 'edit-aware 3/4, plain scan 0/4', 'npm': 'edit-aware 7/7, plain scan 7/7', 'path': 'edit-aware 12/12, plain scan 12/12'}
+finished 2026-11-10T13:53:05Z exit 0

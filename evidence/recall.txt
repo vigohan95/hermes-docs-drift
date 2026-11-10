@@ -200,3 +200,28 @@ mutations that could not be made and are not counted: 12
 further findings for the injected item itself (other doc lines linking the removed file): 0
 findings after an injection that were about something else: 0
 
+
+===== round5-heldout3   scanner code 35e6564
+12 repositories
+kind             injected  edit-aware  plain scan
+env                    43          38           3
+flag/literal           36          35           0
+flag/refactor          60          58           2
+make                    2           1           0
+npm                     7           7           7
+path                   73          72          71
+total                 221         211          83
+recall: edit-aware 0.955, plain scan 0.376
+mutations that could not be made and are not counted: 24
+further findings for the injected item itself (other doc lines linking the removed file): 0
+findings after an injection that were about something else: 0
+  miss: Jia-Ethan/codex-keysmith env MODE
+  miss: Jia-Ethan/codex-keysmith env PATH
+  miss: KKKKhazix/agent-autoloop env PATHEXT
+  miss: alexellis/arkade env KUBECONFIG
+  miss: alexellis/arkade make test
+  miss: mvanhorn/cli-printing-press flag/refactor --no-live-check
+  miss: realiti4/claude-swap flag/literal --purge
+  miss: realiti4/claude-swap flag/refactor --purge
+  miss: tmux-python/tmuxp env TMUX
+  miss: tmux-python/tmuxp path docs/cli/index.md

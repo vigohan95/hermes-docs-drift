@@ -1,0 +1,28 @@
+{
+ "candidates_available": {
+  "flag": 0,
+  "env": 0,
+  "npm": 0,
+  "make": 0,
+  "path": 1
+ },
+ "baseline_findings": 0,
+ "rows": [
+  {
+   "kind": "path",
+   "name": "history-compare.png",
+   "where": "README.md",
+   "files_changed": 1,
+   "detected_scan": true,
+   "scan_s": 0.0,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "README.md:200 [high]"
+  }
+ ],
+ "repo": "six-ddc/plow",
+ "sha": "b5afa2935ad47ca84afbb52b7b8c77bd77a58a8b",
+ "per_kind_limit": 12,
+ "seed": 20261110
+}

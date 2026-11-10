@@ -1,0 +1,338 @@
+{
+ "candidates_available": {
+  "flag": 28,
+  "env": 3,
+  "npm": 0,
+  "make": 2,
+  "path": 2
+ },
+ "baseline_findings": 0,
+ "rows": [
+  {
+   "kind": "flag/literal",
+   "name": "--format",
+   "where": "cmd/get.go:96",
+   "files_changed": 2,
+   "detected": null,
+   "note": "mutation left a definition of the flag in place"
+  },
+  {
+   "kind": "flag/refactor",
+   "name": "--format",
+   "where": "cmd/get.go:96",
+   "files_changed": 149,
+   "detected_scan": false,
+   "scan_s": 0.05,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "AGENTS.md:114 [high]"
+  },
+  {
+   "kind": "flag/literal",
+   "name": "--load-balancer",
+   "where": "cmd/apps/openfaas_app.go:39",
+   "files_changed": 1,
+   "detected": null,
+   "note": "mutation left a definition of the flag in place"
+  },
+  {
+   "kind": "flag/refactor",
+   "name": "--load-balancer",
+   "where": "cmd/apps/openfaas_app.go:39",
+   "files_changed": 5,
+   "detected_scan": false,
+   "scan_s": 0.08,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "README.md:496 [high]"
+  },
+  {
+   "kind": "flag/literal",
+   "name": "--major",
+   "where": "cmd/release.go:94",
+   "files_changed": 1,
+   "detected": null,
+   "note": "mutation left a definition of the flag in place"
+  },
+  {
+   "kind": "flag/refactor",
+   "name": "--major",
+   "where": "cmd/release.go:94",
+   "files_changed": 37,
+   "detected_scan": false,
+   "scan_s": 0.06,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "cmd/AGENTS.md:46 [high]"
+  },
+  {
+   "kind": "flag/literal",
+   "name": "--minor",
+   "where": "cmd/release.go:95",
+   "files_changed": 1,
+   "detected": null,
+   "note": "mutation left a definition of the flag in place"
+  },
+  {
+   "kind": "flag/refactor",
+   "name": "--minor",
+   "where": "cmd/release.go:95",
+   "files_changed": 32,
+   "detected_scan": false,
+   "scan_s": 0.06,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "cmd/AGENTS.md:46 [high]"
+  },
+  {
+   "kind": "flag/literal",
+   "name": "--persistence",
+   "where": "cmd/apps/cassandra_app.go:30",
+   "files_changed": 6,
+   "detected": null,
+   "note": "mutation left a definition of the flag in place"
+  },
+  {
+   "kind": "flag/refactor",
+   "name": "--persistence",
+   "where": "cmd/apps/cassandra_app.go:30",
+   "files_changed": 17,
+   "detected_scan": false,
+   "scan_s": 0.23,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "CONTRIBUTING.md:52 [high]"
+  },
+  {
+   "kind": "flag/literal",
+   "name": "--print-table",
+   "where": "cmd/install.go:48",
+   "files_changed": 0,
+   "detected": null,
+   "note": "mutation changed nothing"
+  },
+  {
+   "kind": "flag/refactor",
+   "name": "--print-table",
+   "where": "cmd/install.go:48",
+   "files_changed": 1,
+   "detected_scan": true,
+   "scan_s": 0.06,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "README.md:803 [high]"
+  },
+  {
+   "kind": "flag/literal",
+   "name": "--provider",
+   "where": "cmd/apps/inletsoperator_app.go:42",
+   "files_changed": 0,
+   "detected": null,
+   "note": "mutation changed nothing"
+  },
+  {
+   "kind": "flag/refactor",
+   "name": "--provider",
+   "where": "cmd/apps/inletsoperator_app.go:42",
+   "files_changed": 10,
+   "detected_scan": false,
+   "scan_s": 0.06,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "README.md:615 [high]"
+  },
+  {
+   "kind": "flag/literal",
+   "name": "--region",
+   "where": "cmd/apps/inletsoperator_app.go:45",
+   "files_changed": 0,
+   "detected": null,
+   "note": "mutation changed nothing"
+  },
+  {
+   "kind": "flag/refactor",
+   "name": "--region",
+   "where": "cmd/apps/inletsoperator_app.go:45",
+   "files_changed": 3,
+   "detected_scan": false,
+   "scan_s": 0.06,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "README.md:615 [high]"
+  },
+  {
+   "kind": "flag/literal",
+   "name": "--set",
+   "where": "cmd/apps/cassandra_app.go:31",
+   "files_changed": 42,
+   "detected": null,
+   "note": "mutation left a definition of the flag in place"
+  },
+  {
+   "kind": "flag/refactor",
+   "name": "--set",
+   "where": "cmd/apps/cassandra_app.go:31",
+   "files_changed": 287,
+   "detected_scan": false,
+   "scan_s": 0.06,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "README.md:36 [high]"
+  },
+  {
+   "kind": "flag/literal",
+   "name": "--systemd",
+   "where": "cmd/system/containerd.go:33",
+   "files_changed": 0,
+   "detected": null,
+   "note": "mutation changed nothing"
+  },
+  {
+   "kind": "flag/refactor",
+   "name": "--systemd",
+   "where": "cmd/system/containerd.go:33",
+   "files_changed": 5,
+   "detected_scan": true,
+   "scan_s": 0.06,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "README.md:247 [high]"
+  },
+  {
+   "kind": "flag/literal",
+   "name": "--token",
+   "where": "cmd/apps/inletsoperator_app.go:49",
+   "files_changed": 2,
+   "detected": null,
+   "note": "mutation left a definition of the flag in place"
+  },
+  {
+   "kind": "flag/refactor",
+   "name": "--token",
+   "where": "cmd/apps/inletsoperator_app.go:49",
+   "files_changed": 44,
+   "detected_scan": false,
+   "scan_s": 0.08,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "cmd/AGENTS.md:93 [high]"
+  },
+  {
+   "kind": "flag/literal",
+   "name": "--verbose",
+   "where": "cmd/chart/bump.go:40",
+   "files_changed": 4,
+   "detected": null,
+   "note": "mutation left a definition of the flag in place"
+  },
+  {
+   "kind": "flag/refactor",
+   "name": "--verbose",
+   "where": "cmd/chart/bump.go:40",
+   "files_changed": 13,
+   "detected_scan": false,
+   "scan_s": 0.08,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "README.md:446 [high]"
+  },
+  {
+   "kind": "env",
+   "name": "HOME",
+   "where": "cmd/system/actions_runner.go:83",
+   "files_changed": 17,
+   "detected_scan": false,
+   "scan_s": 0.08,
+   "detected": true,
+   "new_findings": 2,
+   "other_new_findings": [],
+   "finding": "AGENTS.md:12 [high]"
+  },
+  {
+   "kind": "env",
+   "name": "KUBECONFIG",
+   "where": "pkg/config/config.go:45",
+   "files_changed": 1,
+   "detected_scan": false,
+   "scan_s": 0.08,
+   "detected": false,
+   "new_findings": 0,
+   "other_new_findings": []
+  },
+  {
+   "kind": "env",
+   "name": "PATH",
+   "where": "cmd/get.go:395",
+   "files_changed": 17,
+   "detected_scan": false,
+   "scan_s": 0.06,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "README.md:214 [high]"
+  },
+  {
+   "kind": "make",
+   "name": "e2e",
+   "where": "Makefile:28",
+   "files_changed": 1,
+   "detected_scan": false,
+   "scan_s": 0.08,
+   "detected": true,
+   "new_findings": 2,
+   "other_new_findings": [],
+   "finding": "AGENTS.md:157 [high]"
+  },
+  {
+   "kind": "make",
+   "name": "test",
+   "where": "Makefile:24",
+   "files_changed": 1,
+   "detected_scan": false,
+   "scan_s": 0.06,
+   "detected": false,
+   "new_findings": 0,
+   "other_new_findings": []
+  },
+  {
+   "kind": "path",
+   "name": ".github/PULL_REQUEST_TEMPLATE.md",
+   "where": "AGENTS.md",
+   "files_changed": 1,
+   "detected_scan": true,
+   "scan_s": 0.06,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "AGENTS.md:357 [high]"
+  },
+  {
+   "kind": "path",
+   "name": "CONTRIBUTING.md",
+   "where": "AGENTS.md",
+   "files_changed": 1,
+   "detected_scan": true,
+   "scan_s": 0.09,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "AGENTS.md:356 [high]"
+  }
+ ],
+ "repo": "alexellis/arkade",
+ "sha": "a5f88e9316f954916ea8bf6fed53254417c2d9d6",
+ "per_kind_limit": 12,
+ "seed": 20261110
+}

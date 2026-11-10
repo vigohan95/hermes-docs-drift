@@ -222,7 +222,8 @@ def run_repo(root: str) -> dict:
                 fresh2, hit2 = hits(res2)
                 row["detected"] = bool(hit2)
                 row["new_findings"] = len(fresh2)
-                row["other_new_findings"] = [f"{f.check} {f.name} {f.doc_file}:{f.doc_line}" for f in fresh2 if f not in hit2][:10]
+                # every one of them: earlier runs kept the first ten per injection (see evidence/README.md)
+                row["other_new_findings"] = [f"{f.check} {f.name} {f.doc_file}:{f.doc_line}" for f in fresh2 if f not in hit2]
                 if hit2:
                     row["finding"] = f"{hit2[0].doc_file}:{hit2[0].doc_line} [{hit2[0].confidence}]"
                 rows.append(row)

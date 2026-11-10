@@ -1,0 +1,160 @@
+{
+ "candidates_available": {
+  "flag": 0,
+  "env": 0,
+  "npm": 0,
+  "make": 0,
+  "path": 20
+ },
+ "baseline_findings": 1,
+ "rows": [
+  {
+   "kind": "path",
+   "name": "LICENSE",
+   "where": "README.md",
+   "files_changed": 1,
+   "detected_scan": true,
+   "scan_s": 0.06,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "README.md:9 [high]"
+  },
+  {
+   "kind": "path",
+   "name": "book/chapters/advanced-topics.md",
+   "where": "book/README.md",
+   "files_changed": 1,
+   "detected_scan": true,
+   "scan_s": 0.06,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "book/README.md:18 [high]"
+  },
+  {
+   "kind": "path",
+   "name": "book/chapters/basics.md",
+   "where": "book/README.md",
+   "files_changed": 1,
+   "detected_scan": true,
+   "scan_s": 0.05,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "book/README.md:8 [high]"
+  },
+  {
+   "kind": "path",
+   "name": "book/chapters/formatting.md",
+   "where": "book/README.md",
+   "files_changed": 1,
+   "detected_scan": true,
+   "scan_s": 0.03,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "book/README.md:15 [high]"
+  },
+  {
+   "kind": "path",
+   "name": "book/chapters/installation.md",
+   "where": "book/README.md",
+   "files_changed": 1,
+   "detected_scan": true,
+   "scan_s": 0.06,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "book/README.md:7 [high]"
+  },
+  {
+   "kind": "path",
+   "name": "book/chapters/internals.md",
+   "where": "book/README.md",
+   "files_changed": 1,
+   "detected_scan": true,
+   "scan_s": 0.05,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "book/README.md:19 [high]"
+  },
+  {
+   "kind": "path",
+   "name": "book/chapters/modules-example.md",
+   "where": "book/README.md",
+   "files_changed": 1,
+   "detected_scan": true,
+   "scan_s": 0.06,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "book/README.md:25 [high]"
+  },
+  {
+   "kind": "path",
+   "name": "book/chapters/option-groups.md",
+   "where": "book/README.md",
+   "files_changed": 1,
+   "detected_scan": true,
+   "scan_s": 0.06,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "book/README.md:13 [high]"
+  },
+  {
+   "kind": "path",
+   "name": "book/chapters/options.md",
+   "where": "book/README.md",
+   "files_changed": 1,
+   "detected_scan": true,
+   "scan_s": 0.05,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "book/README.md:10 [high]"
+  },
+  {
+   "kind": "path",
+   "name": "book/chapters/toolkits.md",
+   "where": "book/README.md",
+   "files_changed": 1,
+   "detected_scan": true,
+   "scan_s": 0.06,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "book/README.md:17 [high]"
+  },
+  {
+   "kind": "path",
+   "name": "docs/CLI11_300.png",
+   "where": "README.md",
+   "files_changed": 1,
+   "detected_scan": true,
+   "scan_s": 0.05,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "README.md:3 [high]"
+  },
+  {
+   "kind": "path",
+   "name": "tests/NewParseTest.cpp",
+   "where": "README.md",
+   "files_changed": 1,
+   "detected_scan": true,
+   "scan_s": 0.05,
+   "detected": true,
+   "new_findings": 1,
+   "other_new_findings": [],
+   "finding": "README.md:1603 [high]"
+  }
+ ],
+ "repo": "CLIUtils/CLI11",
+ "sha": "1764a057b760e8873eab03f4635b4aaed5303a04",
+ "per_kind_limit": 12,
+ "seed": 20261110
+}

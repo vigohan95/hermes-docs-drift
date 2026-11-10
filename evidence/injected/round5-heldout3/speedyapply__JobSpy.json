@@ -1,0 +1,15 @@
+{
+ "candidates_available": {
+  "flag": 0,
+  "env": 0,
+  "npm": 0,
+  "make": 0,
+  "path": 0
+ },
+ "baseline_findings": 0,
+ "rows": [],
+ "repo": "speedyapply/JobSpy",
+ "sha": "68b88d6909a2342ad75fbb945c4204a3a7ed6665",
+ "per_kind_limit": 12,
+ "seed": 20261110
+}

@@ -1,0 +1,15 @@
+{
+ "candidates_available": {
+  "flag": 0,
+  "env": 0,
+  "npm": 0,
+  "make": 0,
+  "path": 0
+ },
+ "baseline_findings": 0,
+ "rows": [],
+ "repo": "red-data-tools/YouPlot",
+ "sha": "492d8864c22dbe2c50b089f5c79e840f07d49658",
+ "per_kind_limit": 12,
+ "seed": 20261110
+}
