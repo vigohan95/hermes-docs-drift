@@ -18,6 +18,12 @@ CHECKS = {
     "make-target-missing": "Docs tell the reader to run a make target that no Makefile defines.",
 }
 
+# Told to the agent in a session after an edit, never by a whole-repository scan (see checks.added_undocumented).
+EDIT_NOTES = {
+    "added-flag-undocumented": "An edit in this session added a command-line flag that no doc mentions, while the docs list other flags of the project.",
+    "added-env-undocumented": "An edit in this session added a read of an environment variable that no doc mentions, while the docs name other variables with the same prefix.",
+}
+
 CONFIDENCE_ORDER = {"high": 2, "medium": 1}
 
 
@@ -68,7 +74,7 @@ class Finding:
         d = self.brief()
         d["name"] = self.name
         d["why"] = list(self.why)
-        d["what_this_check_means"] = CHECKS.get(self.check, "")
+        d["what_this_check_means"] = CHECKS.get(self.check) or EDIT_NOTES.get(self.check, "")
         return d
 
 

@@ -17,7 +17,7 @@ from urllib.parse import unquote
 
 from .docs import Command, Doc, block_at, commands_of, table_columns, table_header_for
 from .facts import ENV_TOKEN, FLAG_LITERAL, Fact, Project, is_support_path, norm_flag
-from .model import Finding, Index
+from .model import EDIT_NOTES, Finding, Index
 from .repo import Repo
 
 THIRD_PARTY_ENV_PREFIXES = {
@@ -1375,6 +1375,148 @@ def check_path_refs(ctx: Context) -> List[Finding]:
             seen[rel] = f
         findings.extend(f.finish() for f in seen.values())
     return findings
+
+
+# ------------------------------------------------------------------ added by an edit
+def _listing_end(lines: Iterable[int]) -> int:
+    """Last line of the longest run of consecutive lines (a table, a list); the first such run on a tie."""
+    have = set(lines)
+    best_end, best_len, run = 0, 0, 0
+    for line in sorted(have):
+        run = run + 1 if (line - 1) in have else 1
+        if run > best_len:
+            best_end, best_len = line, run
+        elif run > 1 and line - 1 == best_end and run - 1 == best_len:
+            best_end, best_len = line, run
+    return best_end
+
+
+def _sibling_place(ctx: Context, lines_of: Callable[[Doc], Dict[int, Set[str]]],
+                   preferred: Set[str], others: Set[str]) -> Optional[Tuple[Doc, int, List[str]]]:
+    """(doc, line, sibling names found there) for the doc that names the most siblings."""
+    for names in (preferred, others):
+        best: Optional[Tuple[Doc, int, List[str]]] = None
+        for doc in ctx.docs:
+            by_line = {ln: hit & names for ln, hit in lines_of(doc).items() if hit & names}
+            found = sorted(set().union(*by_line.values())) if by_line else []
+            if found and (best is None or len(found) > len(best[2])):
+                best = (doc, _listing_end(by_line), found)
+        if best is not None:
+            return best
+    return None
+
+
+def added_undocumented(ctx: Context) -> List[Finding]:
+    """Flags and environment variables the edits since ``ctx.before`` added that no doc mentions.
+
+    Not one of the checks. It needs the code as it was before the edits, and it
+    is only asked for in an agent session (``Scanner.scan(added=True)``): the
+    whole-repository scan, the command line and ``changed_only`` do not run it.
+    A name is reported when the docs already document a sibling (another flag
+    of the project; another variable with the same prefix), so there is a
+    place where a reader would look for it.
+    """
+    if ctx.before is None or not (ctx.added_flags or ctx.added_envs):
+        return []
+    flag_mentions, env_mentions = ctx.doc_mentions()
+    findings: List[Finding] = []
+
+    def flag_mentioned(k: str) -> bool:
+        other = k[3:] if k.startswith("no-") else "no-" + k
+        return k in flag_mentions or other in flag_mentions
+
+    added_keys = {norm_flag(f.name) for f in ctx.added_flags}
+    product: Dict[str, Fact] = {}
+    for key, facts in ctx.flag_facts.items():
+        fact = next((f for f in facts if not is_support_path(f.file) and not f.hidden), None)
+        if fact is not None and key not in added_keys and key not in IGNORED_FLAGS:
+            product[key] = fact
+
+    def flag_lines(doc: Doc) -> Dict[int, Set[str]]:
+        out: Dict[int, Set[str]] = {}
+        for i, ln in enumerate(doc.lines, 1):
+            if "--" in ln:
+                keys = {norm_flag(m) for m in FLAG_LITERAL.findall(ln)}
+                if keys:
+                    out[i] = keys
+        return out
+
+    # A rename is reported once, where the docs still use the old name; the new name is in that finding.
+    renamed_to = [_rename_hint(old, ctx.added_flags) for k, old in ctx.removed_flags.items() if k in flag_mentions]
+    for fact in sorted(ctx.added_flags, key=lambda f: (f.file, f.line, f.name)):
+        key = norm_flag(fact.name)
+        if fact.hidden or not fact.name.startswith("--") or key in IGNORED_FLAGS or flag_mentioned(key):
+            continue
+        if any(r is fact for r in renamed_to):
+            continue
+        if any(f.file == fact.file and f.line == fact.line and flag_mentioned(k)
+               for k, ff in ctx.flag_facts.items() if k != key for f in ff):
+            ctx.skip("alias-of-documented-flag")
+            continue
+        same_file = {k for k, f in product.items() if f.file == fact.file}
+        place = _sibling_place(ctx, flag_lines, same_file, set(product))
+        if place is None:
+            ctx.skip("added-flag-no-documented-sibling")
+            continue
+        doc, line, found = place
+        shown = f"`--{found[0]}`" + (f" and {len(found) - 1} other flag(s)" if len(found) > 1 else "")
+        f = Finding(
+            check="added-flag-undocumented", name=fact.name, doc_file=doc.path, doc_line=line,
+            doc_quote=_clip(doc.line_text(line)),
+            message=f"This session's edits added `{fact.name}` ({fact.file}:{fact.line}); no doc mentions it. {doc.path} documents {shown} of the project.",
+            confidence="medium", code_file=fact.file, code_line=fact.line,
+            code_quote=ctx.code_line(fact.file, fact.line),
+            suggestion=f"Document `{fact.name}` in {doc.path} (the other flags are around line {line}), or leave it out on purpose.",
+            why=["the flag was not in the code before this session's first edit",
+                 "it appears in no doc file", f"{len(found)} other flag(s) of the project appear in {doc.path}"],
+        )
+        findings.append(f.finish())
+
+    readers: Dict[str, Fact] = {}
+    added_names = {f.name for f in ctx.added_envs}
+    for name, facts in ctx.env_facts.items():
+        fact = next((f for f in facts if not is_support_path(f.file)), None)
+        if fact is not None and name not in added_names:
+            readers[name] = fact
+
+    def env_lines(doc: Doc) -> Dict[int, Set[str]]:
+        out: Dict[int, Set[str]] = {}
+        for i, ln in enumerate(doc.lines, 1):
+            if "_" in ln:
+                names = set(ENV_TOKEN.findall(ln))
+                if names:
+                    out[i] = names
+        return out
+
+    renamed_env = [_rename_hint(old, ctx.added_envs) for n, old in ctx.removed_envs.items() if n in env_mentions]
+    for fact in sorted(ctx.added_envs, key=lambda f: (f.file, f.line, f.name)):
+        name = fact.name
+        if name in env_mentions or name.startswith("_") or "_" not in name:
+            continue
+        if any(r is fact for r in renamed_env):
+            continue
+        prefix = name.split("_")[0]
+        if prefix in THIRD_PARTY_ENV_PREFIXES and not any(len(k) >= 3 and prefix == k for k in ctx.name_keys):
+            continue
+        siblings = {n for n in readers if n.split("_")[0] == prefix}
+        place = _sibling_place(ctx, env_lines, siblings, set()) if siblings else None
+        if place is None:
+            ctx.skip("added-env-no-documented-sibling")
+            continue
+        doc, line, found = place
+        shown = f"`{found[0]}`" + (f" and {len(found) - 1} other {prefix}_ variable(s)" if len(found) > 1 else "")
+        f = Finding(
+            check="added-env-undocumented", name=name, doc_file=doc.path, doc_line=line,
+            doc_quote=_clip(doc.line_text(line)),
+            message=f"This session's edits added a read of `{name}` ({fact.file}:{fact.line}); no doc mentions it. {doc.path} documents {shown}.",
+            confidence="medium", code_file=fact.file, code_line=fact.line,
+            code_quote=ctx.code_line(fact.file, fact.line),
+            suggestion=f"Document `{name}` in {doc.path} (around line {line}), or leave it out on purpose.",
+            why=["the variable was not read, or written anywhere in the code, before this session's first edit",
+                 "it appears in no doc file", f"{len(found)} other {prefix}_ variable(s) the code reads appear in {doc.path}"],
+        )
+        findings.append(f.finish())
+    return [f for f in findings if f.check in EDIT_NOTES]
 
 
 ALL_CHECKS: Dict[str, Callable[[Context], List[Finding]]] = {

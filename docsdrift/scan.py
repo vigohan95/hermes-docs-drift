@@ -11,7 +11,7 @@ import re
 import time
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Set, Tuple
 
-from .checks import ALL_CHECKS, Context
+from .checks import ALL_CHECKS, Context, added_undocumented
 from .docs import Doc, parse_markdown
 from .facts import ENV_TOKEN, FLAG_LITERAL, Fact, FileFacts, Project, extract_file, is_support_path, norm_flag, scan_project
 from .model import CHECKS, CONFIDENCE_ORDER, Finding, Index, ScanResult
@@ -113,6 +113,7 @@ class Scanner:
         budget_s: Optional[float] = None,
         refresh: bool = True,
         before: Optional[Index] = None,
+        added: bool = False,
     ) -> ScanResult:
         """Run the checks.
 
@@ -120,6 +121,10 @@ class Scanner:
         repository (``result.index``). With it, a name that the code had then
         and has nowhere now is reported wherever the docs still use it, without
         the gates that a whole-repository scan needs to stay quiet.
+
+        ``added`` (only with ``before``) also reports flags and environment
+        variables that are in the code now, were not then, and that no doc
+        mentions. The Hermes hooks ask for it; nothing else does.
         """
         started = time.monotonic()
         deadline = started + budget_s if budget_s is not None else None
@@ -220,6 +225,15 @@ class Scanner:
                     findings.append(f)
                 else:
                     ctx.skip("below-min-confidence")
+        if added and before is not None and not result.incomplete:
+            try:
+                for f in added_undocumented(ctx):
+                    if CONFIDENCE_ORDER.get(f.confidence, 1) >= floor:
+                        findings.append(f)
+                    else:
+                        ctx.skip("below-min-confidence")
+            except Exception as exc:
+                result.notes.append(f"added-name report failed: {type(exc).__name__}: {exc}")
         seen: Set[str] = set()
         unique: List[Finding] = []
         for f in sorted(findings, key=lambda x: (x.doc_file, x.doc_line, x.check, x.name)):

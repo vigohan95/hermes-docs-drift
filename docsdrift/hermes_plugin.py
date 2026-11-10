@@ -28,7 +28,7 @@ import threading
 from collections import OrderedDict
 from typing import Any, Dict, Iterable, List, Optional, Set, Tuple
 
-from .model import CHECKS, Finding, Index, ScanResult
+from .model import CHECKS, EDIT_NOTES, Finding, Index, ScanResult
 from .report import format_new_drift, format_result
 from .scan import DEFAULT_CHECKS, Scanner, apply_ignores, explain, find_root, resolve_checks
 
@@ -45,6 +45,7 @@ SETTING_DEFAULTS: Dict[str, Any] = {
     "min_confidence": "medium",
     "report_after_edit": True,
     "nudge_before_finish": True,
+    "report_added": True,
     "hook_time_budget_s": 8,
     "max_reported": 8,
     "ignore_names": [],
@@ -208,7 +209,8 @@ def _scan(root: str, budget_s: Optional[float], checks: Any = None, min_confiden
           before: Optional[Index] = None) -> ScanResult:
     sc = _scanner(root)
     result = sc.scan(overlay=overlay, checks=_checks_setting(checks), min_confidence=_min_confidence(min_confidence),
-                     budget_s=budget_s, refresh=refresh, before=before)
+                     budget_s=budget_s, refresh=refresh, before=before,
+                     added=before is not None and bool(_setting("report_added")))
     return apply_ignores(result, _setting("ignore_names"), _setting("ignore_paths"))
 
 
@@ -343,19 +345,31 @@ def on_transform_tool_result(tool_name: str = "", args: Any = None, result: Any 
             data["docs_drift"] = {"not_checked": skipped[0]}
             return json.dumps(data, ensure_ascii=False)
         entry: Dict[str, Any] = {}
-        if new_all:
-            entry["note"] = (
-                f"This edit left {len(new_all)} place(s) where the docs no longer match the code. "
+        added_all = [f for f in new_all if f.check in EDIT_NOTES]
+        drift_all = [f for f in new_all if f.check not in EDIT_NOTES]
+        notes: List[str] = []
+        if drift_all:
+            notes.append(
+                f"This edit left {len(drift_all)} place(s) where the docs no longer match the code. "
                 "Update the docs (or the code) before finishing; docs_drift_explain <id> shows both sides."
             )
-            entry["new"] = [f.brief() for f in new_all[:limit]]
-            if len(new_all) > limit:
-                entry["more"] = len(new_all) - limit
+            entry["new"] = [f.brief() for f in drift_all[:limit]]
+            if len(drift_all) > limit:
+                entry["more"] = len(drift_all) - limit
+        if added_all:
+            notes.append(
+                f"This edit added {len(added_all)} name(s) that no doc mentions. Document them where their "
+                "siblings are documented before finishing, unless they are meant to stay undocumented."
+            )
+            entry["added"] = [f.brief() for f in added_all[:limit]]
+            if len(added_all) > limit:
+                entry["more_added"] = len(added_all) - limit
         if fixed_all:
             entry["resolved"] = [f.id for f in fixed_all]
         entry["still_open"] = open_total
         if not new_all:
-            entry["note"] = f"{len(fixed_all)} docs-drift finding(s) resolved by this edit; {open_total} still open."
+            notes.append(f"{len(fixed_all)} docs-drift finding(s) resolved by this edit; {open_total} still open.")
+        entry = {"note": " ".join(notes), **entry}
         data["docs_drift"] = entry
         return json.dumps(data, ensure_ascii=False)
     except Exception:
@@ -382,8 +396,7 @@ def on_pre_verify(changed_paths: Any = None, attempt: int = 0, **kw: Any) -> Opt
                 still.extend(_state(owner, root)["open"].values())
         if not still:
             return None
-        text = format_new_drift(still, limit=int(_setting("max_reported")))
-        text = text.replace("this edit left", "your edits in this session left", 1)
+        text = format_new_drift(still, limit=int(_setting("max_reported")), whose="your edits in this session")
         return {"action": "continue", "message": text + "\nFix these (or say why the docs are right) before finishing."}
     except Exception:
         logger.debug("docs-drift pre_verify failed", exc_info=True)
@@ -454,7 +467,9 @@ def _scan_for_tool(root: str, changed_only: bool, checks: Any, min_confidence: A
     if changed_only:
         result, resolved, problem = sc.scan_changes("HEAD", **kw)
     else:
-        result, resolved, problem = sc.scan(before=before, **kw), [], None
+        # with the session's pre-edit index: the same view the hooks have, added names included
+        added = before is not None and bool(_setting("report_added"))
+        result, resolved, problem = sc.scan(before=before, added=added, **kw), [], None
     return apply_ignores(result, _setting("ignore_names"), _setting("ignore_paths")), resolved, problem
 
 

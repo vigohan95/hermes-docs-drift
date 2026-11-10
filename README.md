@@ -147,6 +147,24 @@ whenever the plugin is enabled.
 
 A finding that was already there before the session started is never reported by the hooks.
 
+**Names an edit added.** The checks look for docs that say something the code no longer does.
+The opposite case, code that gained something the docs do not have yet, is reported by the
+hooks only, and only for what the session itself added: when an edit adds a flag definition
+or a read of an environment variable, no doc file mentions the new name, and the docs already
+document a sibling (another flag of the project; another variable with the same prefix), the
+edit result gets an `added` list ("This session's edits added `--dry-run` (cli.py:14); no doc
+mentions it"), pointing at the place where the siblings are documented. It stays open, and is
+part of the reminder before the turn ends, until a doc mentions the name. It runs inside the
+same scan and the same time budget. `report_added: false` turns it off.
+
+This was added on 2026-11-10 after the measurements under "Measured precision" were made. It
+is not one of the nine checks and it is not part of any precision or injection number in this
+README: `docs_drift_scan` without a session edit, `/drift`, `changed_only` and the command
+line never report it. It has unit tests and the real-model sessions described above; how
+often it is wrong on real repositories has not been measured. Two cases where it will be
+wrong are known: docs generated from the code at build time (the name is not in any file
+yet), and a flag that is meant to stay undocumented but is not marked hidden in the code.
+
 **Tools (the model calls them).**
 
 - `docs_drift_scan` scans a repository. Arguments: `path`, `changed_only` (only drift caused
@@ -456,6 +474,7 @@ Under `plugins.entries.docs-drift` in the Hermes config:
 | `min_confidence` | `medium` | Lowest confidence to report: `high` or `medium`. |
 | `report_after_edit` | `true` | Add the `docs_drift` entry to edit results. Set to `false` for reminder-only mode. |
 | `nudge_before_finish` | `true` | Ask the agent to continue once if it finishes while drift it introduced is open. |
+| `report_added` | `true` | In a session, also say when an edit added a flag or environment variable that no doc mentions (see "Names an edit added"). |
 | `hook_time_budget_s` | `8` | Seconds a hook may spend scanning. |
 | `max_reported` | `8` | Findings listed in one hook message. |
 | `ignore_names` | `[]` | Flag, variable, script or target names never to report. |

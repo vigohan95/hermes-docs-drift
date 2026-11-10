@@ -35,6 +35,10 @@ config_schema:
     type: bool
     default: true
     description: "Ask the agent to continue once if it finishes a turn while drift it introduced is still open."
+  report_added:
+    type: bool
+    default: true
+    description: "In a session, also say when an edit added a flag or environment variable that no doc mentions while the docs document its siblings. Not part of the checks; a whole-repository scan never reports it."
   hook_time_budget_s:
     type: number
     default: 8

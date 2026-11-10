@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Iterable, List
 
-from .model import Finding, ScanResult
+from .model import EDIT_NOTES, Finding, ScanResult
 
 
 def format_finding(f: Finding) -> List[str]:
@@ -49,13 +49,17 @@ def format_result(result: ScanResult, limit: int = 50, title: str = "docs-drift"
     return "\n".join(lines)
 
 
-def format_new_drift(new: Iterable[Finding], resolved: int = 0, limit: int = 8) -> str:
+def format_new_drift(new: Iterable[Finding], resolved: int = 0, limit: int = 8, whose: str = "this edit") -> str:
     """Short message for the agent after an edit."""
     new = list(new)
-    lines = [
-        f"docs-drift: this edit left {len(new)} place{'s' if len(new) != 1 else ''} "
-        "where the docs no longer match the code."
-    ]
+    n_added = sum(1 for f in new if f.check in EDIT_NOTES)
+    n_drift = len(new) - n_added
+    parts = []
+    if n_drift or not n_added:
+        parts.append(f"left {n_drift} place{'s' if n_drift != 1 else ''} where the docs no longer match the code")
+    if n_added:
+        parts.append(f"added {n_added} name{'s' if n_added != 1 else ''} that no doc mentions")
+    lines = [f"docs-drift: {whose} " + " and ".join(parts) + "."]
     for f in new[:limit]:
         lines.append(f"- {f.doc_file}:{f.doc_line} [{f.check}] {f.message}")
         if f.code_file:
