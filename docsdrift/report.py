@@ -21,7 +21,9 @@ def format_finding(f: Finding) -> List[str]:
     return out
 
 
-def format_result(result: ScanResult, limit: int = 50, title: str = "docs-drift") -> str:
+def format_result(result: ScanResult, limit: int = 50, title: str = "docs-drift", changed_hint: str = "") -> str:
+    """``changed_hint`` names the change-aware form of the command (``/drift --changed``); it is
+    given for whole-repository scans and shown only when something was withheld."""
     n = len(result.findings)
     head = (
         f"{title}: {n} finding{'s' if n != 1 else ''} "
@@ -38,7 +40,10 @@ def format_result(result: ScanResult, limit: int = 50, title: str = "docs-drift"
         total = sum(result.suppressed.values())
         parts = ", ".join(f"{k}: {v}" for k, v in sorted(result.suppressed.items(), key=lambda kv: -kv[1])[:6])
         lines.append("")
-        lines.append(f"not reported (uncertain, {total}): {parts}")
+        line = f"withheld as uncertain: {total} ({parts})."
+        if changed_hint:
+            line += f" If they come from changes that are not committed yet, {changed_hint} reports them."
+        lines.append(line)
     for note in result.notes:
         lines.append(f"note: {note}")
     return "\n".join(lines)

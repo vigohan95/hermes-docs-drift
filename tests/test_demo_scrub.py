@@ -99,7 +99,7 @@ def test_defaults_come_from_this_machine():
 
 
 def test_drivers_install_the_scrubber():
-    for name in ("run_demo.py",):
+    for name in ("run_demo.py", "run_real.py"):
         path = os.path.join(ROOT, "demo", name)
         if not os.path.exists(path):
             pytest.fail(name + " is missing")
@@ -132,3 +132,13 @@ def test_driver_output_has_no_temp_or_home_prefix(tmp_path):
     if len(user) >= 3:
         assert user.lower() not in lines[0].lower()
     assert scrub_mod is not None
+
+
+def test_real_model_driver_is_skipped_without_a_key():
+    import subprocess
+    import sys
+    env = {k: v for k, v in os.environ.items() if not k.startswith("DOCS_DRIFT_")}
+    proc = subprocess.run([sys.executable, os.path.join(ROOT, "demo", "run_real.py")], env=env,
+                          capture_output=True, text=True, timeout=60)
+    assert proc.returncode == 0
+    assert proc.stdout.startswith("skipped: DOCS_DRIFT_API_KEY is not set")

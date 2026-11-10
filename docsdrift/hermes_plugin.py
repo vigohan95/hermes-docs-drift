@@ -175,7 +175,9 @@ def _state(owner: str, root: str, create: bool = True) -> Optional[Dict[str, Any
         st = _sessions.get(key)
         if st is None and create:
             # baseline: finding ids before the session's first edit; index: the code side at that moment
-            st = {"baseline": None, "index": None, "open": {}}
+            # skipped: why a hook scan did not finish; skip_told: the agent has been told once
+            st = {"baseline": None, "index": None, "open": {}, "skipped": "", "skip_told": False,
+                  "edited": False}
             _sessions[key] = st
             while len(_sessions) > MAX_SESSIONS:
                 _sessions.popitem(last=False)
@@ -231,21 +233,40 @@ def _edit_landed(tool_name: str, result: Any) -> Optional[Dict[str, Any]]:
 def on_pre_tool_call(tool_name: str = "", args: Any = None, **kw: Any) -> None:
     """Take the baseline before the first edit in a repository. Never blocks, never raises."""
     try:
-        if tool_name not in EDIT_TOOLS or not _setting("report_after_edit"):
+        if tool_name not in EDIT_TOOLS or not (_setting("report_after_edit") or _setting("nudge_before_finish")):
             return None
         owner = _owner(kw)
         budget = float(_setting("hook_time_budget_s"))
         with _lock:
             for root in _roots_for(_edit_paths(tool_name, args)):
                 st = _state(owner, root)
-                if st["baseline"] is not None:
+                if st["baseline"] is not None or st["edited"]:
+                    # After the first edit the present state is no baseline any more; git supplies it.
                     continue
+                st["edited"] = True
                 result = _scan(root, budget)
                 if not result.incomplete:
                     st["baseline"], st["index"] = result.ids(), result.index
+                else:
+                    st["skipped"] = _why_incomplete(result)
     except Exception:
         logger.debug("docs-drift pre_tool_call failed", exc_info=True)
     return None
+
+
+def _why_incomplete(result: ScanResult) -> str:
+    return (result.notes[-1] if result.notes else "the scan did not finish").replace("; nothing reported.", "").rstrip(".")
+
+
+def _skip_note(st: Dict[str, Any], checked: bool) -> Optional[str]:
+    """What to tell the agent, once per session and repository, when an edit was not checked."""
+    why, st["skipped"] = st.get("skipped") or "", ""
+    if checked or not why or st.get("skip_told"):
+        return None
+    st["skip_told"] = True
+    logger.info("docs-drift: edit not checked (%s)", why)
+    return (f"docs-drift did not check this edit: {why}. What was indexed is kept, so later edits are "
+            "usually checked; docs_drift_scan with changed_only=true checks now with a longer time limit.")
 
 
 def _baseline_from_git(root: str, budget: float) -> Optional[ScanResult]:
@@ -270,10 +291,14 @@ def _rescan(owner: str, root: str, budget: float) -> Optional[Tuple[List[Finding
     # removed stays reported until the docs (or the code) are fixed.
     current = _scan(root, budget, before=st["index"])
     if current.incomplete:
+        st["skipped"] = _why_incomplete(current)
         return None
     if st["baseline"] is None:
-        # Without git there is nothing to compare with: accept the present state silently.
+        # Nothing to compare with (no git, or no scan finished before the edit): take the present
+        # state as the baseline. ``skipped`` stays set when a scan ran out of time on the way here.
         st["baseline"], st["index"] = current.ids(), current.index
+    else:
+        st["skipped"] = ""
     now = {f.id: f for f in current.findings}
     open_before: Dict[str, Finding] = st["open"]
     fixed = [f for fid, f in open_before.items() if fid not in now]
@@ -299,9 +324,13 @@ def on_transform_tool_result(tool_name: str = "", args: Any = None, result: Any 
         new_all: List[Finding] = []
         fixed_all: List[Finding] = []
         open_total = 0
+        skipped: List[str] = []
         with _lock:
             for root in _roots_for(_edit_paths(tool_name, args, data)):
                 out = _rescan(owner, root, budget)
+                note = _skip_note(_state(owner, root), checked=bool(out and (out[0] or out[1])))
+                if note:
+                    skipped.append(note)
                 if out is None:
                     continue
                 new, fixed, still = out
@@ -309,7 +338,10 @@ def on_transform_tool_result(tool_name: str = "", args: Any = None, result: Any 
                 fixed_all.extend(fixed)
                 open_total += still
         if not new_all and not fixed_all:
-            return None
+            if not skipped:
+                return None
+            data["docs_drift"] = {"not_checked": skipped[0]}
+            return json.dumps(data, ensure_ascii=False)
         entry: Dict[str, Any] = {}
         if new_all:
             entry["note"] = (
@@ -332,7 +364,7 @@ def on_transform_tool_result(tool_name: str = "", args: Any = None, result: Any 
 
 
 def on_pre_verify(changed_paths: Any = None, attempt: int = 0, **kw: Any) -> Optional[Dict[str, str]]:
-    """Keep the turn going once when drift from this session is still open."""
+    """Keep the turn going once when the session's edits left drift that is still open."""
     try:
         if not _setting("nudge_before_finish") or attempt:
             return None
@@ -342,9 +374,8 @@ def on_pre_verify(changed_paths: Any = None, attempt: int = 0, **kw: Any) -> Opt
         with _lock:
             roots = _roots_for(_abs(p) for p in (changed_paths or []) if isinstance(p, str))
             for root in roots:
-                st = _state(owner, root, create=False)
-                if not st or not st["open"]:
-                    continue
+                # Scanned here even when no edit result reported anything: report_after_edit may be
+                # off, or the scan after the edit may have run out of time.
                 out = _rescan(owner, root, budget)
                 if out is None:
                     continue
@@ -556,7 +587,8 @@ def handle_command(raw_args: str = "") -> str:
             before = None if changed else _session_index(root)
             result, resolved, problem = _scan_for_tool(root, changed, checks, None, before)
         title = "docs-drift (new since HEAD)" if changed else "docs-drift"
-        text = format_result(result, limit=30, title=f"{title} {root}")
+        text = format_result(result, limit=30, title=f"{title} {root}",
+                             changed_hint="" if changed else "`/drift --changed`")
         if problem:
             text += f"\nnote: {problem}"
         if resolved:

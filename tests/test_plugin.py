@@ -285,6 +285,58 @@ def test_a_crash_inside_the_scan_does_not_reach_hermes(ctx, notesync, monkeypatc
     assert hp.on_transform_tool_result(tool_name="patch", args={"path": path}, result=patch_result(path)) is None
 
 
+# ------------------------------------------------------------------ scans that run out of time
+def _slow_scans(monkeypatch, slow_calls):
+    """Make the first ``slow_calls`` hook scans stop early, the way a cold cache on a large repository does."""
+    real = hp._scan
+    seen = {"n": 0}
+
+    def scan(root, budget_s, *a, **kw):
+        seen["n"] += 1
+        if seen["n"] <= slow_calls:
+            from docsdrift.model import ScanResult
+            return ScanResult(root=root, incomplete=True,
+                              notes=["Time budget of 8s used up after indexing 150 of 900 files; nothing reported."])
+        return real(root, budget_s, *a, **kw)
+
+    monkeypatch.setattr(hp, "_scan", scan)
+    return seen
+
+
+def test_an_edit_that_could_not_be_checked_says_so_once(ctx, notesync, monkeypatch):
+    _slow_scans(monkeypatch, slow_calls=3)      # the scan before the edit, the git baseline, the scan after it
+    data = do_edit(notesync, "notesync/cli.py", '"--output-dir"', '"--dest"')
+    entry = data["docs_drift"]
+    assert set(entry) == {"not_checked"}
+    assert "did not check this edit" in entry["not_checked"]
+    assert "Time budget of 8s used up after indexing 150 of 900 files" in entry["not_checked"]
+    assert "docs_drift_scan" in entry["not_checked"]
+    # the next edit is checked: the scans finish now, and the baseline comes from git
+    data = do_edit(notesync, "notesync/cli.py", '"--timeout"', '"--wait"')
+    assert len(data["docs_drift"]["new"]) == 3 and "not_checked" not in data["docs_drift"]
+
+
+def test_the_not_checked_note_is_not_repeated(ctx, notesync, monkeypatch):
+    _slow_scans(monkeypatch, slow_calls=99)
+    first = do_edit(notesync, "notesync/cli.py", '"--output-dir"', '"--dest"')
+    assert "not_checked" in first["docs_drift"]
+    assert do_edit(notesync, "notesync/cli.py", '"--timeout"', '"--wait"') is None
+    assert hp.on_pre_verify(session_id="s1", changed_paths=[cli_path(notesync)], attempt=0) is None
+
+
+def test_a_slow_scan_before_the_edit_alone_changes_nothing(ctx, notesync, monkeypatch):
+    _slow_scans(monkeypatch, slow_calls=1)      # only the scan before the edit; git supplies the baseline
+    data = do_edit(notesync, "notesync/cli.py", '"--output-dir"', '"--dest"')
+    assert len(data["docs_drift"]["new"]) == 2 and "not_checked" not in data["docs_drift"]
+
+
+def test_a_baseline_taken_after_the_edit_is_reported_as_not_checked(ctx, make_repo, monkeypatch):
+    root = make_repo(dict(NOTESYNC), use_git=False)
+    _slow_scans(monkeypatch, slow_calls=1)      # no git and no scan before the edit: nothing to compare with
+    data = do_edit(root, "notesync/cli.py", '"--output-dir"', '"--dest"')
+    assert "did not check this edit" in data["docs_drift"]["not_checked"]
+
+
 # ------------------------------------------------------------------ pre_verify
 def test_finish_check_nudges_once_and_only_for_open_drift(ctx, notesync):
     changed = [cli_path(notesync)]
@@ -298,6 +350,40 @@ def test_finish_check_nudges_once_and_only_for_open_drift(ctx, notesync):
     edit(notesync, "README.md", "--output-dir", "--dest")                                  # fixed outside the edit tools
     edit(notesync, "docs/configuration.md", "--output-dir", "--dest")
     assert hp.on_pre_verify(session_id="s1", changed_paths=changed, attempt=0) is None
+
+
+def test_reminder_only_mode_reports_before_the_turn_ends(notesync):
+    """report_after_edit off, nudge_before_finish on: nothing in the edit result, one reminder at the end."""
+    hp._reset_for_tests()
+    hp.register(FakeCtx({"report_after_edit": False}))
+    changed = [cli_path(notesync)]
+    assert do_edit(notesync, "notesync/cli.py", '"--output-dir"', '"--dest"') is None
+    nudge = hp.on_pre_verify(session_id="s1", changed_paths=changed, attempt=0, final_response="Done.")
+    assert nudge["action"] == "continue"
+    assert "your edits in this session left 2 places" in nudge["message"]
+    assert "README.md" in nudge["message"] and "docs/configuration.md" in nudge["message"]
+    edit(notesync, "README.md", "--output-dir", "--dest")
+    edit(notesync, "docs/configuration.md", "--output-dir", "--dest")
+    assert hp.on_pre_verify(session_id="s1", changed_paths=changed, attempt=0) is None
+    hp._reset_for_tests()
+
+
+def test_finish_check_alone_uses_git_when_no_edit_hook_ran(ctx, notesync):
+    """The reminder does not depend on an earlier edit result having reported the drift."""
+    edit(notesync, "notesync/cli.py", '"--output-dir"', '"--dest"')        # edited without the edit hooks
+    nudge = hp.on_pre_verify(session_id="s9", changed_paths=[cli_path(notesync)], attempt=0)
+    assert nudge and "left 2 places" in nudge["message"]
+
+
+def test_finish_check_does_not_blame_the_session_for_old_drift(make_repo):
+    hp._reset_for_tests()
+    hp.register(FakeCtx({"report_after_edit": False}))
+    files = dict(NOTESYNC)
+    files["README.md"] = files["README.md"].replace("--dry-run", "--dryrun")   # wrong before the session starts
+    root = make_repo(files)
+    assert do_edit(root, "notesync/cli.py", "seconds to wait", "seconds to wait for") is None
+    assert hp.on_pre_verify(session_id="s1", changed_paths=[cli_path(root)], attempt=0) is None
+    hp._reset_for_tests()
 
 
 # ------------------------------------------------------------------ settings
@@ -454,6 +540,51 @@ def test_drift_command(ctx, make_repo, monkeypatch):
     assert drift("explain").startswith("usage:")
     assert "does not exist" in drift("Z:/no/such/place")
     assert isinstance(drift(None), str)
+
+
+@pytest.fixture
+def example(tmp_path):
+    """A committed copy of examples/notesync, the project the README and the demo use."""
+    import shutil
+    from conftest import HAVE_GIT, git
+    if not HAVE_GIT:
+        pytest.skip("git is not installed")
+    root = str(tmp_path / "notesync")
+    shutil.copytree(os.path.join(ROOT, "examples", "notesync"), root, ignore=shutil.ignore_patterns("__pycache__"))
+    git(root, "init", "-q", "-b", "main")
+    git(root, "add", "-A")
+    git(root, "commit", "-q", "-m", "init")
+    return root
+
+
+def test_plain_drift_says_what_it_withheld_and_names_the_changed_form(ctx, example, monkeypatch):
+    """A rename that is not committed: the plain scan cannot prove it, and must not look like a clean bill."""
+    notesync = example
+    monkeypatch.setattr(hp, "_agent_cwd", lambda: notesync)
+    edit(notesync, "notesync/cli.py", '"--output-dir"', '"--dest"')        # no hook saw this edit
+    drift = ctx.commands["drift"]
+    plain = drift("")
+    assert "0 findings" in plain
+    last = plain.splitlines()[-1]
+    assert last.startswith("withheld as uncertain: 3 (")
+    assert "flag-has-loose-trace: 2" in last and "option-list-not-ours: 1" in last
+    assert last.endswith("If they come from changes that are not committed yet, `/drift --changed` reports them.")
+    changed = drift("--changed")
+    assert "2 findings" in changed and "/drift --changed" not in changed
+    # the findings themselves are the same as before this wording existed
+    assert json.loads(ctx.tools["docs_drift_scan"]["handler"]({"path": notesync}))["summary"]["findings"] == 0
+
+
+def test_cli_names_since_head_when_something_was_withheld(example, capsys):
+    from docsdrift import cli
+    notesync = example
+    edit(notesync, "notesync/cli.py", '"--output-dir"', '"--dest"')
+    assert cli.main([notesync]) == 0
+    out = capsys.readouterr().out
+    assert "withheld as uncertain: 3 (" in out and "`--since HEAD` reports them." in out
+    assert cli.main([notesync, "--since", "HEAD"]) == 1
+    out = capsys.readouterr().out
+    assert "2 findings" in out and "reports them" not in out
 
 
 def test_state_is_bounded(ctx, notesync):

@@ -75,7 +75,8 @@ def main(argv: Optional[List[str]] = None) -> int:
         print(json.dumps(d, indent=2, ensure_ascii=False))
     else:
         title = f"docs-drift (new since {args.since})" if args.since else "docs-drift"
-        print(format_result(result, limit=args.max_findings, title=title))
+        print(format_result(result, limit=args.max_findings, title=title,
+                            changed_hint="" if args.since else "`--since HEAD`"))
         if problem:
             print(f"note: {problem}")
         if resolved:
