@@ -1,0 +1,53 @@
+name: docs-drift
+version: 0.1.0
+description: "Checks that README and Markdown docs still match the code after the agent edits files: command-line flags, environment variables, documented defaults, npm scripts, make targets and links to files. Reports new mismatches in the same session with file:line on both sides. Offline and deterministic; no model call, no network, no API key."
+author: "Han Vigo"
+license: MIT
+homepage: https://github.com/vigohan95/hermes-docs-drift
+manifest_version: 2
+api_version: 1
+requires_hermes: ">=0.21.6"
+tags:
+  - docs
+  - code-quality
+  - verification
+provides_tools:
+  - docs_drift_scan
+  - docs_drift_explain
+provides_hooks:
+  - pre_tool_call
+  - transform_tool_result
+  - pre_verify
+config_schema:
+  checks:
+    type: list
+    default: []
+    description: "Checks to run. Empty means the defaults. Use ids, 'all', or '+id' / '-id' relative to the defaults (see /drift checks)."
+  min_confidence:
+    type: string
+    default: medium
+    description: "Lowest confidence to report: high or medium."
+  report_after_edit:
+    type: bool
+    default: true
+    description: "After write_file / patch, add a docs_drift entry to the tool result when that edit caused new drift."
+  nudge_before_finish:
+    type: bool
+    default: true
+    description: "Ask the agent to continue once if it finishes a turn while drift it introduced is still open."
+  hook_time_budget_s:
+    type: number
+    default: 8
+    description: "Seconds a hook may spend scanning. When the budget runs out the hook stays silent."
+  max_reported:
+    type: int
+    default: 8
+    description: "Findings listed in one hook message."
+  ignore_names:
+    type: list
+    default: []
+    description: "Flag, variable, script or target names never to report (for docs that are right as written)."
+  ignore_paths:
+    type: list
+    default: []
+    description: "Glob patterns of doc files never to report on, for example docs/archive/*."
