@@ -1,0 +1,40 @@
+docs-drift: slash commands typed into an interactive Hermes chat   2026-11-10T16:18:01Z
+hermes:   Hermes Agent vgit.b7db40d (2026.9.24) · stable · local b7db40d82568
+plugin:   docs-drift is installed in this Hermes home (enabled, 0.1.0)
+source:   docs-drift commit 0504c04
+project:  a fresh copy of examples/notesync with one commit; then --output-dir renamed to --dest in
+          notesync/cli.py and not committed. The docs still say --output-dir.
+terminal: a pseudo-terminal, 200 columns wide. No model: Hermes was given a closed local port.
+shown:    what Hermes printed after echoing each command, control sequences removed, without the
+          lines it redraws around its input field
+
+> /drift
+  docs-drift %TEMP%\docs-drift-typed-7yprj_q_\notesync: 2 findings (2 doc files checked against 4 code files, 44 ms)
+  README.md:8  cli-flag-undefined  [high]  DD-5fb3c36f
+    `--output-dir` is used with `notesync` in the docs, but the code does not define that flag.
+    docs: README.md:8  notesync ./notes --output-dir ./backup
+    fix:  Remove the flag from the docs, or restore it in the code.
+  docs/configuration.md:10  cli-flag-undefined  [high]  DD-6d2fee65
+    `--output-dir` is used with `notesync` in the docs, but the code does not define that flag.
+    docs: docs/configuration.md:10  notesync ./notes --output-dir /mnt/backup/notes
+    fix:  Remove the flag from the docs, or restore it in the code.
+  withheld as uncertain: 1 (option-list-not-ours: 1). If they come from changes that are not committed yet, `/drift --changed` reports them.
+
+> /drift --changed
+  docs-drift (new since HEAD) %TEMP%\docs-drift-typed-7yprj_q_\notesync: 2 findings (2 doc files checked against 4 code files, 96 ms)
+  README.md:8  cli-flag-undefined  [high]  DD-5fb3c36f
+    `--output-dir` was removed from the code by the edit, but the docs still use it.
+    docs: README.md:8  notesync ./notes --output-dir ./backup
+    code: notesync/cli.py:12  parser.add_argument("--dest", default="./out", help="where the copies go")
+    also at lines: 16
+    fix:  The same edit added `--dest` (notesync/cli.py:12). If this is a rename, replace `--output-dir` with `--dest` in the docs.
+  docs/configuration.md:7  cli-flag-undefined  [high]  DD-6d2fee65
+    `--output-dir` was removed from the code by the edit, but the docs still use it.
+    docs: docs/configuration.md:7  To write the copies somewhere else, pass `--output-dir`:
+    code: notesync/cli.py:12  parser.add_argument("--dest", default="./out", help="where the copies go")
+    also at lines: 10
+    fix:  The same edit added `--dest` (notesync/cli.py:12). If this is a rename, replace `--output-dir` with `--dest` in the docs.
+  withheld as uncertain: 1 (option-list-not-ours: 1).
+  note: Compared with HEAD: 1 changed file(s), 0 finding(s) already present before the change are not shown.
+
+RESULT: ok, every command was answered by docs-drift
