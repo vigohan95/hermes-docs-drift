@@ -82,7 +82,10 @@ def test_the_example_project_has_no_findings_before_any_edit():
 
 def test_every_task_names_an_existing_example_and_never_mentions_docs():
     for name, task in tasks.TASKS.items():
-        assert os.path.isdir(os.path.join(ROOT, "examples", task["example"])), name
+        if "repo" in task:                       # a real repository: the driver is handed a checkout
+            assert "example" not in task and task["commit"], name
+        else:
+            assert os.path.isdir(os.path.join(ROOT, "examples", task["example"])), name
         assert not any(w in task["prompt"].lower() for w in ("doc", "readme", "guide", "manual")), name
 
 
@@ -213,6 +216,63 @@ def test_hooks_on_an_added_flag_and_an_added_variable(ctx, project):
     subprocess.run(["git", "checkout", "-q", "--", "."], cwd=project, check=True)
     new, added, reminder = hook_says(project, "add-env")
     assert new == [] and added == [("added-env-undocumented", "docs/configuration.md:6")]
+
+
+# ------------------------------------------------------------------ the request on a real repository
+def test_the_real_repository_task_names_its_starting_tree_and_uses_the_add_rule(tmp_path):
+    if not HAVE_GIT:
+        pytest.skip("git is not installed")
+    task = tasks.TASKS["uvicorn-add-flag"]
+    assert task["repo"] == "encode/uvicorn" and task["commit"] and "doc" not in task["prompt"].lower()
+    root = str(tmp_path / "app")
+    os.makedirs(os.path.join(root, "app"))
+    os.makedirs(os.path.join(root, "docs"))
+    for rel, text in (("app/main.py", 'import click\n\n@click.option("--port")\ndef main(port):\n    pass\n'),
+                      ("docs/settings.md", "* `--port <int>` - the port.\n"),
+                      ("docs/release-notes.md", "- nothing yet\n")):
+        with open(os.path.join(root, *rel.split("/")), "w", encoding="utf-8", newline="\n") as fh:
+            fh.write(text)
+    subprocess.run(["git", "init", "-q", "-b", "main"], cwd=root, check=True, capture_output=True)
+    assert tasks.judge(task, root)["verdict"] == "not done in the code"
+    edit(root, "app/main.py", '@click.option("--port")', '@click.option("--port")\n@click.option("--quiet", is_flag=True)')
+    assert tasks.judge(task, root)["verdict"] == "docs stale"
+    edit(root, "docs/release-notes.md", "- nothing yet", "- Add `--quiet`")
+    assert tasks.judge(task, root)["verdict"] == "docs stale"          # release notes are not counted
+    edit(root, "docs/settings.md", "the port.", "the port.\n* `--quiet` - only warnings and errors.")
+    result = tasks.judge(task, root)
+    assert result["verdict"] == "docs consistent" and result["mentions"][0].startswith("docs/settings.md:2:")
+
+
+def test_the_driver_wants_a_checkout_for_the_real_repository_task(capsys):
+    import run_real
+    with pytest.raises(SystemExit) as stop:
+        run_real.main(["--task", "uvicorn-add-flag"])
+    assert stop.value.code == 2 and "--project" in capsys.readouterr().err
+    with pytest.raises(SystemExit):
+        run_real.main(["--task", "add-flag", "--project", "."])
+
+
+def test_a_clone_for_a_session_keeps_line_endings_and_the_upstream_origin(tmp_path):
+    if not HAVE_GIT:
+        pytest.skip("git is not installed")
+    import run_real
+    src = str(tmp_path / "src")
+    os.makedirs(src)
+    with open(os.path.join(src, "a.txt"), "w", encoding="utf-8", newline="\n") as fh:
+        fh.write("one\ntwo\n")
+    git = ["git", "-c", "user.name=t", "-c", "user.email=t@example.invalid", "-c", "core.autocrlf=false",
+           "-c", "commit.gpgsign=false"]
+    for args in (["init", "-q", "-b", "main"], ["add", "-A"], ["commit", "-q", "-m", "init"],
+                 ["remote", "add", "origin", "https://example.invalid/some/project.git"]):
+        subprocess.run(git + args, cwd=src, check=True, capture_output=True)
+    dest = str(tmp_path / "copy")
+    commit = run_real.clone_project(src, dest)
+    head = subprocess.run(["git", "rev-parse", "HEAD"], cwd=src, capture_output=True, text=True).stdout.strip()
+    assert head.startswith(commit)
+    with open(os.path.join(dest, "a.txt"), "rb") as fh:
+        assert fh.read() == b"one\ntwo\n"
+    origin = subprocess.run(["git", "remote", "get-url", "origin"], cwd=dest, capture_output=True, text=True).stdout.strip()
+    assert origin == "https://example.invalid/some/project.git"
 
 
 # ------------------------------------------------------------------ who spoke first

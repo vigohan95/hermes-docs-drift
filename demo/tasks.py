@@ -58,6 +58,13 @@ TASKS: Dict[str, dict] = {
         "prompt": "Let the timeout be set with a NOTESYNC_TIMEOUT environment variable.",
         "kind": "add", "new": "NOTESYNC_TIMEOUT",
     },
+    # A request on a real repository. ``repo`` and ``commit`` name the starting tree; the
+    # driver is given a checkout of it with --project and refuses any other commit.
+    "uvicorn-add-flag": {
+        "repo": "encode/uvicorn", "commit": "a99c1b7",
+        "prompt": "Add a --quiet flag that sets the log level to warning.",
+        "kind": "add", "new": "--quiet",
+    },
 }
 
 

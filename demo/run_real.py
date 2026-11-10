@@ -5,7 +5,9 @@
 
 ``--task`` picks one of the requests in ``demo/tasks.py`` (rename, default,
 remove-flag, remove-env, add-flag, add-env): the example project, the prompt and
-the rule by which the outcome is decided afterwards.
+the rule by which the outcome is decided afterwards. ``uvicorn-add-flag`` is a
+request on a real repository: it needs ``--project DIR`` as well, a checkout of
+encode/uvicorn at the commit the task names.
 
 The model is any OpenAI-compatible endpoint with tool calling, named by three
 environment variables:
@@ -83,8 +85,15 @@ def show_result(event: dict, no_block: str = NO_BLOCK) -> None:
 
 
 def clone_project(src: str, dest: str) -> str:
-    """A local clone of a git checkout at its current commit; returns the short commit id."""
-    subprocess.run(["git", "clone", "-q", "--no-hardlinks", src, dest], check=True)
+    """A local clone of a git checkout at its current commit; returns the short commit id.
+
+    Line endings are left as the repository has them, and ``origin`` in the clone
+    names what it names in the checkout, not the checkout's directory.
+    """
+    subprocess.run(["git", "clone", "-q", "--no-hardlinks", "-c", "core.autocrlf=false", src, dest], check=True)
+    origin = run(["git", "-C", src, "remote", "get-url", "origin"]).splitlines()
+    if origin and "://" in origin[0]:
+        subprocess.run(["git", "-C", dest, "remote", "set-url", "origin", origin[0]], check=False)
     return run(["git", "-C", dest, "rev-parse", "--short", "HEAD"])
 
 
@@ -150,7 +159,9 @@ def main(argv=None) -> int:
     args = ap.parse_args(argv)
     task = TASKS.get(args.task)
     if task:
-        if args.project:
+        if task.get("repo") and not args.project:
+            ap.error(f"task {args.task} runs on a checkout of {task['repo']} at {task['commit']}; pass its directory with --project")
+        if args.project and not task.get("repo"):
             ap.error("--task brings its own project; do not pass --project as well")
         args.prompt = task["prompt"]
 
@@ -165,7 +176,10 @@ def main(argv=None) -> int:
         return 2
     # Everything printed from here on has the key and the temp and home directory prefixes replaced.
     home = os.environ.get("HERMES_HOME") or os.path.join(os.path.expanduser("~"), ".hermes")
-    scrub.install(secrets=[key], named=[(os.path.abspath(home), "$HERMES_HOME"), (ROOT, "<docs-drift>")])
+    named = [(os.path.abspath(home), "$HERMES_HOME"), (ROOT, "<docs-drift>")]
+    if args.project:
+        named.append((os.path.abspath(args.project), "<checkout>"))
+    scrub.install(secrets=[key], named=named)
 
     hermes = shlex.split(args.hermes, posix=(os.name != "nt"))
     work = tempfile.mkdtemp(prefix="docs-drift-real-")
@@ -183,6 +197,10 @@ def main(argv=None) -> int:
         src = os.path.abspath(args.project)
         repo = os.path.join(work, os.path.basename(src.rstrip("\\/")) or "project")
         commit = clone_project(src, repo)
+        if task and not commit.startswith(task["commit"]):
+            print(f"the checkout is at commit {commit}; task {args.task} starts from {task['repo']} at {task['commit']}")
+            shutil.rmtree(work, ignore_errors=True)
+            return 2
         origin = run(["git", "-C", src, "remote", "get-url", "origin"]).splitlines()
         project = f"a local clone of {origin[0] if origin else os.path.basename(src)} at commit {commit}"
     else:
