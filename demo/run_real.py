@@ -50,7 +50,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
 import scrub  # noqa: E402  (demo/scrub.py)
-from run_demo import PROMPT, REMINDER, copy_example, free_port, indent, run, show, stamp  # noqa: E402
+from run_demo import NO_BLOCK, PROMPT, REMINDER, copy_example, free_port, indent, run, show, stamp  # noqa: E402
 
 DOC_SUFFIXES = (".md", ".mdx", ".markdown", ".rst", ".txt", ".adoc")
 DOC_DIRS = ("docs/", "doc/", "documentation/", "website/", "man/")
@@ -67,7 +67,16 @@ def is_history(rel: str) -> bool:
     return os.path.basename(rel.replace("\\", "/")).lower().startswith(HISTORY)
 
 
-def show_result(event: dict) -> None:
+def no_block_reason(plugin: str, settings: str) -> str:
+    """Why an edit result has no docs_drift entry, as far as the driver can know it."""
+    if "NOT installed" in plugin:
+        return "(no docs_drift block: the plugin is not installed in this Hermes home)"
+    if "report_after_edit: false" in settings.lower():
+        return "(no docs_drift block: report_after_edit is false, so the plugin adds nothing to edit results)"
+    return NO_BLOCK
+
+
+def show_result(event: dict, no_block: str = NO_BLOCK) -> None:
     """Like ``run_demo.show``, but says "no docs_drift block" only for edits."""
     name = str(event.get("name", ""))
     try:
@@ -75,7 +84,7 @@ def show_result(event: dict) -> None:
     except ValueError:
         out = None
     if name in EDIT_TOOLS or name.startswith("docs_drift") or (isinstance(out, dict) and "docs_drift" in out):
-        show(event)
+        show(event, no_block)
         return
     print(f"[{stamp(event.get('timestamp'))}] tool result  {name} ({event.get('duration_ms')} ms)")
 
@@ -185,8 +194,10 @@ def main(argv=None) -> int:
     if args.label:
         print("run:      " + args.label)
     print("hermes:   " + (run(hermes + ["--version"], env=env).splitlines() or ["(no version output)"])[0])
-    print("plugin:   " + plugin_line(hermes, env))
-    print("settings: " + plugin_settings())
+    plugin, settings = plugin_line(hermes, env), plugin_settings()
+    no_block = no_block_reason(plugin, settings)
+    print("plugin:   " + plugin)
+    print("settings: " + settings)
     print(f"source:   docs-drift commit {run(['git', '-C', ROOT, 'rev-parse', '--short', 'HEAD'])}")
     print(f"model:    {model} at {base_url}, through demo/relay.py on 127.0.0.1:{port}")
     print("          (the relay forwards requests unchanged, adds the key and counts; Hermes has no key)")
@@ -240,7 +251,7 @@ def main(argv=None) -> int:
                 continue
             flush_text(event.get("timestamp"))
             if event.get("type") == "tool_result":
-                show_result(event)
+                show_result(event, no_block)
             else:
                 show(event)
         flush_text()

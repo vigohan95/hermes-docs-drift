@@ -546,7 +546,7 @@ it was called through Hermes' plugin manager instead:
 ## Development
 
 ```sh
-python -m pytest                      # 195 tests; needs pytest and nothing else
+python -m pytest                      # 196 tests; needs pytest and nothing else
 python -m docsdrift . --checks all    # this repository checks its own docs
 python benchmarks/run_scans.py <clones_dir> <out_dir> owner__name ...
 python benchmarks/precision.py evidence/scans evidence/labels.json

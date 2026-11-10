@@ -75,6 +75,14 @@ run in `../demo-forget.txt` and by the unit tests.
 The header of `rename-reminder-only-*.txt` and of `rename-without-plugin-6.txt` calls the run
 "forget": that was the working name of the second scenario. The prompt is the same.
 
+One line in these transcripts is worded wrongly for 13 of the files. Under an edit result
+that has no `docs_drift` entry the driver printed `(no docs_drift block: the edit caused no
+new drift and resolved none)` in every configuration. That reason is right only where the
+plugin is installed with default settings. In the runs without the plugin nothing checked
+the edit, and in the reminder-only runs the plugin does not write into edit results at all.
+The header of each file says which configuration it is. The transcripts were left as they
+were printed; `demo/run_real.py` now prints the actual reason in those two cases.
+
 ## A real repository
 
 `real-repo-simonw-llm.txt`: simonw/llm at commit `39d3254`, plugin with default settings,

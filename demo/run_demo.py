@@ -221,7 +221,10 @@ def main(argv=None) -> int:
     return 0 if ok else 1
 
 
-def show(event: dict) -> None:
+NO_BLOCK = "(no docs_drift block: the edit caused no new drift and resolved none)"
+
+
+def show(event: dict, no_block: str = NO_BLOCK) -> None:
     kind = event.get("type")
     at = stamp(event.get("timestamp"))
     if kind == "tool_use":
@@ -241,7 +244,7 @@ def show(event: dict) -> None:
             if "docs_drift" in out:
                 print(indent('"docs_drift": ' + json.dumps(out["docs_drift"], indent=2, ensure_ascii=False)))
             else:
-                print(indent("(no docs_drift block: the edit caused no new drift and resolved none)"))
+                print(indent(no_block))
     elif kind == "text":
         print(f"[{at}] assistant    {str(event.get('text', '')).strip()}")
     elif kind == "result":

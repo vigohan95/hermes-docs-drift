@@ -148,3 +148,14 @@ def test_named_directories_are_replaced_in_every_spelling():
     out = scrub(r"D:\work\hermes-home\plugins and D:/work/hermes-home/logs",
                 named=[(r"D:\work\hermes-home", "$HERMES_HOME")], temp_dirs=[], home_dirs=[], user="")
     assert out == r"$HERMES_HOME\plugins and $HERMES_HOME/logs"
+
+
+def test_real_model_driver_says_why_an_edit_result_has_no_block():
+    import run_real
+    absent = run_real.no_block_reason("docs-drift is NOT installed in this Hermes home", "defaults (no config.yaml)")
+    silent = run_real.no_block_reason("docs-drift is installed in this Hermes home (enabled, 0.1.0)",
+                                      "report_after_edit: false")
+    default = run_real.no_block_reason("docs-drift is installed in this Hermes home (enabled, 0.1.0)", "defaults")
+    assert "not installed" in absent
+    assert "report_after_edit is false" in silent
+    assert default == run_real.NO_BLOCK and "caused no new drift" in default
