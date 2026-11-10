@@ -1,0 +1,93 @@
+# plugin commit 42298d9a7e9939ba0f669f41817780eea6492b29, installed in a Hermes home with 'hermes plugins install file://<this repository> --enable'
+# hermes: Hermes Agent vgit.b7db40d (2026.9.24) · stable · local b7db40d82568
+# project: a copy of examples/notesync with one commit, then "--output-dir" changed to "--dest" in notesync/cli.py and not committed
+#
+# slash-command.py, the script that was run (it is not kept in the repository as a file, because it imports
+# hermes_cli.plugins, which is not a public plugin API, and nothing in the plugin itself does that):
+#
+#     import inspect, os, sys, time
+#     from hermes_cli import plugins
+#     print("# " + time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()))
+#     print("# Hermes' own plugin manager (hermes_cli.plugins) loads the enabled plugins of HERMES_HOME;")
+#     print("# the handler it registered for /drift is then called directly. No model, no chat session.")
+#     cmds = plugins.get_plugin_commands()
+#     print("plugin commands registered in Hermes:", sorted(cmds))
+#     h = plugins.get_plugin_command_handler("drift")
+#     print("handler:", getattr(h, "__module__", None), getattr(h, "__qualname__", None), inspect.signature(h))
+#     for arg in sys.argv[1:]:
+#         print()
+#         print("/drift " + arg)
+#         print(h(arg))
+
+$ python slash-command.py "" "--changed" "explain DD-5fb3c36f" "checks" "help"      (run in the project directory, with the Python that runs Hermes)
+# 2026-11-10T11:37:32Z
+# Hermes' own plugin manager (hermes_cli.plugins) loads the enabled plugins of HERMES_HOME;
+# the handler it registered for /drift is then called directly. No model, no chat session.
+plugin commands registered in Hermes: ['drift']
+handler: hermes_plugins.docs_drift.docsdrift.hermes_plugin handle_command (raw_args: 'str' = '') -> 'str'
+
+/drift 
+docs-drift %TEMP%\docs-drift-demo-s7g5hhpi\notesync: 0 findings (2 doc files checked against 4 code files, 41 ms)
+
+not reported (uncertain, 3): flag-has-loose-trace: 2, option-list-not-ours: 1
+
+/drift --changed
+docs-drift (new since HEAD) %TEMP%\docs-drift-demo-s7g5hhpi\notesync: 2 findings (2 doc files checked against 4 code files, 117 ms)
+
+README.md:8  cli-flag-undefined  [high]  DD-5fb3c36f
+  `--output-dir` was removed from the code by the edit, but the docs still use it.
+  docs: README.md:8  notesync ./notes --output-dir ./backup
+  code: notesync/cli.py:12  parser.add_argument("--dest", default="./out", help="where the copies go")
+  also at lines: 16
+  fix:  The same edit added `--dest` (notesync/cli.py:12). If this is a rename, replace `--output-dir` with `--dest` in the docs.
+
+docs/configuration.md:7  cli-flag-undefined  [high]  DD-6d2fee65
+  `--output-dir` was removed from the code by the edit, but the docs still use it.
+  docs: docs/configuration.md:7  To write the copies somewhere else, pass `--output-dir`:
+  code: notesync/cli.py:12  parser.add_argument("--dest", default="./out", help="where the copies go")
+  also at lines: 10
+  fix:  The same edit added `--dest` (notesync/cli.py:12). If this is a rename, replace `--output-dir` with `--dest` in the docs.
+
+not reported (uncertain, 1): option-list-not-ours: 1
+note: Compared with HEAD: 1 changed file(s), 0 finding(s) already present before the change are not shown.
+
+/drift explain DD-5fb3c36f
+README.md:8  cli-flag-undefined  [high]  DD-5fb3c36f
+  `--output-dir` was removed from the code by the edit, but the docs still use it.
+  fix: The same edit added `--dest` (notesync/cli.py:12). If this is a rename, replace `--output-dir` with `--dest` in the docs.
+why this was reported:
+  - before the edit `--output-dir` was defined at notesync/cli.py:12
+  - after the edit no non-doc file contains it
+  - files that changed: notesync/cli.py
+  - the doc line runs this project's own command `notesync`
+docs:
+      6 | 
+      7 | ```sh
+>     8 | notesync ./notes --output-dir ./backup
+      9 | notesync ./notes --dry-run
+     10 | ```
+code:
+     10 |     parser = argparse.ArgumentParser(prog="notesync")
+     11 |     parser.add_argument("source", help="folder with .md notes")
+>    12 |     parser.add_argument("--dest", default="./out", help="where the copies go")
+     13 |     parser.add_argument("--timeout", type=int, default=30, help="seconds to wait for a locked file")
+     14 |     parser.add_argument("--dry-run", action="store_true", help="print what would be copied")
+
+/drift checks
+on   path-missing             A Markdown link or image points at a file that is not in the repository.
+off  path-ref-missing         A file path written in inline code does not exist in the repository.
+on   cli-flag-undefined       Docs show a command-line flag that the code no longer defines.
+off  cli-flag-undocumented    The code defines a flag that the docs listing its siblings do not mention.
+on   env-undefined            Docs name an environment variable that nothing in the code reads.
+off  env-undocumented         The code reads an environment variable that the docs listing its siblings do not mention.
+on   default-mismatch         Docs state a default value that differs from the default in the code.
+on   npm-script-missing       Docs tell the reader to run a package.json script that does not exist.
+on   make-target-missing      Docs tell the reader to run a make target that no Makefile defines.
+
+/drift help
+/drift [path]            scan the repository (default: the working directory)
+/drift --changed [path]  only drift introduced by uncommitted changes
+/drift --all [path]      also run the opt-in checks
+/drift explain <id>      show one finding with both sides
+/drift checks            list the checks
+exit status: 0

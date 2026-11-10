@@ -363,6 +363,10 @@ that the hooks fire and what the agent is given. They do not show how a language
 reacts to it. Recorded runs: [evidence/demo-rename.txt](evidence/demo-rename.txt) and
 [evidence/demo-forget.txt](evidence/demo-forget.txt).
 
+`/drift` was not typed in an interactive Hermes chat, which needs a configured model
+provider. The handler that Hermes registered for it was called through Hermes' plugin
+manager instead: [evidence/slash-command.txt](evidence/slash-command.txt).
+
 ## Development
 
 ```sh
