@@ -99,7 +99,7 @@ def test_defaults_come_from_this_machine():
 
 
 def test_drivers_install_the_scrubber():
-    for name in ("run_demo.py", "run_real.py"):
+    for name in ("run_demo.py", "run_real.py", "type_drift.py"):
         path = os.path.join(ROOT, "demo", name)
         if not os.path.exists(path):
             pytest.fail(name + " is missing")
