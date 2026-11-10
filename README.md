@@ -15,6 +15,13 @@ hermes plugins install vigohan95/hermes-docs-drift --enable
 
 Needs Hermes 0.21.6 or later. No Python packages are installed.
 
+![A recorded Hermes session with docs-drift installed: the result of a patch call carries a docs_drift block that names the new flag no doc mentions](media/session-with-plugin-note.png)
+
+A frame of the demo video. The terminal lines are lines 28 to 47 of
+`evidence/real-model/round3/glm-5.3-add-flag-plugin-1.txt`, a session recorded on 2026-11-10
+with `glm-5.3`, the first of them cut at 135 characters; the header and the caption bar were
+drawn by the video script. Five more frames are in `media/`.
+
 ## Does it change what the agent does? Measured with a real model
 
 106 sessions in real Hermes with a real model, in two sets on 2026-11-10. Each session got
@@ -716,13 +723,15 @@ The output of `hermes plugins validate` is in [evidence/validate.txt](evidence/v
 The workflow in `.github/workflows/ci.yml` runs the tests on Linux, macOS and Windows with
 Python 3.11, 3.12 and 3.14 and then, on Linux, validates and installs the plugin in a pinned
 Hermes checkout and runs both scripted demos. The Linux job fails if the validator's security
-scan line says anything but `safe`, and it installs without `--force` and without a terminal;
-those two checks are newer than the last run named here. It does not run `demo/run_real.py` or
-`demo/type_drift.py`. All ten jobs passed on commit `2eb97cd`. The
-first run, on `35e6564`, failed in the nine test jobs: pytest imported the entry point under
-the name of the checkout directory, which is not a Python identifier there. That is fixed
-in `2eb97cd` and `tests/test_layout.py` guards it. The real-model sessions and the precision
-and injection measurements were run on one Windows machine and nowhere else.
+scan line says anything but `safe`, and it installs without `--force` and without a terminal.
+It does not run `demo/run_real.py` or `demo/type_drift.py`. All ten jobs passed on commit
+`9f94e8d`, those two checks included. The one commit after it changed this paragraph and
+added the images in `media/` and the frame near the top of this file; no code, test or
+workflow file changed. The first run, on `35e6564`, failed in the nine test jobs: pytest
+imported the entry point under the name of the checkout directory, which is not a Python
+identifier there. That is fixed in `2eb97cd` and `tests/test_layout.py` guards it. The
+real-model sessions and the precision and injection measurements were run on one Windows
+machine and nowhere else.
 
 ## License
 
