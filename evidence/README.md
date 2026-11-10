@@ -33,6 +33,7 @@ The three sets and the commit each repository was scanned at are in `targets.txt
 | `demo-rename.txt`, `demo-forget.txt` | Output of `python demo/run_demo.py rename` and `forget` against Hermes Agent `b7db40d` with the plugin installed from commit `2071824`. |
 | `demo-without-plugin.txt` | The `rename` script run against a Hermes home in which the plugin is not installed. The driver's checks fail, as they should; the file is kept for the timing of Hermes' `patch` tool without the hooks. The line `plugin:` at its top names the source checkout, not an installed copy. |
 | `validate.txt` | Output of `hermes plugins validate` for this repository. |
+| `requires-hermes.txt` | Why `requires_hermes` is `>=0.21.6`: what the source of each numbered Hermes release contains. A reading of the source at each tag, not a run. |
 | `slash-command.txt` | The `/drift` command was not typed in an interactive Hermes chat, because that needs a configured model provider. A short script asked Hermes' plugin manager (`hermes_cli.plugins`) for the handler the plugin registered for `/drift` and called it. The file has the script, quoted at the top, and its output. |
 
 ## Things to know when reading the files

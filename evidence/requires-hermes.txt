@@ -1,0 +1,71 @@
+# Which Hermes release first has what docs-drift calls. Recorded 2026-11-10T11:56:29Z.
+# Method: for every release of NousResearch/hermes-agent with a vMAJOR.MINOR.PATCH tag (gh api repos/NousResearch/hermes-agent/releases),
+# fetch hermes_cli/plugins.py at the tag (gh api .../contents/hermes_cli/plugins.py?ref=TAG) and count lines that match.
+# This is a reading of the source at each tag. The plugin was RUN only on commit b7db40d (main, 2026-11-10), which is newer than v0.23.1.
+#
+# Releases (tag, published):
+#   v0.23.1  2026-11-10T01:42:15Z
+#   v0.23.0  2026-11-05T21:32:33Z
+#   v0.22.7  2026-11-03T21:53:16Z
+#   v0.22.6  2026-11-02T17:18:36Z
+#   v0.22.5  2026-10-23T05:28:45Z
+#   v0.22.4  2026-10-21T18:49:24Z
+#   v0.22.3  2026-10-21T12:21:11Z
+#   v0.22.2  2026-10-15T08:21:32Z
+#   v0.22.1  2026-10-14T23:59:24Z
+#   v0.22.0  2026-10-14T03:21:46Z
+#   v0.21.7  2026-10-12T05:53:41Z
+#   v0.21.6  2026-10-08T11:51:57Z
+#   (older releases are tagged by date, v2026.9.24 and earlier, and are not version numbers requires_hermes can name)
+#
+# Lines in hermes_cli/plugins.py that contain each name, per tag:
+tag       "pre_tool_call" "transform_tool_result" "pre_verify" changed_paths   attempt  
+v0.21.6   2               1                       2            2               4        
+v0.21.7   2               1                       2            2               4        
+v0.22.0   2               1                       2            2               4        
+v0.22.1   2               1                       2            2               4        
+v0.22.2   2               1                       2            2               4        
+v0.22.3   2               1                       2            2               4        
+v0.22.4   2               1                       2            2               4        
+v0.22.5   2               1                       2            2               4        
+v0.22.6   2               1                       2            2               4        
+v0.22.7   2               1                       2            2               4        
+v0.23.0   2               1                       2            2               4        
+v0.23.1   2               1                       2            2               4        
+
+# v0.21.6, hermes_cli/plugins.py: the hook names the plugin registers are in VALID_HOOKS
+110:    "pre_tool_call", "post_tool_call", "transform_terminal_output", "transform_tool_result",
+119:    "pre_verify", "pre_api_request", "post_api_request", "api_request_error",
+
+# v0.21.6, hermes_cli/plugins.py: keyword arguments passed to pre_tool_call and pre_verify callbacks
+1988:        "pre_tool_call", tool_name=tool_name, args=args if isinstance(args, dict) else {},
+1989-        task_id=task_id, session_id=session_id, tool_call_id=tool_call_id, turn_id=turn_id,
+1990-        api_request_id=api_request_id, middleware_trace=list(middleware_trace or []),
+1991-    )
+2102:        "pre_verify", session_id=session_id, platform=platform, model=model, coding=coding,
+2103-        attempt=attempt, final_response=final_response, changed_paths=list(changed_paths or []),
+2104-    )
+
+# v0.21.6, model_tools.py: keyword arguments passed to transform_tool_result callbacks
+859:            hook_results = invoke_hook("transform_tool_result", tool_name=function_name, args=function_args,
+860-                                       result=result, **ids.hook_kwargs(), duration_ms=duration_ms,
+861-                                       status=status, error_type=error_type, error_message=error_message)
+
+# v0.21.6, hermes_cli/plugins.py: registration methods the plugin calls
+456:    def register_tool(
+457-        self, name: str, toolset: str, schema: dict, handler: Callable,
+458-        check_fn: Callable | None = None, requires_env: list | None = None, is_async: bool = False,
+459-        description: str = "", emoji: str = "", override: bool = False,
+647:    def register_command(
+648-        self, name: str, handler: Callable, description: str = "", args_hint: str = "",
+649-        argument_mode: str | None = None,
+650-    ) -> Optional[PluginRegistration]:
+933:    def register_hook(self, hook_name: str, callback: Callable) -> PluginRegistration:
+934-        """Register a lifecycle hook callback (unknown names warn but are still stored)."""
+
+# The plugin calls: ctx.register_tool(name=, toolset=, schema=, handler=, description=); ctx.register_hook(name, callback);
+# ctx.register_command(name, handler, description=, args_hint=). Its callbacks read tool_name, args, result, session_id, task_id,
+# changed_paths and attempt, and accept any other keyword.
+#
+# Conclusion: v0.21.6 (published 2026-10-08) is the oldest vMAJOR.MINOR.PATCH release and already has all of it, so the floor is >=0.21.6.
+# v0.23.1 no longer defines register_tool and register_command in hermes_cli/plugins.py; in the tested commit b7db40d they are in hermes_cli/plugins_context.py with the same parameters.

@@ -44,8 +44,11 @@ In that session the model side is a fixed script, not a language model; see
 hermes plugins install vigohan95/hermes-docs-drift --enable
 ```
 
-Needs Hermes 0.21.6 or later. No Python packages are installed: the plugin uses the
-standard library only. `git` should be on `PATH`; without it the plugin walks the directory
+Needs Hermes 0.21.6 or later. That is the oldest numbered release, and its source already
+has the three hooks and the registration calls used here
+([evidence/requires-hermes.txt](evidence/requires-hermes.txt)); the plugin itself was run
+only on Hermes `main` at commit `b7db40d` (2026-11-10, after v0.23.1). No Python packages are
+installed: the plugin uses the standard library only. `git` should be on `PATH`; without it the plugin walks the directory
 and cannot compare with an earlier state.
 
 Hermes defers plugin tools behind its `tool_search` and `tool_call` tools by default, so the
