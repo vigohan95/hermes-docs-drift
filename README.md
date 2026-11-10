@@ -94,7 +94,12 @@ the table the answer was no.
 Plans written before the counted sessions, every transcript and the per-session tables:
 [the first set](evidence/real-model/README.md) (16 counted sessions and 3 more, 148 chat
 requests) and [the second set](evidence/real-model/round3/README.md) (90 sessions, 777 chat
-requests).
+requests). One of those 90 transcripts is not on this branch. It is kept unchanged on the branch
+[`evidence-raw`](https://github.com/vigohan95/hermes-docs-drift/blob/evidence-raw/evidence/real-model/round3/qwen3.8-27b-rename-plugin-4.txt),
+because Hermes' install scanner flags a shell command the model issued in it, and with that
+file in the tree the install command above asks for confirmation. The session is counted in the
+table as before; [the file left in its place](evidence/real-model/round3/qwen3.8-27b-rename-plugin-4.MOVED.md)
+says what the line is and why the finding is a false positive.
 
 ## Limits, in short
 
@@ -683,7 +688,7 @@ without a terminal, is [evidence/slash-command.txt](evidence/slash-command.txt).
 ## Development
 
 ```sh
-python -m pytest                      # 261 tests; needs pytest and nothing else
+python -m pytest                      # 263 tests; needs pytest and nothing else
 python -m docsdrift . --checks all    # this repository checks its own docs
 python benchmarks/run_scans.py <clones_dir> <out_dir> owner__name ...
 python benchmarks/precision.py evidence/scans evidence/labels.json
@@ -699,7 +704,9 @@ says which file comes from which run.
 The output of `hermes plugins validate` is in [evidence/validate.txt](evidence/validate.txt).
 The workflow in `.github/workflows/ci.yml` runs the tests on Linux, macOS and Windows with
 Python 3.11, 3.12 and 3.14 and then, on Linux, validates and installs the plugin in a pinned
-Hermes checkout and runs both scripted demos. It does not run `demo/run_real.py` or
+Hermes checkout and runs both scripted demos. The Linux job fails if the validator's security
+scan line says anything but `safe`, and it installs without `--force` and without a terminal;
+those two checks are newer than the last run named here. It does not run `demo/run_real.py` or
 `demo/type_drift.py`. All ten jobs passed on commit `2eb97cd`. The
 first run, on `35e6564`, failed in the nine test jobs: pytest imported the entry point under
 the name of the checkout directory, which is not a Python identifier there. That is fixed

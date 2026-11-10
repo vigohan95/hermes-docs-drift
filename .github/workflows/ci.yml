@@ -54,10 +54,18 @@ jobs:
         run: uv sync --frozen --no-dev
       - name: hermes plugins validate
         working-directory: hermes-agent
-        run: uv run --no-sync hermes plugins validate "$GITHUB_WORKSPACE/plugin" --install-deps
+        run: |
+          set -o pipefail
+          uv run --no-sync hermes plugins validate "$GITHUB_WORKSPACE/plugin" --install-deps | tee "$RUNNER_TEMP/validate.txt"
+      # Hermes scans every file of the repository before it installs it. One flagged line, also in
+      # a recorded transcript under evidence/, makes the verdict "caution", and then the install
+      # asks for a confirmation. The validator still exits with 0 in that case, hence this step.
+      - name: The install scan says safe
+        run: grep -Eq 'security scan [^a-z]+ safe[[:space:]]*$' "$RUNNER_TEMP/validate.txt"
+      # No --force and no terminal: the command of the README, as a user without a prompt runs it.
       - name: Install the plugin into a fresh Hermes home
         working-directory: hermes-agent
-        run: uv run --no-sync hermes plugins install "file://$GITHUB_WORKSPACE/plugin" --enable --yes-deps
+        run: uv run --no-sync hermes plugins install "file://$GITHUB_WORKSPACE/plugin" --enable --yes-deps < /dev/null
       - name: Example session, rename
         working-directory: plugin
         run: python demo/run_demo.py rename --hermes "uv run --no-sync --project $GITHUB_WORKSPACE/hermes-agent hermes"

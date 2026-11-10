@@ -6,6 +6,15 @@ the Hermes home are replaced as they are printed, by `demo/scrub.py`). Hermes wa
 `b7db40d`. In the sessions with the plugin, docs-drift was installed from commit `c07bd2d`,
 the commit that contains [PLAN.md](PLAN.md).
 
+**89 of the 90 transcripts are in this directory. One, `qwen3.8-27b-rename-plugin-4.txt`, is
+kept unchanged on the branch
+[`evidence-raw`](https://github.com/vigohan95/hermes-docs-drift/blob/evidence-raw/evidence/real-model/round3/qwen3.8-27b-rename-plugin-4.txt),**
+because Hermes' install scanner flags one line of it (a shell command the model issued, which
+the scanner's rule `echo_pipe_exec` misreads), and with that file in the tree
+`hermes plugins install` asks for confirmation. The session counts in every table and total
+below as before. [qwen3.8-27b-rename-plugin-4.MOVED.md](qwen3.8-27b-rename-plugin-4.MOVED.md)
+has the commit, the SHA-256, what the line is and why it is a false positive.
+
 The plan was committed before the first session and has not been changed since. What was
 decided while the round was running (a larger budget, a different order, the second batch of
 `add-flag`, the request on a real repository) is in [PLAN-ADDENDUM.md](PLAN-ADDENDUM.md).
@@ -178,7 +187,11 @@ committed. None contains it.
 
 ## Per request and arm
 
-Printed by `python benchmarks/summarize_real.py evidence/real-model/round3`.
+Printed by `python benchmarks/summarize_real.py evidence/real-model/round3`. The script reads the
+one transcript that is not in this directory from the commit its pointer file names
+(`git show`, in a full clone; after `git fetch --unshallow` in a shallow one) and checks its
+SHA-256. Its output was compared before and after that transcript was taken out of the tree:
+the same, byte for byte.
 
 | Model | Task | Arm | Sessions | Docs consistent | Docs stale | Not done in the code | Sessions with an edit of the project's docs | Plugin told the model something | of those: every doc edit came after it | Chat requests |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -209,6 +222,8 @@ after it" counts the sessions in which the plugin told the model something and t
 edited no doc file of the project before that request.
 
 ## Per session
+
+The row `qwen3.8-27b-rename-plugin-4.txt` is the transcript kept on the `evidence-raw` branch.
 
 | File | Started (UTC) | Chat requests | Hermes exit | Plugin told the model | Edits of the project's docs before / after that | Reminder | Outcome |
 | --- | --- | --- | --- | --- | --- | --- | --- |

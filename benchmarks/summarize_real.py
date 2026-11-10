@@ -13,14 +13,23 @@ transcript, because the SUMMARY line of the round 3 sessions counts every edit o
 a file with a doc suffix, also of files outside the project (scratch notes a model
 wrote into a cache directory to try its change). Here only edits of files in the
 project count. Sessions where the two differ are listed under the tables.
+
+A transcript that is kept in another commit of this repository is represented in
+the directory by a pointer file, ``<name>.MOVED.md``, which names the commit, the
+path and the SHA-256 of the transcript. It is read from that commit with
+``git show`` and counted like the others if its SHA-256 matches. Where the commit
+is not in the clone (a shallow clone), the session is named under the tables and
+is missing from them.
 """
 
 from __future__ import annotations
 
 import glob
+import hashlib
 import json
 import os
 import re
+import subprocess
 import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "demo"))
@@ -33,6 +42,8 @@ _ANSWER = re.compile(r"^\[[0-9:]+Z\] answer (\d+) ")
 _RELAY_CALL = re.compile(r"^tool call: (\w+) ")
 _FIRST = re.compile(r"^the plugin told the model something: yes, first in request (\d+)", re.M)
 _NAME = re.compile(r"-(plugin|none)-(\d+)\.txt$")
+MOVED = ".MOVED.md"
+_POINTER = re.compile(r"^- (commit|path|sha256): `([^`]+)`$", re.M)
 
 
 def in_project(path: str) -> bool:
@@ -85,13 +96,36 @@ def recount(text: str):
     return {"before": before, "after": after, "outside_before": outside_before, "outside_after": outside_after}
 
 
+def moved(pointer: str):
+    """The transcript a pointer file stands for, read from the commit it names; None if it cannot be had."""
+    with open(pointer, encoding="utf-8") as fh:
+        fields = dict(_POINTER.findall(fh.read()))
+    if not {"commit", "path", "sha256"} <= set(fields):
+        return None
+    try:
+        blob = subprocess.run(["git", "-C", os.path.dirname(os.path.abspath(pointer)), "show",
+                               f"{fields['commit']}:{fields['path']}"], capture_output=True, timeout=60).stdout
+    except (OSError, subprocess.SubprocessError):
+        return None
+    return blob.decode("utf-8") if hashlib.sha256(blob).hexdigest() == fields["sha256"] else None
+
+
 def read(path: str):
-    with open(path, encoding="utf-8") as fh:
-        text = fh.read()
+    if path.endswith(MOVED):
+        text = moved(path)
+        if text is None:
+            return None, "", None
+    else:
+        with open(path, encoding="utf-8") as fh:
+            text = fh.read()
     lines = text.splitlines()
     summary = next((json.loads(ln[len("SUMMARY: "):]) for ln in reversed(lines) if ln.startswith("SUMMARY: ")), None)
     started = lines[0].rsplit(" ", 1)[-1] if lines else ""
     return summary, started, text
+
+
+def transcript_name(path: str) -> str:
+    return path[:-len(MOVED)] + ".txt" if path.endswith(MOVED) else path
 
 
 def batch_of(name: str) -> int:
@@ -104,14 +138,18 @@ def main(argv=None) -> int:
     if not args:
         print(__doc__.strip())
         return 2
-    files = sorted(f for a in args for f in (glob.glob(os.path.join(a, "*.txt")) if os.path.isdir(a) else [a]))
-    cells, total, missing, differ, unmatched = {}, 0, [], [], []
+    files = sorted((f for a in args for f in (glob.glob(os.path.join(a, "*.txt")) + glob.glob(os.path.join(a, "*" + MOVED))
+                                              if os.path.isdir(a) else [a])), key=transcript_name)
+    cells, total, missing, differ, unmatched, elsewhere = {}, 0, [], [], [], []
     print("| File | Started (UTC) | Chat requests | Hermes exit | Plugin told the model | Edits of the project's docs before / after that "
           "| Reminder | Outcome |")
     print("| --- | --- | --- | --- | --- | --- | --- | --- |")
     for path in files:
-        name = os.path.basename(path)
+        name = os.path.basename(transcript_name(path))
         s, started, text = read(path)
+        if text is None:
+            elsewhere.append((name, os.path.basename(path)))
+            continue
         if s is None:
             missing.append(name)
             continue
@@ -160,13 +198,16 @@ def main(argv=None) -> int:
         print(f"| {model} | {task} | {arm} | {c['n']} ({which}) | {c['consistent']} | {c['stale']} | {c['not_done']} "
               f"| {c['edited_docs']} | {spoke} | {after} | {c['requests']} |")
     print()
-    print(f"chat requests in these {len(files) - len(missing)} sessions: {total}")
+    print(f"chat requests in these {len(files) - len(missing) - len(elsewhere)} sessions: {total}")
     for name, s, counted in differ:
         print(f"doc edits counted again: {name}: the SUMMARY line says {s['doc_edits_before']} before / {s['doc_edits_after']} after; "
               f"{counted['outside_before']} + {counted['outside_after']} of those were files outside the project, "
               f"which leaves {counted['before']} / {counted['after']}")
     for name in unmatched:
         print(f"tool calls of sections 1 and 2 do not line up, counts taken from the SUMMARY line: {name}")
+    for name, pointer in elsewhere:
+        print(f"not in the tables: {name} is kept in another commit, named in {pointer}, and could not be read from it "
+              f"(a shallow clone does not have that commit; `git fetch --unshallow` gets it)")
     for name in missing:
         print(f"no SUMMARY line (not a --task session, or the driver stopped early): {name}")
     return 0

@@ -1,7 +1,9 @@
 """benchmarks/summarize_real.py: the tables are built from what the transcripts say, and nothing else."""
 
+import hashlib
 import json
 import os
+import subprocess
 import sys
 
 from conftest import ROOT
@@ -79,3 +81,62 @@ def test_the_tables_keep_batches_of_five_apart_and_then_pool_them(tmp_path, caps
     assert "m-add-flag-none-4.txt: the SUMMARY line says 2 before / 0 after; 2 + 0 of those were files outside the project" in out
     assert "no SUMMARY line (not a --task session, or the driver stopped early): other.txt" in out
     assert "| `m-add-flag-none-4.txt` | 14:46:20 | 7 | 0 | n/a | 0 / - | n/a | docs stale |" in out
+
+
+def git(cwd, *args):
+    done = subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@example.invalid", "-c", "core.autocrlf=false",
+                           *args], cwd=str(cwd), capture_output=True, text=True, check=True)
+    return done.stdout.strip()
+
+
+def test_a_transcript_kept_in_another_commit_is_read_through_its_pointer(tmp_path, capsys):
+    kept = transcript(True, "docs consistent", first=2, before=0, after=1, requests=9,
+                      calls=[(1, "patch", {"path": "cli.py"}), (2, "patch", {"path": "README.md"})]).encode("utf-8")
+    here = transcript(False, "docs stale", calls=[(1, "patch", {"path": "cli.py"})])
+    runs = tmp_path / "runs"
+    runs.mkdir()
+    (runs / "m-add-flag-plugin-1.txt").write_bytes(kept)
+    (runs / "m-add-flag-none-1.txt").write_bytes(here.encode("utf-8"))
+    git(tmp_path, "init", "-q")
+    git(tmp_path, "add", "-A")
+    git(tmp_path, "commit", "-q", "-m", "both")
+    commit = git(tmp_path, "rev-parse", "HEAD")
+    (runs / "m-add-flag-plugin-1.txt").unlink()
+    pointer = runs / ("m-add-flag-plugin-1" + summarize_real.MOVED)
+    fields = (f"- commit: `{commit}`\n- path: `runs/m-add-flag-plugin-1.txt`\n"
+              f"- sha256: `{hashlib.sha256(kept).hexdigest()}`\n")
+    pointer.write_text("# kept elsewhere\n\n" + fields, encoding="utf-8")
+
+    assert summarize_real.main([str(runs)]) == 0
+    out = capsys.readouterr().out
+    rows = [ln for ln in out.splitlines() if ln.startswith("| `m-add-flag-")]
+    assert [r.split("`")[1] for r in rows] == ["m-add-flag-none-1.txt", "m-add-flag-plugin-1.txt"]   # sorted as before
+    assert "| `m-add-flag-plugin-1.txt` | 14:46:20 | 9 | 0 | edit result | 0 / 1 | not delivered | docs consistent |" in out
+    assert "| m | add-flag | plugin | 1 (1-5) | 1 | 0 | 0 | 1 | 1 | 1 | 9 |" in out
+    assert "chat requests in these 2 sessions: 16" in out and "not in the tables" not in out
+
+    # the transcript in that commit is not the one the pointer was written for: it is not counted
+    pointer.write_text("# kept elsewhere\n\n" + fields.replace(hashlib.sha256(kept).hexdigest(), "0" * 64), encoding="utf-8")
+    assert summarize_real.main([str(runs)]) == 0
+    out = capsys.readouterr().out
+    assert "chat requests in these 1 sessions: 7" in out
+    assert "not in the tables: m-add-flag-plugin-1.txt is kept in another commit, named in m-add-flag-plugin-1.MOVED.md" in out
+    assert "| m | add-flag | plugin |" not in out
+
+    # a pointer that names no commit, and a commit this clone does not have
+    for broken in ("# kept elsewhere\n", fields.replace(commit, "1" * 40)):
+        pointer.write_text(broken, encoding="utf-8")
+        assert summarize_real.moved(str(pointer)) is None
+
+
+def test_the_pointer_in_this_repository_names_a_transcript_of_the_right_shape():
+    """The one transcript kept on another branch: its pointer has the three fields the summarizer reads."""
+    folder = os.path.join(ROOT, "evidence", "real-model", "round3")
+    pointers = [n for n in os.listdir(folder) if n.endswith(summarize_real.MOVED)]
+    assert pointers == ["qwen3.8-27b-rename-plugin-4.MOVED.md"]
+    with open(os.path.join(folder, pointers[0]), encoding="utf-8") as fh:
+        fields = dict(summarize_real._POINTER.findall(fh.read()))
+    assert set(fields) == {"commit", "path", "sha256"}
+    assert len(fields["commit"]) == 40 and len(fields["sha256"]) == 64
+    assert fields["path"] == "evidence/real-model/round3/qwen3.8-27b-rename-plugin-4.txt"
+    assert not os.path.exists(os.path.join(ROOT, *fields["path"].split("/")))
