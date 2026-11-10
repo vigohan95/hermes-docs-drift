@@ -1,8 +1,11 @@
-"""Guards added after the first held-out run (EVIDENCE/labels.json, round 1).
+"""Guards added after reading the findings of real repositories.
 
 Each test is the reduced form of a false report or a miss seen on a real
-repository; the comment names the repository it came from.
+repository; the comment names the repository it came from. The README section
+"Measured precision" says which run each group of guards followed.
 """
+
+import os
 
 import pytest
 
@@ -170,3 +173,75 @@ def test_sentence_that_uses_the_current_default_is_still_a_claim(make_repo):
     files = dict(NOTESYNC)
     files["docs/configuration.md"] += "\nWithout `--timeout` the tool will use the default of 60 and then give up.\n"
     assert names(Scanner(make_repo(files)).scan(), "default-mismatch") == ["--timeout"]
+
+
+# ------------------------------------------------- guards added after scanning hermes-agent itself (b7db40d)
+def test_default_quoted_inside_a_code_span_equals_the_code(make_repo):
+    # website/docs/user-guide/messaging/discord.md:313: the cell is `"safe"`, the code default is 'safe'
+    files = dict(NOTESYNC)
+    files["README.md"] = files["README.md"].replace("| `--output-dir` | `./out` |", "| `--output-dir` | `\"./out\"` |")
+    assert names(Scanner(make_repo(files)).scan(), "default-mismatch") == []
+
+
+def test_placeholder_link_target_is_not_a_link(make_repo):
+    # optional-skills/productivity/shop/SKILL.md:182: "present it as a [Finish in Shop](url) link"
+    extra = "\nShow the address as a [Finish in Shop](url) link. See also [the licence](LICENCE).\n"
+    result = Scanner(make_repo(with_readme(extra))).scan()
+    assert names(result, "path-missing") == ["LICENCE"]
+    assert result.suppressed.get("placeholder-link") == 1
+
+
+def test_page_whose_links_belong_to_another_tree_is_left_alone(make_repo):
+    # optional-skills/mlops/training/unsloth/references/llms-full.md: a documentation site exported into
+    # one file; 58 of its links are routes of that site
+    files = dict(NOTESYNC)
+    files["handbook/guide.md"] = "# Guide\n\n" + "".join(f"- [part {i}](basics/part-{i}.md)\n" for i in range(9))
+    files["README.md"] += "\n" + "".join(f"- [page {i}](docs/page-{i}.md)\n" for i in range(3))
+    result = Scanner(make_repo(files)).scan()
+    # three dead links next to a live one are still reported: they are not most of that page's links ...
+    assert names(result, "path-missing") == ["docs/page-0.md", "docs/page-1.md", "docs/page-2.md"]
+    assert result.suppressed.get("links-of-page-from-another-tree") == 9
+
+
+def test_link_to_a_file_the_edit_removed_is_reported_even_on_such_a_page(make_repo):
+    files = dict(NOTESYNC)
+    files["handbook/guide.md"] = ("# Guide\n\n[the settings](../docs/configuration.md)\n\n"
+                                + "".join(f"- [part {i}](basics/part-{i}.md)\n" for i in range(9)))
+    root = make_repo(files)
+    sc = Scanner(root)
+    before = sc.scan()
+    assert names(before, "path-missing") == []
+    os.remove(os.path.join(root, "docs", "configuration.md"))
+    found = by_check(sc.scan(before=before.index), "path-missing")
+    assert sorted((f.doc_file, f.name) for f in found) == [
+        ("README.md", "docs/configuration.md"), ("handbook/guide.md", "docs/configuration.md")]
+
+
+def test_env_shaped_word_in_a_quoted_sentence_is_not_a_variable(make_repo):
+    # optional-skills/devops/actual-setup/references/opencode.md:69:
+    #   opencode run ... "Reply with exactly this text: OPENCODE_ACTUAL_OK"
+    extra = "\n```sh\nnotesync ./notes --dry-run \"Reply with exactly this text: NOTESYNC_READY_OK\"\n```\n"
+    assert names(Scanner(make_repo(with_readme(extra))).scan(), "env-undefined") == []
+
+
+@pytest.mark.parametrize("block_line", [
+    "export NOTESYNC_REGION=eu",
+    "NOTESYNC_REGION=eu notesync ./notes",
+    "docker run -e \"NOTESYNC_REGION=eu west\" notesync",
+    "echo \"region is $NOTESYNC_REGION\"",
+    "{\"env\": {\"NOTESYNC_REGION\": \"eu\"}}",
+])
+def test_variable_positions_in_a_code_block_are_still_claims(make_repo, block_line):
+    root = make_repo(with_readme("\n```\n" + block_line + "\n```\n"))
+    assert names(Scanner(root).scan(), "env-undefined") == ["NOTESYNC_REGION"]
+
+
+def test_flags_after_a_script_that_forwards_its_arguments_are_not_checked(make_repo):
+    # optional-skills/software-development/python-debugpy/SKILL.md:101:
+    #   scripts/run_tests.sh tests/path/to/test_file.py --showlocals --tb=long   (pytest's flags)
+    files = with_readme("\n```sh\nscripts/run_tests.sh tests/test_cli.py --showlocals\nscripts/sync.sh --frobnicate\n```\n")
+    files["scripts/run_tests.sh"] = "#!/bin/sh\nexec python -m pytest \"$@\"\n"
+    files["scripts/sync.sh"] = "#!/bin/sh\nexec notesync ./notes --dry-run\n"
+    result = Scanner(make_repo(files)).scan()
+    assert names(result) == ["--frobnicate"]
+    assert result.suppressed.get("script-forwards-arguments") == 1

@@ -1,0 +1,62 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    # The scanner uses only the standard library, so there is nothing to install but pytest.
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python: ["3.11", "3.12", "3.14"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -m pip install "pytest>=8,<10"
+      - run: python -m pytest
+      - name: The plugin's own docs match its code
+        run: python -m docsdrift . --checks all
+
+  hermes:
+    # Loads the plugin in a real Hermes checkout: the validator, then the example
+    # session driven by demo/scripted_model.py (a fixed script, no API key).
+    runs-on: ubuntu-latest
+    env:
+      HERMES_REF: b7db40d82568ea68ce321ac1ead3bfea354c7f56
+      PYTHONUTF8: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: plugin
+      - uses: actions/checkout@v4
+        with:
+          repository: NousResearch/hermes-agent
+          ref: ${{ env.HERMES_REF }}
+          path: hermes-agent
+      - uses: astral-sh/setup-uv@v6
+      - name: Use a fresh Hermes home
+        run: echo "HERMES_HOME=$RUNNER_TEMP/hermes-home" >> "$GITHUB_ENV"
+      - name: Install Hermes
+        working-directory: hermes-agent
+        run: uv sync --frozen --no-dev
+      - name: hermes plugins validate
+        working-directory: hermes-agent
+        run: uv run --no-sync hermes plugins validate "$GITHUB_WORKSPACE/plugin" --install-deps
+      - name: Install the plugin into a fresh Hermes home
+        working-directory: hermes-agent
+        run: uv run --no-sync hermes plugins install "file://$GITHUB_WORKSPACE/plugin" --enable --yes-deps
+      - name: Example session, rename
+        working-directory: plugin
+        run: python demo/run_demo.py rename --hermes "uv run --no-sync --project $GITHUB_WORKSPACE/hermes-agent hermes"
+      - name: Example session, forgotten docs
+        working-directory: plugin
+        run: python demo/run_demo.py forget --hermes "uv run --no-sync --project $GITHUB_WORKSPACE/hermes-agent hermes"

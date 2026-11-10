@@ -93,6 +93,10 @@ DEFAULT_RX = re.compile(
     r"(`[^`]+`|\"[^\"]+\"|'[^']+'|-?\d+(?:\.\d+)?(?![\w.%])|\btrue\b|\bfalse\b)"
 )
 ANNOUNCED_RX = re.compile(r"(?i)\b(?:will|shall|going to)(?: (?:soon|then|later|eventually))? (?:be the |become the )?$")
+PLACEHOLDER_LINKS = {"url", "link", "href", "uri", "path", "src", "target", "file", "todo", "tbd"}
+FOREIGN_TREE_MIN_LINKS = 8      # this many dead links that are also most of a page's links: the page is from another tree
+QUOTED_TEXT = re.compile(r"\"[^\"]*\"|'[^']*'")
+FORWARDS_ARGS = re.compile(r"\$@|\$\*|\$\{@\}|%\*")
 OPTION_SPAN = re.compile(r"^(?:-[A-Za-z](?:,|\s|/)\s*)?--([a-zA-Z][\w-]*)(?:[\s=,|/\[<].*)?$")
 LIST_OR_TABLE_LINE = re.compile(r"^\s*(?:[-*+]\s|\d+[.)]\s|\||#{1,6}\s|<t[dr]|<li|<dt)")
 HIDDEN_NAME = re.compile(r"(debug|internal|experimental|deprecated|hidden|unsafe|legacy|test|dev|ci)", re.I)
@@ -427,6 +431,7 @@ def check_cli_flags(ctx: Context) -> List[Finding]:
                 continue
             label, rest = own
             used = _flags_in(rest)
+            forwards = _forwards_arguments(ctx, doc, label)
             gone = bool(ctx.removed_flags) and any(norm_flag(n) in ctx.removed_flags for n in used)
             if doc.stale_context(cmd.line, edit=gone):
                 ctx.skip("stale-context")
@@ -434,6 +439,9 @@ def check_cli_flags(ctx: Context) -> List[Finding]:
             for name in used:
                 key = norm_flag(name)
                 if key in IGNORED_FLAGS:
+                    continue
+                if forwards and key not in ctx.removed_flags and not _flag_strict(ctx, key):
+                    ctx.skip("script-forwards-arguments")
                     continue
                 per_command.setdefault(label.split(" ")[0] + ":" + label, set()).add(key)
                 info = claims.setdefault((doc.path, key), {"lines": [], "label": label, "raw": name, "src": "command"})
@@ -540,6 +548,19 @@ def check_cli_flags(ctx: Context) -> List[Finding]:
             f.suggestion = "Remove the flag from the docs, or restore it in the code."
         findings.append(f.finish())
     return findings
+
+
+def _forwards_arguments(ctx: Context, doc: Doc, label: str) -> bool:
+    """True when the command is a script in the repository that passes "$@" on to something else."""
+    script = label.split(" ")[-1].strip("\"'")
+    if "/" not in script and "." not in script:
+        return False
+    for base in ("", posixpath.dirname(doc.path)):
+        cand = posixpath.normpath(posixpath.join(base, script))
+        if not cand.startswith("..") and ctx.repo.has_file(cand):
+            text = ctx.repo.read(cand) or ""
+            return bool(FORWARDS_ARGS.search(text))
+    return False
 
 
 def _rename_hint(old: Optional[Fact], added: List[Fact]) -> Optional[Fact]:
@@ -669,9 +690,20 @@ def _doc_env_claims(doc: Doc) -> Dict[str, List[int]]:
             out.setdefault(name, []).append(sp.line)
     for blk in doc.blocks:
         for i, ln in enumerate(blk.lines):
-            for name in ENV_TOKEN.findall(ln):
-                out.setdefault(name, []).append(blk.start + i)
+            for m in ENV_TOKEN.finditer(ln):
+                if not _in_quoted_prose(ln, m.start(), m.end()):
+                    out.setdefault(m.group(0), []).append(blk.start + i)
     return out
+
+
+def _in_quoted_prose(line: str, start: int, end: int) -> bool:
+    """True for `tool "Reply with exactly this text: ALL_DONE_OK"`: a word in a sentence, not a variable."""
+    name = line[start:end]
+    for q in QUOTED_TEXT.finditer(line):
+        if q.start() < start and end < q.end():
+            inner = q.group(0)[1:-1]
+            return " " in inner.strip() and "$" not in inner and "%" not in inner and name + "=" not in inner
+    return False
 
 
 def _removed_env_findings(ctx: Context) -> List[Finding]:
@@ -835,8 +867,9 @@ def _norm_value(v: Any) -> Tuple[str, Any]:
     if isinstance(v, (int, float)):
         return ("num", float(v))
     s = str(v).strip()
-    if len(s) >= 2 and s[0] == s[-1] and s[0] in "\"'`":
-        s = s[1:-1].strip()
+    for _ in range(2):          # `"safe"` in a table cell: code span around a quoted string
+        if len(s) >= 2 and s[0] == s[-1] and s[0] in "\"'`":
+            s = s[1:-1].strip()
     low = s.lower()
     if low in ("true", "false"):
         return ("bool", low == "true")
@@ -1158,6 +1191,8 @@ def check_paths(ctx: Context) -> List[Finding]:
         site = _site_mode(ctx, doc.path)
         doc_dir = posixpath.dirname(doc.path)
         seen: Dict[str, Finding] = {}
+        resolved: Set[str] = set()   # distinct link targets of this page that point inside the repository
+        plain: Set[str] = set()      # ... of which: simply not there (not removed by the edit, not a case slip)
         for link in doc.links:
             t = link.target.strip()
             if (not t or t.startswith(("#", "/", "?", "\\")) or re.match(r"^[a-zA-Z][a-zA-Z0-9+.-]*:", t)
@@ -1169,7 +1204,11 @@ def check_paths(ctx: Context) -> List[Finding]:
             target = posixpath.normpath(posixpath.join(doc_dir, t))
             if target.startswith("..") or target == ".":
                 continue
+            resolved.add(target)
             if repo.exists(target):
+                continue
+            if t.lower() in PLACEHOLDER_LINKS and target not in ctx.removed_files:
+                ctx.skip("placeholder-link")        # "[Finish in Shop](url)" shows a format, it is not a link
                 continue
             base = target.rsplit("/", 1)[-1]
             ext = base.rsplit(".", 1)[-1].lower() if "." in base else ""
@@ -1233,6 +1272,7 @@ def check_paths(ctx: Context) -> List[Finding]:
                     if repo.exists(alt):
                         continue
                 unchecked.add(target)
+                plain.add(target)
             if target in seen:
                 if link.line not in seen[target].doc_lines:
                     seen[target].doc_lines.append(link.line)
@@ -1258,6 +1298,11 @@ def check_paths(ctx: Context) -> List[Finding]:
                      "the target is neither tracked, untracked-on-disk, git-ignored nor inside a submodule"],
             )
             seen[target] = f
+        if len(plain) >= FOREIGN_TREE_MIN_LINKS and 2 * len(plain) >= len(resolved):
+            # e.g. a documentation site exported into one file: its links were never relative to this tree
+            ctx.skip("links-of-page-from-another-tree", len(plain))
+            for target in plain:
+                del seen[target]
         findings.extend(f.finish() for f in seen.values())
     if unchecked:
         # one git call for all missing targets: a file that .gitignore names is build output, not drift
