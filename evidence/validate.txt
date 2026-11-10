@@ -1,5 +1,6 @@
-# 2026-11-10T13:25:31Z  hermes plugins validate, run in the working tree that was then committed
-# (commit 2c47a1b plus one sentence in plugin.yaml and this file)
+# 2026-11-10T16:40:52Z  hermes plugins validate, run in the working tree that was then committed
+# (commit d453254 plus a paragraph in the Install section of the README, evidence/install-without-force.txt,
+# one row in evidence/README.md and this file)
 # hermes: Hermes Agent vgit.b7db40d (2026.9.24) · stable · local b7db40d82568
 $ hermes plugins validate . --install-deps
 

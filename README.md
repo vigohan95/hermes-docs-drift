@@ -192,6 +192,17 @@ only on Hermes `main` at commit `b7db40d` (2026-11-10, after v0.23.1). No Python
 installed: the plugin uses the standard library only. `git` should be on `PATH`; without it
 the plugin walks the directory and cannot compare with an earlier state.
 
+Hermes scans every file of a plugin repository before it installs it, and with a verdict of
+`caution` it asks for confirmation, or refuses where it cannot ask. For this repository the
+verdict is `safe` ([evidence/validate.txt](evidence/validate.txt)), and the same command,
+given a local clone in place of the GitHub name, installed it with no `--force` and no terminal
+([evidence/install-without-force.txt](evidence/install-without-force.txt)). To keep it that
+way, one recorded session transcript is not on the default branch: the scanner reads a shell
+command the model issued in it as a pipe into an interpreter. It is unchanged on the branch
+`evidence-raw`, and
+[a note in its place](evidence/real-model/round3/qwen3.8-27b-rename-plugin-4.MOVED.md) says
+where and why. The same evidence file shows the commit before that change being refused.
+
 Hermes defers plugin tools behind its `tool_search` and `tool_call` tools by default, so the
 model finds `docs_drift_scan` by searching for it. The hooks do not depend on that: they run
 whenever the plugin is enabled.

@@ -1,0 +1,56 @@
+# hermes plugins install without --force, with no terminal to answer a question
+#
+# 1. This repository at commit d453254, into a Hermes home that did not exist before.
+#    Started 2026-11-10T16:34:44Z, finished 16:37:12Z.
+#    hermes: Hermes Agent vgit.b7db40d (2026.9.24) · stable · local b7db40d82568
+#    Standard input was the null device, so Hermes could not ask anything. <docs-drift> is the local
+#    clone of this repository, $HERMES_HOME the new home; both are written that way in place of the
+#    local paths, and the box was redrawn to the shorter text. Carriage returns were removed. Nothing
+#    else was changed. (This recording was made 80 columns wide, the one under 2 was made 400 wide.)
+#    Afterwards `git rev-parse HEAD` in $HERMES_HOME/plugins/docs-drift printed
+#    d45325498b438cb0a59f7b149a99decd61f77420 and `hermes plugins list` showed docs-drift as enabled, 0.1.0.
+$ hermes plugins install file://<docs-drift> --enable --yes-deps < /dev/null
+Warning: custom (unreviewed) source — not from the Hermes catalog.
+Warning: Using insecure/local URL scheme. Consider using https:// or git@ for
+production installs.
+Cloning file://<docs-drift>...
+Preparing the isolated Hermes runtime…
+  → Installing Python dependencies…
+  ✓ Installing Python dependencies
+
+┌─────────────── ✓ Installed ───────────────┐
+│ Plugin installed: file://<docs-drift>     │
+│ Location: $HERMES_HOME\plugins\docs-drift │
+└───────────────────────────────────────────┘
+
+  → Installing Python dependencies…
+  ✓ Installing Python dependencies
+✓ Plugin docs-drift enabled.
+
+exit status: 0
+
+
+# 2. For comparison: the same command on commit e1d26a1, the last one that had the transcript
+#    qwen3.8-27b-rename-plugin-4.txt in its tree. Started 2026-11-10T16:36:13Z, into another new home,
+#    from a clone checked out at that commit (<clone at e1d26a1>). Hermes refused to install it.
+#    The recording has 1259 lines. Left out below, and marked where: 621 lines of the scan report
+#    (102 MEDIUM, 519 LOW), and the second printing of the same report (625 lines: Hermes prints it
+#    once as the scan result and once inside the error).
+$ hermes plugins install file://<clone at e1d26a1> --enable --yes-deps < /dev/null
+Warning: custom (unreviewed) source — not from the Hermes catalog.
+Warning: Using insecure/local URL scheme. Consider using https:// or git@ for production installs.
+Cloning file://<clone at e1d26a1>...
+
+⚠ Security scan flagged this plugin:
+Scan: plugin (file://<clone at e1d26a1>/community)  Verdict: CAUTION
+  HIGH     obfuscation    evidence/real-model/round3/qwen3.8-27b-rename-plugin-4.txt:221 "tool call: terminal {"command": "cd \"%TEMP%\\docs-drift-rea"
+  [... 621 lines left out: 102 MEDIUM and 519 LOW ...]
+
+Decision: BLOCKED — Blocked (community source + caution verdict, 622 findings). Use --force to override.
+Blocked: Security scan blocked plugin install: Requires confirmation (caution verdict, 622 findings)
+
+[... 625 lines left out: the same report printed a second time ...]
+
+Decision: BLOCKED — Blocked (community source + caution verdict, 622 findings). Use --force to override.
+Review the findings above. Install only plugins from sources you trust. (Scanning can be configured via plugins.scan_on_install in config.yaml.)
+exit status: 1
