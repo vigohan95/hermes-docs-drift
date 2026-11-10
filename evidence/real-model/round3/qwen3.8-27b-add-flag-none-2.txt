@@ -1,0 +1,174 @@
+docs-drift run with a real model   2026-11-10T15:15:38Z
+run:      round 3, add-flag, without the plugin, session 2
+hermes:   Hermes Agent vgit.b7db40d (2026.9.24) · stable · local b7db40d82568
+plugin:   docs-drift is NOT installed in this Hermes home
+settings: defaults (no config.yaml)
+source:   docs-drift commit 5551b34
+model:    qwen3.8-27b at https://api.vultrinference.com/v1, through demo/relay.py on 127.0.0.1:56277
+          (the relay forwards requests unchanged, adds the key and counts; Hermes has no key)
+project:  a fresh copy of examples/notesync-tasks with one commit
+task:     add-flag
+prompt:   Add a --dry-run flag that prints what would be copied.
+toolsets: file
+
+--- 1. what Hermes did (the events it prints with --format stream-json) ---
+$ hermes chat -q "Add a --dry-run flag that prints what would be copied." --provider custom --base-url http://127.0.0.1:56277/v1 --api-key not-a-real-key -m qwen3.8-27b --yolo --format stream-json --max-turns 20 -t file
+[15:15:58Z] tool call    read_file {"path": "pyproject.toml"}
+[15:15:58Z] tool call    search_files {"pattern": "copi", "target": "content", "output_mode": "files_only"}
+[15:16:01Z] tool result  read_file (2641 ms)
+[15:16:01Z] tool result  search_files (2644 ms)
+[15:16:03Z] tool call    read_file {"path": "notesync/cli.py"}
+[15:16:03Z] tool call    read_file {"path": "notesync/sync.py"}
+[15:16:04Z] tool result  read_file (895 ms)
+[15:16:04Z] tool result  read_file (900 ms)
+[15:16:11Z] tool call    read_file {"path": "Makefile"}
+[15:16:11Z] tool call    search_files {"pattern": "*test*", "target": "files"}
+[15:16:11Z] tool call    read_file {"path": "README.md"}
+[15:16:15Z] tool result  read_file (4320 ms)
+[15:16:15Z] tool result  search_files (4319 ms)
+[15:16:15Z] tool result  read_file (4324 ms)
+[15:16:18Z] assistant    No test suite exists yet (`make test` just runs pytest with no tests collected); I'll verify with a live run instead. Making the edits now.
+[15:16:18Z] tool call    patch {"path": "notesync/sync.py", "old_string": "def copy_notes(source: Path, dest: Path, one_by_one: bool = False) -> List[Path]:\n    \"\"\"Copy every .md file in ``source`` to ``dest`` and return the copies.\"\"\"\n    notes = sorted(source.glob(\"*.md\"))\n    dest.mkdir(parents=True, exist_ok=True)", "new_string": "def copy_notes(source: Path, dest: Path, one_by_one: bool = False, dry_run: bool = False) -> List[Path]:\n    \"\"\"Copy every .md file in ``source`` to ``dest`` and return the copies.\n\n    With ``dry_run`` nothing is written (the destination is not even\n    created); the paths the copies would be written to are returned.\n    \"\"\"\n    notes = sorted(source.glob(\"*.md\"))\n    if dry_run:\n        return [dest / note.name for note in notes]\n    dest.mkdir(parents=True, exist_ok=True)"}
+[15:16:18Z] tool call    patch {"path": "notesync/cli.py", "old_string": "    parser.add_argument(\"--legacy-sync\", action=\"store_true\",\n                        help=\"deprecated: copy the files one by one, as version 0.2 did\")\n    return parser\n\n\ndef main(argv=None) -> int:\n    args = build_parser().parse_args(argv)\n    copied = copy_notes(Path(args.source), Path(args.output_dir), one_by_one=args.legacy_sync)\n    token = read_token()", "new_string": "    parser.add_argument(\"--legacy-sync\", action=\"store_true\",\n                        help=\"deprecated: copy the files one by one, as version 0.2 did\")\n    parser.add_argument(\"--dry-run\", action=\"store_true\",\n                        help=\"print what would be copied, without copying or uploading\")\n    return parser\n\n\ndef main(argv=None) -> int:\n    args = build_parser().parse_args(argv)\n    source = Path(args.source)\n    copied = copy_notes(source, Path(args.output_dir), one_by_one=args.legacy_sync, dry_run=args.dry_run)\n    if args.dry_run:\n        for target in copied:\n            print(f\"would copy {source / target.name} -> {target}\")\n        print(f\"dry run: {len(copied)} notes would be copied\")\n        return 0\n    token = read_token()"}
+[15:16:22Z] tool result  patch (3517 ms)
+             (fields from Hermes' own tool, not shown: diff, files_modified, lint, resolved_path, success)
+             (no docs_drift block: the plugin is not installed in this Hermes home)
+[15:16:22Z] tool result  patch (3527 ms)
+             (fields from Hermes' own tool, not shown: diff, files_modified, lint, resolved_path, success)
+             (no docs_drift block: the plugin is not installed in this Hermes home)
+[15:16:24Z] tool call    patch {"new_string": "| `--legacy-sync` | off | deprecated: copy the files one by one |\n| `--dry-run` | off | print what would be copied, without copying or uploading |", "old_string": "| `--legacy-sync` | off | deprecated: copy the files one by one |", "path": "README.md"}
+[15:16:27Z] tool result  patch (2979 ms)
+             (fields from Hermes' own tool, not shown: diff, files_modified, lint, resolved_path, success)
+             (no docs_drift block: the plugin is not installed in this Hermes home)
+[15:16:37Z] assistant    Now verifying with a live run:
+             
+             I don't have a terminal tool in this session, so I can't execute the CLI — but the patcher ran a syntax check on both edited files and both passed. Let me re-read the final state to confirm consistency:
+[15:16:37Z] tool call    read_file {"path": "notesync/cli.py"}
+[15:16:37Z] tool call    read_file {"path": "notesync/sync.py"}
+[15:16:38Z] tool result  read_file (897 ms)
+[15:16:38Z] tool result  read_file (901 ms)
+[15:16:41Z] assistant    Done. What changed:
+             
+             - notesync/sync.py: copy_notes gained a dry_run parameter. When set, it returns the paths the copies would be written to (sorted, one per .md file) and writes nothing — it bails before dest.mkdir, so even the output folder is not created.
+             - notesync/cli.py: added --dry-run (store_true). main() prints one "would copy <source>/<name> -> <dest>/<name>" line per note, then "dry run: N notes would be copied", and returns 0 without reading the token or uploading.
+             - README.md: added the flag to the options table.
+             
+             Verified: the patcher's built-in syntax check passed on both edited Python files, and I re-read the final state — logic is consistent (dry-run short-circuits before any file I/O or upload).Caveat: this session has no terminal tool, so I could not run make test; make lint or an actual notesync --dry-run invocation. There's no test suite in the repo (pytest collects nothing), so make test fails regardless of this change — you may want to run it yourself to confirm: notesync ./some-notes --dry-run should list the pairs, create no output dir, and touch no files, while normal runs behave exactly as before.
+[15:16:41Z] end of turn  exit_code 0, 53726 ms
+
+--- 2. what the model was sent and what it answered (the relay log, unedited) ---
+[15:15:56Z] request 1 to model qwen3.8-27b: 2 messages, 4 tools offered
+docs_drift tools: not offered
+system prompt (12955 characters, not shown)
+user message:
+Add a --dry-run flag that prints what would be copied.
+[15:15:58Z] answer 1 (2.0 s, prompt 4534 / completion 97 tokens):
+tool call: read_file {"path": "pyproject.toml"}
+tool call: search_files {"pattern": "copi", "target": "content", "output_mode": "files_only"}
+
+[15:16:01Z] request 2 to model qwen3.8-27b: 5 messages, 4 tools offered
+assistant: (its own earlier tool call: read_file) (its own earlier tool call: search_files)
+tool result:
+{"content": "1|[project]\n2|name = \"notesync\"\n3|version = \"0.5.0\"\n4|description = \"Copy Markdown notes to a folder and upload them.\"\n5|requires-python = \">=3.9\"\n6|\n7|[project.scripts]\n8|notesync = \"notesync.cli:main\"", "total_lines": 8, "file_size": 187, "truncated": false, "is_binary": false, "is_image": false, "not_found": false}
+tool result:
+{"total_count": 6, "files": [".\\README.md", ".\\notesync\\cli.py", ".\\docs\\configuration.md", ".\\docs\\troubleshooting.md", ".\\notesync\\sync.py", ".\\notesync\\upload.py"]}
+[15:16:03Z] answer 2 (2.0 s, prompt 4829 / completion 79 tokens):
+tool call: read_file {"path": "notesync/cli.py"}
+tool call: read_file {"path": "notesync/sync.py"}
+
+[15:16:04Z] request 3 to model qwen3.8-27b: 8 messages, 4 tools offered
+assistant: (its own earlier tool call: read_file) (its own earlier tool call: read_file)
+tool result:
+{"content": "1|\"\"\"notesync: copy Markdown notes to a folder and upload them.\"\"\"\n2|\n3|import argparse\n4|from pathlib import Path\n5|\n6|from .sync import copy_notes\n7|from .upload import read_token, upload\n8|\n9|\n10|def build_parser() -> argparse.ArgumentParser:\n11|    parser = argparse.ArgumentParser(prog=\"notesync\")\n12|    parser.add_argument(\"source\", help=\"folder with .md notes\")\n13|    parser.add_argument(\"--output-dir\", default=\"./out\", help=\"where the copies go\")\n14|    parser.add_argument(\"--timeout\", type=int, default=30, help=\"seconds to wait for the server\")\n15|    parser.add_argument(\"--retries\", type=int, default=3, help=\"how often a failed upload is tried again\")\n16|    parser.add_argument(\"--legacy-sync\", action=\"store_true\",\n17|                        help=\"deprecated: copy the files one by one, as version 0.2 did\")\n18|    return parser\n19|\n20|\n21|def main(argv=None) -> int:\n22|    args = build_parser().parse_args(argv)\n23|    copied = copy_notes(Path(args.source), Path(args.output_dir), one_by_one=args.legacy_sync)\n24|    token = read_token()\n25|    if token:\n26|        upload(copied, token, timeout=args.timeout, retries=args.retries)\n27|    print(f\"{len(copied)} notes copied\")\n28|    return 0\n29|\n30|\n31|if __name__ == \"__main__\":\n32|    raise SystemExit(main())", "total_lines": 32, "file_size": 119 ... (81 more characters)
+tool result:
+{"content": "1|\"\"\"Copying the notes.\"\"\"\n2|\n3|import shutil\n4|from pathlib import Path\n5|from typing import List\n6|\n7|\n8|def copy_notes(source: Path, dest: Path, one_by_one: bool = False) -> List[Path]:\n9|    \"\"\"Copy every .md file in ``source`` to ``dest`` and return the copies.\"\"\"\n10|    notes = sorted(source.glob(\"*.md\"))\n11|    dest.mkdir(parents=True, exist_ok=True)\n12|    copied = []\n13|    if one_by_one:\n14|        # the 0.2 way: open, read and write each file, flushing after every one\n15|        for note in notes:\n16|            target = dest / note.name\n17|            with open(note, \"rb\") as src, open(target, \"wb\") as out:\n18|                out.write(src.read())\n19|                out.flush()\n20|            copied.append(target)\n21|        return copied\n22|    for note in notes:\n23|        copied.append(Path(shutil.copy2(note, dest / note.name)))\n24|    return copied", "total_lines": 24, "file_size": 814, "truncated": false, "is_binary": false, "is_image": false, "not_found": false}
+[15:16:11Z] answer 3 (7.1 s, prompt 5714 / completion 1748 tokens):
+tool call: read_file {"path": "Makefile"}
+tool call: search_files {"pattern": "*test*", "target": "files"}
+tool call: read_file {"path": "README.md"}
+
+[15:16:15Z] request 4 to model qwen3.8-27b: 12 messages, 4 tools offered
+assistant: (its own earlier tool call: read_file) (its own earlier tool call: search_files) (its own earlier tool call: read_file)
+tool result:
+{"content": "1|.PHONY: test lint\n2|\n3|test:\n4|\tpython -m pytest -q\n5|\n6|lint:\n7|\tpython -m compileall -q notesync", "total_lines": 7, "file_size": 87, "truncated": false, "is_binary": false, "is_image": false, "not_found": false}
+tool result:
+{"total_count": 1, "files": ["./.git"]}
+tool result:
+{"content": "1|# notesync\n2|\n3|Copies Markdown notes to a folder, one file per note, and uploads the copies when a token\n4|is set.\n5|\n6|## Usage\n7|\n8|```sh\n9|notesync ./notes --output-dir ./backup\n10|```\n11|\n12|## Options\n13|\n14|| Option | Default | Meaning |\n15|| --- | --- | --- |\n16|| `--output-dir` | `./out` | where the copies go |\n17|| `--timeout` | `30` | seconds to wait for the server |\n18|| `--retries` | `3` | how often a failed upload is tried again |\n19|| `--legacy-sync` | off | deprecated: copy the files one by one |\n20|\n21|A failed upload is tried again 3 times before notesync gives up on that file.\n22|\n23|## Upload\n24|\n25|Set `NOTESYNC_TOKEN` to enable the upload. More in\n26|[the configuration guide](docs/configuration.md); if something goes wrong, see\n27|[troubleshooting](docs/troubleshooting.md).\n28|\n29|## Development\n30|\n31|```sh\n32|make test\n33|```", "total_lines": 33, "file_size": 774, "truncated": false, "is_binary": false, "is_image": false, "not_found": false}
+[15:16:18Z] answer 4 (2.9 s, prompt 7947 / completion 827 tokens):
+text: No test suite exists yet (`make test` just runs pytest with no tests collected); I'll verify with a live run instead. Making the edits now.
+tool call: patch {"path": "notesync/sync.py", "old_string": "def copy_notes(source: Path, dest: Path, one_by_one: bool = False) -> List[Path]:\n    \"\"\"Copy every .md file in ``source`` to ``dest`` and return the copies.\"\"\"\n    notes = sorted(source.glob(\"*.md\"))\n    dest.mkdir(parents=True, exist_ok=True)", "new_string": "def copy_notes(source: Path, dest: Path, one_by_one: bool = False, dry_run: bool = False) -> List[Path]:\n    \"\"\"Copy every .md file in ``source`` to ``dest`` and return the copies.\n\n    With ``dry_run`` nothing is written (the destination is not even\n    created); the paths the copies would be written to are returned.\n    \"\"\"\n    notes = sorted(source.glob(\"*.md\"))\n ... (115 more characters)
+tool call: patch {"path": "notesync/cli.py", "old_string": "    parser.add_argument(\"--legacy-sync\", action=\"store_true\",\n                        help=\"deprecated: copy the files one by one, as version 0.2 did\")\n    return parser\n\n\ndef main(argv=None) -> int:\n    args = build_parser().parse_args(argv)\n    copied = copy_notes(Path(args.source), Path(args.output_dir), one_by_one=args.legacy_sync)\n    token = read_token()", "new_string": "    parser.add_argument(\"--legacy-sync\", action=\"store_true\",\n                        help=\"deprecated: copy the files one by one, as version 0.2 did\")\n    parser.add_argument(\"--dry-run\", action=\"store_true\",\n                        help=\"print wha ... (521 more characters)
+
+[15:16:22Z] request 5 to model qwen3.8-27b: 15 messages, 4 tools offered
+assistant: No test suite exists yet (`make test` just runs pytest with no tests collected); I'll verify with a live run instead. Making the edits now. (its own earlier tool call: patch) (its own earlier tool call: patch)
+tool result:
+{"success": true, "diff": "--- a/%TEMP%\\docs-drift-real-od0yyvfb\\notesync\\notesync\\sync.py\n+++ b/%TEMP%\\docs-drift-real-od0yyvfb\\notesync\\notesync\\sync.py\n@@ -5,9 +5,15 @@\n from typing import List\n \n \n-def copy_notes(source: Path, dest: Path, one_by_one: bool = False) -> List[Path]:\n-    \"\"\"Copy every .md file in ``source`` to ``dest`` and return the copies.\"\"\"\n+def copy_notes(source: Path, dest: Path, one_by_one: bool = False, dry_run: bool = False) -> List[Path]:\n+    \"\"\"Copy every .md file in ``source`` to ``dest`` and return the copies.\n+\n+    With ``dry_run`` nothing is written (the destination is not even\n+    created); the paths the copies would be written to are returned.\n+    \"\"\"\n     notes = sorted(source.glob(\"*.md\"))\n+    if dry_run:\n+        return [dest / note.name for note in notes]\n     dest.mkdir(parents=True, exist_ok=True)\n     copied = []\n     if one_by_one:\n", "files_modified": ["%TEMP%\\docs-drift-real-od0yyvfb\\notesync\\notesync\\sync.py"], "lint": {"status": "ok", "output": ""}, "resolved_path": "%TEMP%\\docs-drift-real-od0yyvfb\\notesync\\notesync\\sync.py"}
+tool result:
+{"success": true, "diff": "--- a/%TEMP%\\docs-drift-real-od0yyvfb\\notesync\\notesync\\cli.py\n+++ b/%TEMP%\\docs-drift-real-od0yyvfb\\notesync\\notesync\\cli.py\n@@ -15,12 +15,20 @@\n     parser.add_argument(\"--retries\", type=int, default=3, help=\"how often a failed upload is tried again\")\n     parser.add_argument(\"--legacy-sync\", action=\"store_true\",\n                         help=\"deprecated: copy the files one by one, as version 0.2 did\")\n+    parser.add_argument(\"--dry-run\", action=\"store_true\",\n+                        help=\"print what would be copied, without copying or uploading\")\n     return parser\n \n \n def main(argv=None) -> int:\n     args = build_parser().parse_args(argv)\n-    copied = copy_notes(Path(args.source), Path(args.output_dir), one_by_one=args.legacy_sync)\n+    source = Path(args.source)\n+    copied = copy_notes(source, Path(args.output_dir), one_by_one=args.legacy_sync, dry_run=args.dry_run)\n+    if args.dry_run:\n+        for target in copied:\n+            print(f\"would copy {source / target.name} -> {target}\")\n+        print(f\"dry run: {len(copied)} notes would be copied\")\n+        return 0\n     token = read_token()\n     if token:\n         upload(copied, token, timeout=args.timeout, retries=args.retries)\n", "files_modified": ["~\\AppData\ ... (222 more characters)
+[15:16:24Z] answer 5 (2.0 s, prompt 9671 / completion 124 tokens):
+tool call: patch {"new_string": "| `--legacy-sync` | off | deprecated: copy the files one by one |\n| `--dry-run` | off | print what would be copied, without copying or uploading |", "old_string": "| `--legacy-sync` | off | deprecated: copy the files one by one |", "path": "README.md"}
+
+[15:16:27Z] request 6 to model qwen3.8-27b: 17 messages, 4 tools offered
+assistant: (its own earlier tool call: patch)
+tool result:
+{"success": true, "diff": "--- a/%TEMP%\\docs-drift-real-od0yyvfb\\notesync\\README.md\n+++ b/%TEMP%\\docs-drift-real-od0yyvfb\\notesync\\README.md\n@@ -17,6 +17,7 @@\n | `--timeout` | `30` | seconds to wait for the server |\n | `--retries` | `3` | how often a failed upload is tried again |\n | `--legacy-sync` | off | deprecated: copy the files one by one |\n+| `--dry-run` | off | print what would be copied, without copying or uploading |\n \n A failed upload is tried again 3 times before notesync gives up on that file.\n \n", "files_modified": ["%TEMP%\\docs-drift-real-od0yyvfb\\notesync\\README.md"], "lint": {"status": "skipped", "message": "No linter for .md files"}, "resolved_path": "%TEMP%\\docs-drift-real-od0yyvfb\\notesync\\README.md"}
+[15:16:33Z] answer 6 (6.1 s, prompt 10097 / completion 278 tokens):
+text: Now verifying with a live run:
+tool call: terminal {"command": "cd \"$LOCALAPPDATA/Temp\" && rm -rf dryrun-check && mkdir -p dryrun-check/notes && echo hello > dryrun-check/notes/a.md && echo world > dryrun-check/notes/b.md && echo notnotes > dryrun-check/notes/c.txt && cd %TEMP%/docs-drift-real-od0yyvfb/notesync && python -m notesync.cli \"%TEMP%/dryrun-check/notes\" --output-dir \"%TEMP%/dryrun-check/out\" --dry-run; echo \"exit=$?\"; ls dryrun-check 2>/dev/null; ls \"%TEMP%/dryrun-check/\""}
+
+[15:16:33Z] request 7 to model qwen3.8-27b: 19 messages, 4 tools offered
+assistant: Now verifying with a live run: (its own earlier tool call: terminal)
+tool result:
+Tool 'terminal' does not exist. Available tools: patch, read_file, search_files, write_file
+[15:16:37Z] answer 7 (3.6 s, prompt 10411 / completion 329 tokens):
+text: I don't have a terminal tool in this session, so I can't execute the CLI — but the patcher ran a syntax check on both edited files and both passed. Let me re-read the final state to confirm consistency:
+tool call: read_file {"path": "notesync/cli.py"}
+tool call: read_file {"path": "notesync/sync.py"}
+
+[15:16:38Z] request 8 to model qwen3.8-27b: 22 messages, 4 tools offered
+assistant: I don't have a terminal tool in this session, so I can't execute the CLI — but the patcher ran a syntax check on both edited files and both passed. Let me re-read the final state to confirm consistency: (its own earlier tool call: read_file) (its own earlier tool call: read_file)
+tool result:
+{"content": "1|\"\"\"notesync: copy Markdown notes to a folder and upload them.\"\"\"\n2|\n3|import argparse\n4|from pathlib import Path\n5|\n6|from .sync import copy_notes\n7|from .upload import read_token, upload\n8|\n9|\n10|def build_parser() -> argparse.ArgumentParser:\n11|    parser = argparse.ArgumentParser(prog=\"notesync\")\n12|    parser.add_argument(\"source\", help=\"folder with .md notes\")\n13|    parser.add_argument(\"--output-dir\", default=\"./out\", help=\"where the copies go\")\n14|    parser.add_argument(\"--timeout\", type=int, default=30, help=\"seconds to wait for the server\")\n15|    parser.add_argument(\"--retries\", type=int, default=3, help=\"how often a failed upload is tried again\")\n16|    parser.add_argument(\"--legacy-sync\", action=\"store_true\",\n17|                        help=\"deprecated: copy the files one by one, as version 0.2 did\")\n18|    parser.add_argument(\"--dry-run\", action=\"store_true\",\n19|                        help=\"print what would be copied, without copying or uploading\")\n20|    return parser\n21|\n22|\n23|def main(argv=None) -> int:\n24|    args = build_parser().parse_args(argv)\n25|    source = Path(args.source)\n26|    copied = copy_notes(source, Path(args.output_dir), one_by_one=args.legacy_sync, dry_run=args.dry_run)\n27|    if args.dry_run:\n28|        for target in copied:\n29|            print(f\"would copy  ... (511 more characters)
+tool result:
+{"content": "1|\"\"\"Copying the notes.\"\"\"\n2|\n3|import shutil\n4|from pathlib import Path\n5|from typing import List\n6|\n7|\n8|def copy_notes(source: Path, dest: Path, one_by_one: bool = False, dry_run: bool = False) -> List[Path]:\n9|    \"\"\"Copy every .md file in ``source`` to ``dest`` and return the copies.\n10|\n11|    With ``dry_run`` nothing is written (the destination is not even\n12|    created); the paths the copies would be written to are returned.\n13|    \"\"\"\n14|    notes = sorted(source.glob(\"*.md\"))\n15|    if dry_run:\n16|        return [dest / note.name for note in notes]\n17|    dest.mkdir(parents=True, exist_ok=True)\n18|    copied = []\n19|    if one_by_one:\n20|        # the 0.2 way: open, read and write each file, flushing after every one\n21|        for note in notes:\n22|            target = dest / note.name\n23|            with open(note, \"rb\") as src, open(target, \"wb\") as out:\n24|                out.write(src.read())\n25|                out.flush()\n26|            copied.append(target)\n27|        return copied\n28|    for note in notes:\n29|        copied.append(Path(shutil.copy2(note, dest / note.name)))\n30|    return copied", "total_lines": 30, "file_size": 1049, "truncated": false, "is_binary": false, "is_image": false, "not_found": false}
+[15:16:40Z] answer 8 (2.8 s, prompt 11753 / completion 353 tokens):
+text: Done. What changed:
+
+- notesync/sync.py: copy_notes gained a dry_run parameter. When set, it returns the paths the copies would be written to (sorted, one per .md file) and writes nothing — it bails before dest.mkdir, so even the output folder is not created.
+- notesync/cli.py: added --dry-run (store_true). main() prints one "would copy <source>/<name> -> <dest>/<name>" line per note, then "dry run: N notes would be copied", and returns 0 without reading the token or uploading.
+- README.md: added the flag to the options table.
+
+Verified: the patcher's built-in syntax check passed on both edited Python files, and I re-read the final state — logic is consistent (dry-run short-circuits before any file I/O or upload).
+
+Caveat: this session has no terminal tool, so I could not run make test; make lint or an actual notesync --dry-run invocation. There's no test suite in the repo (pytest collects nothing), so make test fails regardless of this change — you may want to run it yourself to confirm: notesync ./some-notes --dry-run should list the pairs, create no output dir, and touch no files, while normal runs behave exactly as before.
+
+--- 3. afterwards ---
+Hermes exit_code: 0
+chat requests sent to the model: 8 (of which 0 side requests without tools)
+tokens reported by Hermes: {"input": 64956, "output": 3835, "total": 68791, "cache_read": 56064, "cache_write": 0}
+edit results that carried a docs_drift entry: 0 (0 findings reported in them)
+reminder before the end of the turn (pre_verify): not delivered
+the plugin told the model something: no
+edits of doc files the model issued: 1
+
+$ git status --short
+ M README.md
+ M notesync/cli.py
+ M notesync/sync.py
+$ git diff --stat
+ README.md        |  1 +
+ notesync/cli.py  | 10 +++++++++-
+ notesync/sync.py | 10 ++++++++--
+ 3 files changed, 18 insertions(+), 3 deletions(-)
+$ python -m docsdrift . --since HEAD        (the same scanner, run outside Hermes)
+docs-drift (new since HEAD): 0 findings (3 doc files checked against 6 code files, 160 ms)
+
+withheld as uncertain: 1 (stale-context: 1).
+note: Compared with HEAD: 3 changed file(s), 0 finding(s) already present before the change are not shown.
+
+rule:     at least one doc file contains --dry-run (changelogs not counted); checked by demo/tasks.py
+code:     the requested change is in the code
+mentions: README.md:20:| `--dry-run` | off | print what would be copied, without copying or uploading |
+OUTCOME: docs consistent
+SUMMARY: {"doc_edits_after": 0, "doc_edits_before": 1, "entries": 0, "entries_with_findings": 0, "exit_code": 0, "findings_reported": 0, "model": "qwen3.8-27b", "plugin": false, "reminder": false, "requests": 8, "settings": "defaults (no config.yaml)", "spoke": false, "spoke_how": "", "stale_lines": 0, "task": "add-flag", "verdict": "docs consistent"}
