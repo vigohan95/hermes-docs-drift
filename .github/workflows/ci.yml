@@ -33,9 +33,15 @@ jobs:
   hermes:
     # Loads the plugin in a real Hermes checkout: the validator, then the example
     # session driven by demo/scripted_model.py (a fixed script, no API key).
+    # Two Hermes commits: the one the recorded sessions were made with, and upstream main as it
+    # was when the plugin was submitted to the catalog (986 commits later).
+    strategy:
+      fail-fast: false
+      matrix:
+        hermes: [b7db40d82568ea68ce321ac1ead3bfea354c7f56, 3d4dd108cf52e26cf0d7fb218461e53623a8ec2d]
     runs-on: ubuntu-latest
     env:
-      HERMES_REF: b7db40d82568ea68ce321ac1ead3bfea354c7f56
+      HERMES_REF: ${{ matrix.hermes }}
       PYTHONUTF8: "1"
     steps:
       - uses: actions/checkout@v4
