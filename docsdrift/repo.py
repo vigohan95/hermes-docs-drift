@@ -12,7 +12,7 @@ import os
 import re
 import subprocess
 from pathlib import PurePosixPath
-from typing import Dict, Iterable, List, Optional, Set, Tuple
+from typing import Dict, Iterable, List, Optional, Sequence, Set, Tuple
 
 DOC_EXTENSIONS = (".md", ".mdx", ".markdown")
 
@@ -135,12 +135,17 @@ def find_root(start: str, strict: bool = False) -> Optional[str]:
         cur = parent
 
 
+def _git_env() -> Dict[str, str]:
+    # Read-only use: GIT_OPTIONAL_LOCKS=0 stops `git status` from rewriting .git/index in the background.
+    return dict(os.environ, GIT_OPTIONAL_LOCKS="0")
+
+
 def _git(root: str, args: List[str], timeout: float = 20.0) -> Optional[bytes]:
     try:
         proc = subprocess.run(
             ["git", "-C", root] + args,
             stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, stdin=subprocess.DEVNULL,
-            timeout=timeout, check=False,
+            timeout=timeout, check=False, env=_git_env(),
         )
     except (OSError, subprocess.SubprocessError):
         return None
@@ -345,18 +350,21 @@ class Repo:
                 overlay[name] = blob.decode("utf-8", "replace")
         return overlay
 
-    def ignored(self, rel: str) -> bool:
-        if not self.git_ok:
-            return False
+    def ignored_many(self, rels: Sequence[str]) -> Optional[Set[str]]:
+        """The subset of ``rels`` that git ignores, asked in one call. None when git could not answer."""
+        if not rels or not self.git_ok:
+            return set()
         try:
             proc = subprocess.run(
-                ["git", "-C", self.root, "check-ignore", "-q", "--", rel],
-                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, stdin=subprocess.DEVNULL,
-                timeout=10, check=False,
+                ["git", "-C", self.root, "check-ignore", "-z", "--stdin"],
+                input=b"".join(r.encode("utf-8") + b"\x00" for r in rels),
+                stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, timeout=20, check=False, env=_git_env(),
             )
         except (OSError, subprocess.SubprocessError):
-            return False
-        return proc.returncode == 0
+            return None
+        if proc.returncode not in (0, 1):      # 1 means "none of them is ignored"
+            return None
+        return {p for p in proc.stdout.decode("utf-8", "replace").split("\x00") if p}
 
     def submodule_paths(self) -> List[str]:
         text = self.read(".gitmodules") if self.has_file(".gitmodules") else None

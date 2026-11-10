@@ -143,3 +143,30 @@ def test_alias_on_the_line_of_a_documented_flag_is_not_undocumented(make_repo):
     result = Scanner(make_repo(files)).scan(checks="all")
     assert names(result, "cli-flag-undocumented") == []
     assert result.suppressed.get("alias-of-documented-flag") == 1
+
+
+# ------------------------------------------------- generated pages named in .gitignore
+def test_many_links_to_git_ignored_pages_are_not_reported(make_repo):
+    # pdm-project/pdm: docs/reference/cli.md is generated at build time and git-ignored, and linked
+    # from dozens of places. An earlier version stopped asking git after 40 links and reported the rest.
+    files = dict(NOTESYNC)
+    files[".gitignore"] = "docs/reference/\n"
+    links = "".join(f"- see [the reference](docs/reference/cli.md#item-{i})\n" for i in range(60))
+    files["README.md"] += "\n" + links + "- and [the settings](docs/reference/settings.md)\n- and [a missing page](docs/nope.md)\n"
+    result = Scanner(make_repo(files)).scan()
+    assert names(result, "path-missing") == ["docs/nope.md"]
+    assert result.suppressed.get("link-to-untracked-or-ignored-file") == 2
+
+
+# ------------------------------------------------- a default that is announced, not current
+def test_announced_future_default_is_not_a_default_claim(make_repo):
+    # mikefarah/yq: "Set `--flag=true` to get this behaviour (flag will default to true in late 2025)"
+    files = dict(NOTESYNC)
+    files["docs/configuration.md"] += "\nSet `--timeout=60` for slow disks (the flag will default to 60 in the next release).\n"
+    assert names(Scanner(make_repo(files)).scan(), "default-mismatch") == []
+
+
+def test_sentence_that_uses_the_current_default_is_still_a_claim(make_repo):
+    files = dict(NOTESYNC)
+    files["docs/configuration.md"] += "\nWithout `--timeout` the tool will use the default of 60 and then give up.\n"
+    assert names(Scanner(make_repo(files)).scan(), "default-mismatch") == ["--timeout"]

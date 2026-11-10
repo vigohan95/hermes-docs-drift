@@ -86,7 +86,7 @@ SCRIPTS = {
     "rename": [
         lambda ms: _call("patch", mode="replace", path="notesync/cli.py",
                          old_string='"--output-dir"', new_string='"--dest"'),
-        lambda ms: _call("docs_drift_explain", id=(_drift(ms).get("new") or [{}])[0].get("id", "")),
+        lambda ms: _call("docs_drift_explain", finding_id=(_drift(ms).get("new") or [{}])[0].get("id", "")),
         *_fix_doc_steps(),
         lambda ms: _say("Renamed --output-dir to --dest in notesync/cli.py and updated README.md and "
                         "docs/configuration.md, which still used the old name. docs_drift_scan is clean."),

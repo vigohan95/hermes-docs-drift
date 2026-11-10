@@ -92,6 +92,7 @@ DEFAULT_RX = re.compile(
     r"(?i)\bdefaults?\b(?:\s+value)?\s*(?:is|to|of|are)?\s*[:=]?\s*"
     r"(`[^`]+`|\"[^\"]+\"|'[^']+'|-?\d+(?:\.\d+)?(?![\w.%])|\btrue\b|\bfalse\b)"
 )
+ANNOUNCED_RX = re.compile(r"(?i)\b(?:will|shall|going to)(?: (?:soon|then|later|eventually))? (?:be the |become the )?$")
 OPTION_SPAN = re.compile(r"^(?:-[A-Za-z](?:,|\s|/)\s*)?--([a-zA-Z][\w-]*)(?:[\s=,|/\[<].*)?$")
 LIST_OR_TABLE_LINE = re.compile(r"^\s*(?:[-*+]\s|\d+[.)]\s|\||#{1,6}\s|<t[dr]|<li|<dt)")
 HIDDEN_NAME = re.compile(r"(debug|internal|experimental|deprecated|hidden|unsafe|legacy|test|dev|ci)", re.I)
@@ -866,6 +867,8 @@ def _doc_default(doc: Doc, line: int, name_span: str) -> Optional[str]:
     val = m.group(1)
     if val.strip("`") == name_span:
         return None
+    if ANNOUNCED_RX.search(text[:m.start()]):
+        return None             # "will default to true in the next release" is a plan, not the current default
     return val
 
 
@@ -1150,7 +1153,7 @@ def check_paths(ctx: Context) -> List[Finding]:
     for f in repo.files:
         basenames.setdefault(f.rsplit("/", 1)[-1], []).append(f)
     findings: List[Finding] = []
-    ignore_calls = 0
+    unchecked: Set[str] = set()      # missing targets that git has not been asked about yet
     for doc in ctx.docs:
         site = _site_mode(ctx, doc.path)
         doc_dir = posixpath.dirname(doc.path)
@@ -1229,11 +1232,7 @@ def check_paths(ctx: Context) -> List[Finding]:
                     alt = posixpath.normpath(posixpath.join(doc.path.rsplit(".", 1)[0], t))
                     if repo.exists(alt):
                         continue
-                if ignore_calls < 40:
-                    ignore_calls += 1
-                    if repo.ignored(target):
-                        ctx.skip("link-to-untracked-or-ignored-file")
-                        continue
+                unchecked.add(target)
             if target in seen:
                 if link.line not in seen[target].doc_lines:
                     seen[target].doc_lines.append(link.line)
@@ -1260,6 +1259,14 @@ def check_paths(ctx: Context) -> List[Finding]:
             )
             seen[target] = f
         findings.extend(f.finish() for f in seen.values())
+    if unchecked:
+        # one git call for all missing targets: a file that .gitignore names is build output, not drift
+        ignored = repo.ignored_many(sorted(unchecked))
+        drop = unchecked if ignored is None else ignored
+        kept = [f for f in findings if f.name not in drop]
+        ctx.skip("ignore-check-failed" if ignored is None else "link-to-untracked-or-ignored-file",
+                 len(findings) - len(kept))
+        findings = kept
     return findings
 
 
