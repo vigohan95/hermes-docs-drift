@@ -34,7 +34,7 @@ STALE_WORDS = re.compile(
     r"was replaced|has been replaced|replaced by|replaces|instead of|used to|old name|"
     r"prior to|before v?\d|as of v?\d|since v?\d|in v?\d+\.\d+|breaking|migrat\w*|"
     r"not (yet )?(supported|implemented|available)|planned|coming soon|future|todo|"
-    r"proposal|proposed|would|could|might|hypothetical|for example,? (if|a)|e\.g\.)\b",
+    r"proposal|proposed|would|could|might|hypothetical|for example,? (if|a))\b",
     re.I,
 )
 STALE_HEADING = re.compile(
@@ -42,6 +42,21 @@ STALE_HEADING = re.compile(
     r"deprecat\w*|breaking|roadmap|todo|future|planned|proposal|ideas|alternatives|"
     r"comparison|vs\.?|faq|troubleshoot\w*|related|see also|acknowledg\w*|credits|"
     r"background|motivation|prior art|inspiration)\b",
+    re.I,
+)
+
+
+# The narrower rule used when the code side is known to have just changed: only lines and
+# sections that are explicitly about history are skipped.
+HISTORY_WORDS = re.compile(
+    r"\b(deprecat\w*|removed|renamed|no longer|formerly|previously|obsolete|"
+    r"was replaced|has been replaced|replaced by|used to|old name|prior to|before v?\d|"
+    r"not (yet )?(supported|implemented|available)|planned|coming soon)\b",
+    re.I,
+)
+HISTORY_HEADING = re.compile(
+    r"\b(change\s?log|changes|history|release notes?|what'?s new|migrat\w*|upgrad\w*|"
+    r"deprecat\w*|breaking|roadmap|todo|future|planned|proposal|ideas)\b",
     re.I,
 )
 
@@ -97,12 +112,16 @@ class Doc:
             stack.append((level, title))
         return " > ".join(t for _, t in stack)
 
-    def stale_context(self, line: int) -> bool:
-        """True when the line or its heading talks about past/future behaviour."""
+    def stale_context(self, line: int, edit: bool = False) -> bool:
+        """True when the line or its heading talks about past/future behaviour.
+
+        ``edit=True`` is the narrower rule for names an edit has just removed.
+        """
         text = self.lines[line - 1] if 0 < line <= len(self.lines) else ""
-        if STALE_WORDS.search(text):
+        words, heading = (HISTORY_WORDS, HISTORY_HEADING) if edit else (STALE_WORDS, STALE_HEADING)
+        if words.search(text):
             return True
-        return bool(STALE_HEADING.search(self.heading_at(line)))
+        return bool(heading.search(self.heading_at(line)))
 
     def line_text(self, line: int) -> str:
         return self.lines[line - 1] if 0 < line <= len(self.lines) else ""

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import hashlib
 from dataclasses import dataclass, field
-from typing import Any, Dict, List
+from typing import Any, Dict, FrozenSet, List, Optional
 
 CHECKS = {
     "path-missing": "A Markdown link or image points at a file that is not in the repository.",
@@ -73,6 +73,27 @@ class Finding:
 
 
 @dataclass
+class Index:
+    """The code side as one scan saw it.
+
+    A later scan can be given an earlier Index (``before=``). Names that were
+    in the code then and are in no non-doc file now were removed by the edits
+    in between, which is much stronger evidence than "the docs mention a name
+    the code does not have".
+    """
+
+    flag_literals: FrozenSet[str] = frozenset()
+    product_flag_literals: FrozenSet[str] = frozenset()                # the same, outside tests/tools/CI
+    flag_facts: Dict[str, List[Any]] = field(default_factory=dict)     # key -> [Fact]
+    env_tokens: FrozenSet[str] = frozenset()
+    env_facts: Dict[str, List[Any]] = field(default_factory=dict)      # NAME -> [Fact]
+    npm_scripts: Dict[str, str] = field(default_factory=dict)          # name -> package.json path
+    make_targets: Dict[str, str] = field(default_factory=dict)         # name -> "Makefile:line"
+    files: FrozenSet[str] = frozenset()
+    keys: Dict[str, Any] = field(default_factory=dict)                 # path -> (mtime, size) of code files
+
+
+@dataclass
 class ScanResult:
     root: str
     findings: List[Finding] = field(default_factory=list)
@@ -82,6 +103,7 @@ class ScanResult:
     code_files: int = 0
     elapsed_ms: int = 0
     incomplete: bool = False      # the scan stopped early; findings are withheld
+    index: Optional[Index] = field(default=None, repr=False, compare=False)
 
     def ids(self) -> set:
         return {f.id for f in self.findings}

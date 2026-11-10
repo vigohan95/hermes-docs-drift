@@ -17,7 +17,7 @@ from urllib.parse import unquote
 
 from .docs import Command, Doc, block_at, commands_of, table_columns, table_header_for
 from .facts import ENV_TOKEN, FLAG_LITERAL, Fact, Project, is_support_path, norm_flag
-from .model import Finding
+from .model import Finding, Index
 from .repo import Repo
 
 THIRD_PARTY_ENV_PREFIXES = {
@@ -111,6 +111,8 @@ class Context:
         auto_env: bool,
         loose: Callable[[Iterable[str]], Set[str]],
         doc_mentions: Callable[[], Tuple[Set[str], Set[str]]],
+        before: Optional[Index] = None,
+        keys: Optional[Dict[str, Any]] = None,
     ):
         self.repo = repo
         self.docs = docs
@@ -142,6 +144,64 @@ class Context:
                 self.name_keys.add(pieces[0])
                 self.name_keys.add("".join(pieces))
                 self.name_keys.add("_".join(pieces))
+        # What the edits since ``before`` removed from / added to the code.
+        self.before = before
+        self.removed_flags: Dict[str, Optional[Fact]] = {}    # key -> the definition it had (None: literal only)
+        self.added_flags: List[Fact] = []
+        self.removed_envs: Dict[str, Fact] = {}               # NAME -> the read it had
+        self.added_envs: List[Fact] = []
+        self.removed_npm: Dict[str, str] = {}
+        self.added_npm: List[str] = []
+        self.removed_make: Dict[str, str] = {}
+        self.added_make: List[str] = []
+        self.removed_files: Set[str] = set()
+        self.added_files: Set[str] = set()
+        self.changed_files: List[str] = []
+        if before is not None:
+            self._diff(before, keys or {})
+
+    def _diff(self, before: Index, keys: Dict[str, Any]) -> None:
+        def product(facts: List[Fact]) -> Optional[Fact]:
+            return next((f for f in facts if not is_support_path(f.file)), None)
+
+        known_before = set(before.flag_literals) | set(before.flag_facts)
+        for key in known_before:
+            if key in self.flag_literals or key in self.flag_facts:
+                continue
+            fact = product(before.flag_facts.get(key, []))
+            if fact is not None or key in before.product_flag_literals:
+                self.removed_flags[key] = fact
+        for key, facts in self.flag_facts.items():
+            fact = product(facts)
+            if key not in known_before and fact is not None:
+                self.added_flags.append(fact)
+        for name, facts in before.env_facts.items():
+            fact = product(facts)
+            if fact is None or name in self.env_facts:
+                continue
+            if name in self.env_tokens:
+                continue                  # still written somewhere in the code
+            self.removed_envs[name] = fact
+        for name, facts in self.env_facts.items():
+            fact = product(facts)
+            if name not in before.env_facts and name not in before.env_tokens and fact is not None:
+                self.added_envs.append(fact)
+        now_npm, now_make = self.project.npm_scripts, self.project.make_targets
+        self.removed_npm = {n: w for n, w in before.npm_scripts.items() if n not in now_npm}
+        self.added_npm = [n for n in now_npm if n not in before.npm_scripts]
+        self.removed_make = {n: w for n, w in before.make_targets.items() if n not in now_make}
+        self.added_make = [n for n in now_make if n not in before.make_targets]
+        now_files = set(self.repo.files)
+        self.removed_files = set(before.files) - now_files
+        self.added_files = now_files - set(before.files)
+        self.changed_files = sorted(
+            rel for rel in set(before.keys) | set(keys) if before.keys.get(rel) != keys.get(rel)
+        )
+
+    def changed_note(self) -> str:
+        shown = ", ".join(self.changed_files[:3])
+        more = len(self.changed_files) - 3
+        return shown + (f" and {more} more" if more > 0 else "")
 
     def flag_lines(self, doc: Doc) -> Dict[str, int]:
         """flag key -> first line in this doc that writes ``--flag``."""
@@ -168,7 +228,8 @@ class Context:
         return hit
 
     def skip(self, reason: str, n: int = 1) -> None:
-        self.suppressed[reason] = self.suppressed.get(reason, 0) + n
+        if n > 0:
+            self.suppressed[reason] = self.suppressed.get(reason, 0) + n
 
     def commands(self, doc: Doc) -> List[Command]:
         if doc.path not in self._commands:
@@ -322,10 +383,12 @@ def check_cli_flags(ctx: Context) -> List[Finding]:
             if not own:
                 continue
             label, rest = own
-            if doc.stale_context(cmd.line):
+            used = _flags_in(rest)
+            gone = bool(ctx.removed_flags) and any(norm_flag(n) in ctx.removed_flags for n in used)
+            if doc.stale_context(cmd.line, edit=gone):
                 ctx.skip("stale-context")
                 continue
-            for name in _flags_in(rest):
+            for name in used:
                 key = norm_flag(name)
                 if key in IGNORED_FLAGS:
                     continue
@@ -337,7 +400,15 @@ def check_cli_flags(ctx: Context) -> List[Finding]:
         mentions: Dict[str, List[int]] = {}
         for sp in doc.spans:
             m = OPTION_SPAN.match(sp.text)
-            if not m or not LIST_OR_TABLE_LINE.match(doc.line_text(sp.line)):
+            if not m:
+                continue
+            rkey = norm_flag(m.group(1))
+            if ctx.removed_flags.get(rkey) is not None and not doc.stale_context(sp.line, edit=True):
+                # a flag whose definition the edit removed: any `--flag` span is a claim
+                info = claims.setdefault((doc.path, rkey), {"lines": [], "label": "", "raw": rkey, "src": "span"})
+                if sp.line not in info["lines"]:
+                    info["lines"].append(sp.line)
+            if not LIST_OR_TABLE_LINE.match(doc.line_text(sp.line)):
                 continue
             if doc.stale_context(sp.line):
                 continue
@@ -368,6 +439,11 @@ def check_cli_flags(ctx: Context) -> List[Finding]:
         if key in strict:
             continue
         doc = ctx._by_path[doc_path]
+        if key in ctx.removed_flags:
+            findings.append(_removed_flag_finding(ctx, doc, key, info))
+            continue
+        if info["src"] == "span":
+            continue
         if info["src"] == "command":
             group = None
             for g, keys in per_command.items():
@@ -412,6 +488,48 @@ def check_cli_flags(ctx: Context) -> List[Finding]:
             f.suggestion = "Remove the flag from the docs, or restore it in the code."
         findings.append(f.finish())
     return findings
+
+
+def _rename_hint(old: Optional[Fact], added: List[Fact]) -> Optional[Fact]:
+    """The definition an edit most likely renamed ``old`` to: same file and close by, or the only new one."""
+    if not added:
+        return None
+    if old is not None:
+        near = [a for a in added if a.file == old.file and abs(a.line - old.line) <= 3]
+        if len(near) == 1:
+            return near[0]
+    return added[0] if len(added) == 1 else None
+
+
+def _removed_flag_finding(ctx: Context, doc: Doc, key: str, info: Dict[str, Any]) -> Finding:
+    old = ctx.removed_flags.get(key)
+    line = min(info["lines"])
+    was = f"defined at {old.file}:{old.line}" if old is not None else "written in the code"
+    why = [
+        f"before the edit `--{key}` was {was}",
+        "after the edit no non-doc file contains it",
+        f"files that changed: {ctx.changed_note()}" if ctx.changed_files else "files were removed",
+    ]
+    if info["src"] == "command":
+        why.append(f"the doc line runs this project's own command `{info['label']}`")
+    f = Finding(
+        check="cli-flag-undefined", name="--" + key, doc_file=doc.path, doc_line=line,
+        doc_quote=_clip(doc.line_text(line)), confidence="high", doc_lines=sorted(info["lines"]), why=why,
+        message=f"`--{info['raw']}` was removed from the code by the edit, but the docs still use it.",
+    )
+    new = _rename_hint(old, ctx.added_flags)
+    if new is not None:
+        f.code_file, f.code_line = new.file, new.line
+        f.code_quote = ctx.code_line(new.file, new.line)
+        f.suggestion = (
+            f"The same edit added `{new.name}` ({new.file}:{new.line}). If this is a rename, "
+            f"replace `--{info['raw']}` with `{new.name}` in the docs."
+        )
+    else:
+        if old is not None:
+            f.code_file = old.file
+        f.suggestion = "Remove the flag from the docs, or restore it in the code."
+    return f.finish()
 
 
 def _flag_strict(ctx: Context, key: str) -> bool:
@@ -500,12 +618,62 @@ def _doc_env_claims(doc: Doc) -> Dict[str, List[int]]:
     return out
 
 
+def _removed_env_findings(ctx: Context) -> List[Finding]:
+    """Variables the code read before the edit and that are in no non-doc file now."""
+    out: List[Finding] = []
+    rx: Dict[str, Any] = {}
+    for name in ctx.removed_envs:
+        esc = re.escape(name)
+        if "_" in name:
+            rx[name] = re.compile(r"(?<![A-Za-z0-9_])" + esc + r"(?![A-Za-z0-9_])")
+        else:
+            # a bare word such as DEV only counts where it is clearly a variable
+            rx[name] = re.compile(
+                r"(?:\benv\.|\$\{?)" + esc + r"(?![A-Za-z0-9_])|(?<![A-Za-z0-9_.])" + esc + r"=|`" + esc + r"`"
+            )
+    for doc in ctx.docs:
+        for name, pat in rx.items():
+            code_only = "_" not in name
+            lines: List[int] = []
+            for i, ln in enumerate(doc.lines, 1):
+                if name not in ln or not pat.search(ln):
+                    continue
+                if code_only and not (doc.in_block[i - 1] or "`" in ln):
+                    continue
+                if not doc.stale_context(i, edit=True):
+                    lines.append(i)
+            if not lines:
+                continue
+            old = ctx.removed_envs[name]
+            f = Finding(
+                check="env-undefined", name=name, doc_file=doc.path, doc_line=lines[0],
+                doc_quote=_clip(doc.line_text(lines[0])), doc_lines=lines,
+                message=f"`{name}` is no longer read by the code after the edit, but the docs still name it.",
+                why=[f"before the edit the code read `{name}` at {old.file}:{old.line}",
+                     "after the edit no non-doc file contains that name",
+                     f"files that changed: {ctx.changed_note()}" if ctx.changed_files else "files were removed"],
+            )
+            new = _rename_hint(old, ctx.added_envs)
+            if new is not None:
+                f.code_file, f.code_line = new.file, new.line
+                f.code_quote = ctx.code_line(new.file, new.line)
+                f.suggestion = (
+                    f"The same edit made the code read `{new.name}` ({new.file}:{new.line}). If this is a rename, "
+                    f"replace `{name}` with `{new.name}` in the docs."
+                )
+            else:
+                f.code_file = old.file
+                f.suggestion = f"Remove `{name}` from the docs, or read it in the code again."
+            out.append(f.finish())
+    return out
+
+
 def check_env(ctx: Context) -> List[Finding]:
-    findings: List[Finding] = []
+    findings: List[Finding] = _removed_env_findings(ctx) if ctx.removed_envs else []
     pending: List[Tuple[Doc, str, List[int], str]] = []
     for doc in ctx.docs:
         for name, lines in _doc_env_claims(doc).items():
-            if len(name) < 5 or name in ctx.env_tokens:
+            if len(name) < 5 or name in ctx.env_tokens or name in ctx.removed_envs:
                 continue
             reason = _own_env_prefix(ctx, name)
             if not reason:
@@ -718,7 +886,7 @@ def _contributor_doc(path: str) -> bool:
     return "/" not in path or bool(CONTRIBUTOR_DOC.search(posixpath.basename(path)))
 
 
-def _npm_script_of(tokens: List[str]) -> Optional[str]:
+def _npm_script_of(tokens: List[str], removed: Any = ()) -> Optional[str]:
     if not tokens or tokens[0] not in ("npm", "yarn", "pnpm", "bun"):
         return None
     pm, rest = tokens[0], tokens[1:]
@@ -736,20 +904,22 @@ def _npm_script_of(tokens: List[str]) -> Optional[str]:
         name = "test"
     elif pm in ("yarn", "pnpm") and rest and ":" in rest[0] and not rest[0].startswith("-"):
         name = rest[0]
-    if not name or not re.match(r"^[A-Za-z0-9][\w:.-]*$", name):
+    elif rest and rest[0] in removed and (pm != "npm" or rest[0] in ("start", "stop", "restart")):
+        name = rest[0]                 # `yarn build`, `pnpm dev`: only trusted for a script the edit removed
+    if not name or not re.match(r"^[A-Za-z0-9][\w:./-]*$", name):
         return None
     return name
 
 
 def check_npm_scripts(ctx: Context) -> List[Finding]:
     p = ctx.project
-    if not p.has_package_json or not p.npm_scripts:
+    if not ctx.removed_npm and (not p.has_package_json or not p.npm_scripts):
         return []
     findings: List[Finding] = []
     for doc in ctx.docs:
         refs: Dict[str, List[Command]] = {}
         for cmd in ctx.commands(doc):
-            name = _npm_script_of(cmd.tokens)
+            name = _npm_script_of(cmd.tokens, ctx.removed_npm)
             if name:
                 refs.setdefault(name, []).append(cmd)
         if not refs:
@@ -762,14 +932,31 @@ def check_npm_scripts(ctx: Context) -> List[Finding]:
             if re.search(r"[\"']" + re.escape(name) + r"[\"']\s*:", doc_text):
                 ctx.skip("script-defined-in-doc-snippet")
                 continue
-            live = [c for c in cmds if not doc.stale_context(c.line) and not ctx.foreign_block(doc, c)]
+            removed = name in ctx.removed_npm
+            live = [c for c in cmds if not doc.stale_context(c.line, edit=removed) and not ctx.foreign_block(doc, c)]
             if not live:
                 ctx.skip("other-project-or-stale")
                 continue
-            if not (_contributor_doc(doc.path) or known):
+            if not (removed or _contributor_doc(doc.path) or known):
                 ctx.skip("script-doc-not-about-this-package")
                 continue
-            line = live[0].line
+            line = min(c.line for c in live)
+            if removed:
+                where = ctx.removed_npm[name]
+                f = Finding(
+                    check="npm-script-missing", name=name, doc_file=doc.path, doc_line=line,
+                    doc_quote=_clip(doc.line_text(line)), doc_lines=sorted({c.line for c in live}),
+                    message=f"The script `{name}` was removed from {where} by the edit, but the docs still run it.",
+                    code_file=where,
+                    why=[f"before the edit {where} defined the script `{name}`",
+                         "after the edit no package.json in the repository defines it"],
+                )
+                if len(ctx.added_npm) == 1:
+                    f.suggestion = f"The same edit added the script `{ctx.added_npm[0]}`. If this is a rename, update the docs to use it."
+                else:
+                    f.suggestion = "Update the docs, or restore the script."
+                findings.append(f.finish())
+                continue
             close = difflib.get_close_matches(name, list(p.npm_scripts), n=1, cutoff=0.6)
             f = Finding(
                 check="npm-script-missing", name=name, doc_file=doc.path, doc_line=line,
@@ -792,13 +979,17 @@ def check_npm_scripts(ctx: Context) -> List[Finding]:
 
 def check_make_targets(ctx: Context) -> List[Finding]:
     p = ctx.project
-    if not p.has_makefile or not p.make_targets:
+    if not ctx.removed_make and (not p.has_makefile or not p.make_targets):
         return []
+    # With generated or computed targets only an explicit target that the edit removed is reported.
+    removed_only = False
     if p.generated_makefile:
-        ctx.notes.append("make-target-missing skipped: the build generates or wraps Makefiles (CMake/autotools/meson).")
-        return []
-    if p.make_dynamic:
-        ctx.notes.append("make-target-missing skipped: a Makefile computes target names or includes generated files.")
+        ctx.notes.append("make-target-missing limited: the build generates or wraps Makefiles (CMake/autotools/meson).")
+        removed_only = True
+    elif p.make_dynamic:
+        ctx.notes.append("make-target-missing limited: a Makefile computes target names or includes generated files.")
+        removed_only = True
+    if removed_only and not ctx.removed_make:
         return []
     findings: List[Finding] = []
     for doc in ctx.docs:
@@ -830,9 +1021,29 @@ def check_make_targets(ctx: Context) -> List[Finding]:
         for name, cmds in sorted(refs.items()):
             if is_known(name):
                 continue
-            live = [c for c in cmds if not doc.stale_context(c.line) and not ctx.foreign_block(doc, c)]
+            live = [c for c in cmds if not doc.stale_context(c.line, edit=name in ctx.removed_make)
+                    and not ctx.foreign_block(doc, c)]
             if not live:
                 ctx.skip("other-project-or-stale")
+                continue
+            if name in ctx.removed_make:
+                where = ctx.removed_make[name]
+                line = min(c.line for c in live)
+                f = Finding(
+                    check="make-target-missing", name=name, doc_file=doc.path, doc_line=line,
+                    doc_quote=_clip(doc.line_text(line)), doc_lines=sorted({c.line for c in live}),
+                    message=f"The make target `{name}` ({where}) was removed by the edit, but the docs still run `make {name}`.",
+                    why=[f"before the edit {where} defined the target `{name}`",
+                         "after the edit no Makefile in the repository defines it"],
+                )
+                f.code_file = where.rpartition(":")[0]
+                if len(ctx.added_make) == 1:
+                    f.suggestion = f"The same edit added the target `{ctx.added_make[0]}`. If this is a rename, update the docs to use it."
+                else:
+                    f.suggestion = "Update the docs, or restore the target."
+                findings.append(f.finish())
+                continue
+            if removed_only:
                 continue
             if not known and not _contributor_doc(doc.path):
                 ctx.skip("make-doc-not-about-this-project")
@@ -840,7 +1051,7 @@ def check_make_targets(ctx: Context) -> List[Finding]:
             if not known and len(refs) == 1 and name in ("install", "all", "clean", "check", "test", "build"):
                 ctx.skip("generic-make-target-without-context")
                 continue
-            line = live[0].line
+            line = min(c.line for c in live)
             close = difflib.get_close_matches(name, list(p.make_targets), n=1, cutoff=0.6)
             f = Finding(
                 check="make-target-missing", name=name, doc_file=doc.path, doc_line=line,
@@ -904,6 +1115,33 @@ def check_paths(ctx: Context) -> List[Finding]:
                 continue
             base = target.rsplit("/", 1)[-1]
             ext = base.rsplit(".", 1)[-1].lower() if "." in base else ""
+            if ctx.removed_files:
+                tails = ("",) if ext else ("", ".md", ".mdx", "/index.md", "/index.mdx", "/README.md")
+                gone = [target + s for s in tails if target + s in ctx.removed_files]
+                if gone and not any(repo.exists(target + s) for s in tails):
+                    if target in seen:
+                        if link.line not in seen[target].doc_lines:
+                            seen[target].doc_lines.append(link.line)
+                        continue
+                    gbase = gone[0].rsplit("/", 1)[-1]
+                    same_name = [a for a in ctx.added_files if a.rsplit("/", 1)[-1] == gbase]
+                    f = Finding(
+                        check="path-missing", name=target, doc_file=doc.path, doc_line=link.line,
+                        doc_quote=_clip(doc.line_text(link.line)), doc_lines=[link.line],
+                        message=f"Link target `{t}` resolves to `{gone[0]}`, which the edit removed or moved.",
+                        why=[f"before the edit `{gone[0]}` was in the repository", "after the edit it is not"],
+                    )
+                    if len(same_name) == 1:
+                        f.code_file = same_name[0]
+                        f.suggestion = f"The same edit added `{same_name[0]}`. If the file moved, update the link."
+                    elif len(ctx.added_files) == 1:
+                        only = next(iter(ctx.added_files))
+                        f.code_file = only
+                        f.suggestion = f"The same edit added `{only}`. If the file was renamed, update the link."
+                    else:
+                        f.suggestion = "Fix or remove the link."
+                    seen[target] = f
+                    continue
             if ext in ("html", "htm"):
                 ctx.skip("link-to-generated-html")
                 continue

@@ -14,7 +14,7 @@ from typing import Any, Dict, Iterable, List, Optional, Sequence, Set, Tuple
 from .checks import ALL_CHECKS, Context
 from .docs import Doc, parse_markdown
 from .facts import ENV_TOKEN, FLAG_LITERAL, Fact, FileFacts, Project, extract_file, is_support_path, norm_flag, scan_project
-from .model import CHECKS, CONFIDENCE_ORDER, Finding, ScanResult
+from .model import CHECKS, CONFIDENCE_ORDER, Finding, Index, ScanResult
 from .repo import Repo, find_root, may_read
 
 # Checks that run unless the caller asks for something else. The two
@@ -56,6 +56,8 @@ def resolve_checks(spec: Optional[Iterable[str]]) -> List[str]:
             name = item.lstrip("+")
             if name in ALL_CHECKS and name not in chosen:
                 chosen.append(name)
+    if not chosen and not any(i.lstrip("+-") in ALL_CHECKS or i.lstrip("+") in ("all", "default") for i in items):
+        return list(DEFAULT_CHECKS)        # nothing recognisable was asked for: do not silently run nothing
     return [c for c in ALL_CHECKS if c in chosen]
 
 
@@ -110,9 +112,17 @@ class Scanner:
         min_confidence: str = "medium",
         budget_s: Optional[float] = None,
         refresh: bool = True,
+        before: Optional[Index] = None,
     ) -> ScanResult:
+        """Run the checks.
+
+        ``before`` is the :class:`Index` of an earlier scan of the same
+        repository (``result.index``). With it, a name that the code had then
+        and has nowhere now is reported wherever the docs still use it, without
+        the gates that a whole-repository scan needs to stay quiet.
+        """
         started = time.monotonic()
-        deadline = started + budget_s if budget_s else None
+        deadline = started + budget_s if budget_s is not None else None
         if refresh:
             self.repo.refresh()
         repo = self.repo.with_overlay(overlay) if overlay else self.repo
@@ -138,6 +148,7 @@ class Scanner:
 
         env_tokens: Set[str] = set()
         flag_literals: Set[str] = set()
+        product_flag_literals: Set[str] = set()
         facts: List[Fact] = []
         dyn_prefixes: Set[str] = set()
         auto_env = False
@@ -158,6 +169,7 @@ class Scanner:
             flag_literals |= ff.flag_literals
             facts.extend(ff.facts)
             if not is_support_path(rel):
+                product_flag_literals |= ff.flag_literals
                 dyn_prefixes |= ff.dyn_prefixes
                 auto_env = auto_env or ff.auto_env
         sig = hash(tuple(sorted(keys.items(), key=lambda kv: kv[0])))
@@ -182,6 +194,13 @@ class Scanner:
         ctx = Context(
             repo=repo, docs=docs, project=project, env_tokens=env_tokens, flag_literals=flag_literals,
             facts=facts, dyn_prefixes=dyn_prefixes, auto_env=auto_env, loose=loose, doc_mentions=doc_mentions,
+            before=before, keys=keys,
+        )
+        result.index = Index(
+            flag_literals=frozenset(flag_literals), product_flag_literals=frozenset(product_flag_literals),
+            flag_facts=ctx.flag_facts, env_tokens=frozenset(env_tokens),
+            env_facts=ctx.env_facts, npm_scripts=dict(project.npm_scripts), make_targets=dict(project.make_targets),
+            files=frozenset(repo.files), keys=keys,
         )
         floor = CONFIDENCE_ORDER.get(min_confidence, 1)
         findings: List[Finding] = []
@@ -326,12 +345,13 @@ class Scanner:
         if overlay is None:
             current = self.scan(refresh=False, **kw)
             return current, [], "not a git repository (or git failed); showing every finding"
-        current = self.scan(refresh=False, **kw)
         if not overlay:
+            current = self.scan(refresh=False, **kw)
             current.findings = []
             current.notes.append(f"No files differ from {rev}.")
             return current, [], None
         baseline = self.scan(overlay=overlay, refresh=False, **kw)
+        current = self.scan(refresh=False, before=None if baseline.incomplete else baseline.index, **kw)
         if baseline.incomplete or current.incomplete:
             current.findings = []
             current.incomplete = True
@@ -360,6 +380,10 @@ def explain(scanner: Scanner, result: ScanResult, finding_id: str) -> Optional[D
     f = result.by_id(finding_id.strip())
     if f is None:
         return None
+    return explain_finding(scanner, f)
+
+
+def explain_finding(scanner: Scanner, f: Finding) -> Dict[str, Any]:
     d = f.full()
     d["doc_context"] = _context(scanner.repo, f.doc_file, f.doc_line)
     if f.code_file and f.code_line:
@@ -390,5 +414,5 @@ def apply_ignores(result: ScanResult, ignore_names: Iterable[str] = (), ignore_p
 
 
 __all__ = [
-    "Scanner", "explain", "apply_ignores", "resolve_checks", "find_root", "DEFAULT_CHECKS", "OPT_IN_CHECKS", "CHECKS",
+    "Scanner", "explain", "explain_finding", "apply_ignores", "resolve_checks", "find_root", "DEFAULT_CHECKS", "OPT_IN_CHECKS", "CHECKS",
 ]

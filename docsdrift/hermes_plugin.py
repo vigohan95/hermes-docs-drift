@@ -7,6 +7,9 @@ What happens in a session:
 * ``transform_tool_result`` re-scans after the edit landed and, only when the
   edit left the docs disagreeing with the code in a way they did not before,
   adds a ``docs_drift`` entry to that tool result. Nothing is added otherwise.
+  The re-scan is given the baseline's index of the code, so a flag, variable,
+  script, target or file that the session's edits removed is reported wherever
+  the docs still use it.
 * ``pre_verify`` asks the agent to keep going once if it tries to finish while
   drift it introduced in this session is still open.
 
@@ -25,8 +28,8 @@ import threading
 from collections import OrderedDict
 from typing import Any, Dict, Iterable, List, Optional, Set, Tuple
 
-from .model import CHECKS, Finding, ScanResult
-from .report import format_finding, format_new_drift, format_result
+from .model import CHECKS, Finding, Index, ScanResult
+from .report import format_new_drift, format_result
 from .scan import DEFAULT_CHECKS, Scanner, apply_ignores, explain, find_root, resolve_checks
 
 logger = logging.getLogger("docs-drift")
@@ -34,7 +37,7 @@ logger = logging.getLogger("docs-drift")
 TOOLSET = "docs_drift"
 EDIT_TOOLS = ("write_file", "patch")
 MAX_SCANNERS = 4
-MAX_SESSIONS = 64
+MAX_SESSIONS = 16
 TOOL_BUDGET_S = 120.0
 
 SETTING_DEFAULTS: Dict[str, Any] = {
@@ -171,7 +174,8 @@ def _state(owner: str, root: str, create: bool = True) -> Optional[Dict[str, Any
     with _lock:
         st = _sessions.get(key)
         if st is None and create:
-            st = {"baseline": None, "open": {}, "tried": False}
+            # baseline: finding ids before the session's first edit; index: the code side at that moment
+            st = {"baseline": None, "index": None, "open": {}}
             _sessions[key] = st
             while len(_sessions) > MAX_SESSIONS:
                 _sessions.popitem(last=False)
@@ -184,11 +188,25 @@ def _owner(kw: Dict[str, Any]) -> str:
     return str(kw.get("session_id") or kw.get("task_id") or "default")
 
 
+def _session_state(root: str, kw: Optional[Dict[str, Any]] = None) -> Optional[Dict[str, Any]]:
+    """The edit-tracking state for a repository: this session's, else the most recently used one."""
+    with _lock:
+        for key in ("session_id", "task_id"):
+            owner = (kw or {}).get(key)
+            if owner and (str(owner), root) in _sessions:
+                return _sessions[(str(owner), root)]
+        for (_, r), st in reversed(_sessions.items()):
+            if r == root:
+                return st
+    return None
+
+
 def _scan(root: str, budget_s: Optional[float], checks: Any = None, min_confidence: Any = None,
-          overlay: Optional[Dict[str, Optional[str]]] = None, refresh: bool = True) -> ScanResult:
+          overlay: Optional[Dict[str, Optional[str]]] = None, refresh: bool = True,
+          before: Optional[Index] = None) -> ScanResult:
     sc = _scanner(root)
     result = sc.scan(overlay=overlay, checks=_checks_setting(checks), min_confidence=_min_confidence(min_confidence),
-                     budget_s=budget_s, refresh=refresh)
+                     budget_s=budget_s, refresh=refresh, before=before)
     return apply_ignores(result, _setting("ignore_names"), _setting("ignore_paths"))
 
 
@@ -222,16 +240,15 @@ def on_pre_tool_call(tool_name: str = "", args: Any = None, **kw: Any) -> None:
                 st = _state(owner, root)
                 if st["baseline"] is not None:
                     continue
-                st["tried"] = True
                 result = _scan(root, budget)
                 if not result.incomplete:
-                    st["baseline"] = result.ids()
+                    st["baseline"], st["index"] = result.ids(), result.index
     except Exception:
         logger.debug("docs-drift pre_tool_call failed", exc_info=True)
     return None
 
 
-def _baseline_from_git(root: str, budget: float) -> Optional[Set[str]]:
+def _baseline_from_git(root: str, budget: float) -> Optional[ScanResult]:
     """Fallback when no pre-edit scan exists: what the scan says with uncommitted changes undone."""
     sc = _scanner(root)
     sc.repo.refresh()
@@ -239,19 +256,24 @@ def _baseline_from_git(root: str, budget: float) -> Optional[Set[str]]:
     if overlay is None:
         return None
     result = _scan(root, budget, overlay=overlay, refresh=False)
-    return None if result.incomplete else result.ids()
+    return None if result.incomplete else result
 
 
 def _rescan(owner: str, root: str, budget: float) -> Optional[Tuple[List[Finding], List[Finding], int]]:
     """(new findings, findings fixed since the last look, still open) or None when unknown."""
     st = _state(owner, root)
-    current = _scan(root, budget)
+    if st["baseline"] is None:
+        base = _baseline_from_git(root, budget)
+        if base is not None:
+            st["baseline"], st["index"] = base.ids(), base.index
+    # Always compared with the session baseline, not with the previous edit: a name the session
+    # removed stays reported until the docs (or the code) are fixed.
+    current = _scan(root, budget, before=st["index"])
     if current.incomplete:
         return None
     if st["baseline"] is None:
-        base = _baseline_from_git(root, budget)
         # Without git there is nothing to compare with: accept the present state silently.
-        st["baseline"] = base if base is not None else current.ids()
+        st["baseline"], st["index"] = current.ids(), current.index
     now = {f.id: f for f in current.findings}
     open_before: Dict[str, Finding] = st["open"]
     fixed = [f for fid, f in open_before.items() if fid not in now]
@@ -394,17 +416,23 @@ def _tool_root(args: Dict[str, Any]) -> Tuple[Optional[str], Optional[str]]:
     return root, None
 
 
-def _scan_for_tool(root: str, changed_only: bool, checks: Any, min_confidence: Any) -> Tuple[ScanResult, List[Finding], Optional[str]]:
+def _scan_for_tool(root: str, changed_only: bool, checks: Any, min_confidence: Any,
+                   before: Optional[Index] = None) -> Tuple[ScanResult, List[Finding], Optional[str]]:
     sc = _scanner(root)
     kw = dict(checks=_checks_setting(checks), min_confidence=_min_confidence(min_confidence), budget_s=TOOL_BUDGET_S)
     if changed_only:
         result, resolved, problem = sc.scan_changes("HEAD", **kw)
     else:
-        result, resolved, problem = sc.scan(**kw), [], None
+        result, resolved, problem = sc.scan(before=before, **kw), [], None
     return apply_ignores(result, _setting("ignore_names"), _setting("ignore_paths")), resolved, problem
 
 
-def handle_scan(args: Any = None, **_kw: Any) -> str:
+def _session_index(root: str, kw: Optional[Dict[str, Any]] = None) -> Optional[Index]:
+    st = _session_state(root, kw)
+    return st["index"] if st else None
+
+
+def handle_scan(args: Any = None, **kw: Any) -> str:
     try:
         args = args if isinstance(args, dict) else {}
         root, err = _tool_root(args)
@@ -415,13 +443,16 @@ def handle_scan(args: Any = None, **_kw: Any) -> str:
         except (TypeError, ValueError):
             limit = 30
         with _lock:
+            before = None if args.get("changed_only") else _session_index(root, kw)
             result, resolved, problem = _scan_for_tool(
-                root, bool(args.get("changed_only")), args.get("checks"), args.get("min_confidence"))
+                root, bool(args.get("changed_only")), args.get("checks"), args.get("min_confidence"), before)
         data = result.to_dict(limit=limit)
         data["checks_run"] = _checks_setting(args.get("checks"))
         if args.get("changed_only"):
             data["compared_with"] = "git HEAD"
             data["resolved_by_changes"] = [f.id for f in resolved]
+        elif before is not None:
+            data["also_compared_with"] = "the code before this session's first edit: names removed since then are reported"
         if problem:
             data.setdefault("notes", []).append(problem)
         if result.findings:
@@ -432,17 +463,25 @@ def handle_scan(args: Any = None, **_kw: Any) -> str:
         return json.dumps({"error": f"docs_drift_scan failed: {type(exc).__name__}: {exc}"})
 
 
-def _find_and_explain(root: str, finding_id: str) -> Optional[Dict[str, Any]]:
+def _find_and_explain(root: str, finding_id: str, kw: Optional[Dict[str, Any]] = None) -> Optional[Dict[str, Any]]:
+    """Look for the finding in a fresh scan; findings caused by edits need the pre-edit code to compare with."""
     sc = _scanner(root)
+    fid = finding_id.strip()
+    before = _session_index(root, kw)
     for checks in (None, "all"):
-        result, _, _ = _scan_for_tool(root, False, checks, "medium")
-        info = explain(sc, result, finding_id)
+        result, _, _ = _scan_for_tool(root, False, checks, "medium", before)
+        info = explain(sc, result, fid)
+        if info is not None:
+            return info
+    result, _, problem = _scan_for_tool(root, True, "all", "medium")     # uncommitted changes vs git HEAD
+    if not problem:
+        info = explain(sc, result, fid)
         if info is not None:
             return info
     return None
 
 
-def handle_explain(args: Any = None, **_kw: Any) -> str:
+def handle_explain(args: Any = None, **kw: Any) -> str:
     try:
         args = args if isinstance(args, dict) else {}
         fid = str(args.get("finding_id") or "").strip()
@@ -452,7 +491,7 @@ def handle_explain(args: Any = None, **_kw: Any) -> str:
         if err:
             return json.dumps({"error": err})
         with _lock:
-            info = _find_and_explain(root, fid)
+            info = _find_and_explain(root, fid, kw)
         if info is None:
             return json.dumps({
                 "error": f"no finding with id {fid} in {root}",
@@ -514,7 +553,8 @@ def handle_command(raw_args: str = "") -> str:
         if err:
             return err
         with _lock:
-            result, resolved, problem = _scan_for_tool(root, changed, checks, None)
+            before = None if changed else _session_index(root)
+            result, resolved, problem = _scan_for_tool(root, changed, checks, None, before)
         title = "docs-drift (new since HEAD)" if changed else "docs-drift"
         text = format_result(result, limit=30, title=f"{title} {root}")
         if problem:

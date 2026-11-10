@@ -28,8 +28,13 @@ Mutations:
 * path:  the linked file removed.
 
 "Detected" means the scan of the mutated tree has a finding of the matching
-check with that name, and the scan of the original tree did not. Up to
-``PER_KIND`` candidates per kind and repository, picked with a fixed seed.
+check with that name, and the scan of the original tree did not. Every
+mutation is scanned twice: as a plain whole-repository scan (``detected_scan``)
+and with the pre-edit index passed in, which is what the Hermes hook and
+``changed_only`` do (``detected``). A flag mutation that leaves a definition of
+the flag in place (the "literal" variant on a Go/cobra project, where the
+definition has no dashes) is not counted. Up to ``PER_KIND`` candidates per
+kind and repository, picked with a fixed seed.
 """
 
 from __future__ import annotations
@@ -140,7 +145,8 @@ def mutate(scanner: Scanner, kind: str, name: str, where: str, variant: str = ""
             parts = [p for p in re.split(r"[-_]", bare) if p]
             snake, camel = "_".join(parts), _camel(parts)
             for ident, rep in ((snake, "zq_renamed"), (camel, "zqRenamed")):
-                subs.append((re.compile(r"(?<![A-Za-z0-9_])" + re.escape(ident) + r"(?![A-Za-z0-9_])"), rep))
+                # "-" on either side means the word is part of another, hyphenated flag name
+                subs.append((re.compile(r"(?<![A-Za-z0-9_-])" + re.escape(ident) + r"(?![A-Za-z0-9_-])"), rep))
                 needles.append(ident)
             if len(parts) > 1:
                 subs.append((re.compile(r"(?<![\w-])" + re.escape("-".join(parts)) + r"(?![\w-])"), "zq-renamed"))
@@ -151,7 +157,11 @@ def mutate(scanner: Scanner, kind: str, name: str, where: str, variant: str = ""
         return _replace_everywhere(scanner, code_files, [(rx, name + "_ZQ")], [name])
     if kind == "npm":
         text = repo.read("package.json") or ""
-        new = re.sub(r'"' + re.escape(name) + r'"(\s*:)', '"' + name + '-zq"\\1', text, count=1)
+        at = text.find('"scripts"')
+        if at < 0:
+            return {}
+        head, text_tail = text[:at], text[at:]
+        new = head + re.sub(r'"' + re.escape(name) + r'"(\s*:)', '"' + name + '-zq"\\1', text_tail, count=1)
         return {"package.json": new} if new != text else {}
     if kind == "make":
         mk = where.rsplit(":", 1)[0]
@@ -188,18 +198,33 @@ def run_repo(root: str) -> dict:
                     row["note"] = "mutation changed nothing"
                     rows.append(row)
                     continue
-                t0 = time.monotonic()
-                res = scanner.scan(overlay=overlay, refresh=False)
-                row["scan_s"] = round(time.monotonic() - t0, 2)
-                new = [f for f in res.findings if f.id not in base_ids]
                 want = norm_flag(name) if kind == "flag" else name
-                hit = [f for f in new if f.check == EXPECT[kind]
-                       and ((norm_flag(f.name) if kind == "flag" else f.name) == want)]
-                row["detected"] = bool(hit)
-                row["new_findings"] = len(new)
-                row["other_new_findings"] = [f"{f.check} {f.name} {f.doc_file}:{f.doc_line}" for f in new if f not in hit][:10]
-                if hit:
-                    row["finding"] = f"{hit[0].doc_file}:{hit[0].doc_line} [{hit[0].confidence}]"
+
+                def hits(res):
+                    fresh = [f for f in res.findings if f.id not in base_ids]
+                    hit = [f for f in fresh if f.check == EXPECT[kind]
+                           and ((norm_flag(f.name) if kind == "flag" else f.name) == want)]
+                    return fresh, hit
+
+                # 1. whole-repository scan of the edited tree (what `docs_drift_scan` sees)
+                res = scanner.scan(overlay=overlay, refresh=False)
+                if kind == "flag" and want in res.index.flag_facts:
+                    row["detected"] = None
+                    row["note"] = "mutation left a definition of the flag in place"
+                    rows.append(row)
+                    continue
+                fresh, hit = hits(res)
+                row["detected_scan"] = bool(hit)
+                # 2. the same scan told what the code looked like before the edit (what the hook sees)
+                t0 = time.monotonic()
+                res2 = scanner.scan(overlay=overlay, refresh=False, before=base.index)
+                row["scan_s"] = round(time.monotonic() - t0, 2)
+                fresh2, hit2 = hits(res2)
+                row["detected"] = bool(hit2)
+                row["new_findings"] = len(fresh2)
+                row["other_new_findings"] = [f"{f.check} {f.name} {f.doc_file}:{f.doc_line}" for f in fresh2 if f not in hit2][:10]
+                if hit2:
+                    row["finding"] = f"{hit2[0].doc_file}:{hit2[0].doc_line} [{hit2[0].confidence}]"
                 rows.append(row)
     return {"candidates_available": {k: len(v) for k, v in cands.items()}, "baseline_findings": len(base.findings), "rows": rows}
 
@@ -218,10 +243,11 @@ def main() -> int:
         for r in data["rows"]:
             if r["detected"] is None:
                 continue
-            t = tally.setdefault(r["kind"], [0, 0])
-            t[1] += 1
+            t = tally.setdefault(r["kind"], [0, 0, 0])
+            t[2] += 1
             t[0] += 1 if r["detected"] else 0
-        print(name, data["candidates_available"], {k: f"{a}/{b}" for k, (a, b) in tally.items()}, flush=True)
+            t[1] += 1 if r["detected_scan"] else 0
+        print(name, data["candidates_available"], {k: f"edit-aware {a}/{n}, plain scan {b}/{n}" for k, (a, b, n) in tally.items()}, flush=True)
     return 0
 
 
