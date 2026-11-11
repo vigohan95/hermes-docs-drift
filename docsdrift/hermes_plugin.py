@@ -25,8 +25,10 @@ import os
 import re
 import shlex
 import threading
+import time
 from collections import OrderedDict
-from typing import Any, Dict, Iterable, List, Optional, Set, Tuple
+from contextlib import contextmanager
+from typing import Any, Dict, Iterable, Iterator, List, Optional, Set, Tuple
 
 from .model import CHECKS, EDIT_NOTES, Finding, Index, ScanResult
 from .report import format_new_drift, format_result
@@ -113,7 +115,22 @@ def _abs(path: str) -> str:
     return os.path.abspath(path)
 
 
-_V4A_HEADER = re.compile(r"^\*\*\* (?:Update|Add|Delete) File:\s*(.+?)\s*$|^\*\*\* Move File:\s*(.+?)\s*->\s*(.+?)\s*$", re.M)
+_V4A_HEADER = re.compile(r"^\*\*\* (Update|Add|Delete|Move) File:([^\n]*)", re.M)
+
+
+def _v4a_paths(body: str) -> List[str]:
+    """Paths named by the file headers of a V4A patch. The header is cut up here, not by the pattern."""
+    out: List[str] = []
+    for m in _V4A_HEADER.finditer(body):
+        rest = m.group(2)
+        if m.group(1) != "Move":
+            parts = [rest]
+        elif "->" in rest:
+            parts = rest.split("->", 1)
+        else:
+            continue
+        out.extend(p.strip() for p in parts if p.strip())
+    return out
 
 
 def _edit_paths(tool_name: str, args: Any, result: Any = None) -> List[str]:
@@ -133,8 +150,7 @@ def _edit_paths(tool_name: str, args: Any, result: Any = None) -> List[str]:
             out.append(v)
         body = args.get("patch")
         if tool_name == "patch" and isinstance(body, str):
-            for m in _V4A_HEADER.finditer(body):
-                out.extend(g for g in m.groups() if g)
+            out.extend(_v4a_paths(body))
     seen: Set[str] = set()
     uniq = []
     for p in out:
@@ -157,11 +173,11 @@ def _roots_for(paths: Iterable[str]) -> List[str]:
     return roots
 
 
-def _scanner(root: str) -> Scanner:
+def _scanner(root: str, deadline: Optional[float] = None) -> Scanner:
     with _lock:
         sc = _scanners.get(root)
         if sc is None:
-            sc = Scanner(root)
+            sc = Scanner(root, deadline=deadline)
             _scanners[root] = sc
             while len(_scanners) > MAX_SCANNERS:
                 _scanners.popitem(last=False)
@@ -206,15 +222,36 @@ def _session_state(root: str, kw: Optional[Dict[str, Any]] = None) -> Optional[D
 
 def _scan(root: str, budget_s: Optional[float], checks: Any = None, min_confidence: Any = None,
           overlay: Optional[Dict[str, Optional[str]]] = None, refresh: bool = True,
-          before: Optional[Index] = None) -> ScanResult:
-    sc = _scanner(root)
+          before: Optional[Index] = None, deadline: Optional[float] = None) -> ScanResult:
+    sc = _scanner(root, deadline)
     result = sc.scan(overlay=overlay, checks=_checks_setting(checks), min_confidence=_min_confidence(min_confidence),
                      budget_s=budget_s, refresh=refresh, before=before,
-                     added=before is not None and bool(_setting("report_added")))
+                     added=before is not None and bool(_setting("report_added")), deadline=deadline)
     return apply_ignores(result, _setting("ignore_names"), _setting("ignore_paths"))
 
 
 # ---------------------------------------------------------------- hooks
+# One hook call has one time limit, hook_time_budget_s, counted from the moment the hook is
+# entered. Waiting for the lock, the git children and every scan in the call share it, so a
+# hook returns after about that long whatever the repository looks like. Hermes fails
+# pre_tool_call closed after 30 s; the default limit here is 8 s.
+def _hook_limit() -> Tuple[float, float]:
+    """(the budget in seconds, the time.monotonic() value at which it ends)."""
+    budget = float(_setting("hook_time_budget_s"))
+    return budget, time.monotonic() + budget
+
+
+@contextmanager
+def _locked_until(deadline: float) -> Iterator[bool]:
+    """Hold the lock, or give up at the deadline (a docs_drift_scan call may hold it for minutes)."""
+    got = _lock.acquire(timeout=max(0.0, deadline - time.monotonic()))
+    try:
+        yield got
+    finally:
+        if got:
+            _lock.release()
+
+
 def _edit_landed(tool_name: str, result: Any) -> Optional[Dict[str, Any]]:
     """The parsed result when the edit was applied, else None."""
     if not isinstance(result, str):
@@ -238,15 +275,17 @@ def on_pre_tool_call(tool_name: str = "", args: Any = None, **kw: Any) -> None:
         if tool_name not in EDIT_TOOLS or not (_setting("report_after_edit") or _setting("nudge_before_finish")):
             return None
         owner = _owner(kw)
-        budget = float(_setting("hook_time_budget_s"))
-        with _lock:
+        budget, deadline = _hook_limit()
+        with _locked_until(deadline) as got:
+            if not got:
+                return None
             for root in _roots_for(_edit_paths(tool_name, args)):
                 st = _state(owner, root)
                 if st["baseline"] is not None or st["edited"]:
                     # After the first edit the present state is no baseline any more; git supplies it.
                     continue
                 st["edited"] = True
-                result = _scan(root, budget)
+                result = _scan(root, budget, deadline=deadline)
                 if not result.incomplete:
                     st["baseline"], st["index"] = result.ids(), result.index
                 else:
@@ -271,27 +310,32 @@ def _skip_note(st: Dict[str, Any], checked: bool) -> Optional[str]:
             "usually checked; docs_drift_scan with changed_only=true checks now with a longer time limit.")
 
 
-def _baseline_from_git(root: str, budget: float) -> Optional[ScanResult]:
+def _baseline_from_git(root: str, budget: float, deadline: Optional[float] = None) -> Optional[ScanResult]:
     """Fallback when no pre-edit scan exists: what the scan says with uncommitted changes undone."""
-    sc = _scanner(root)
-    sc.repo.refresh()
-    overlay = sc.repo.changed_vs("HEAD")
+    sc = _scanner(root, deadline)
+    sc.repo.deadline = deadline
+    try:
+        sc.repo.refresh()
+        overlay = None if sc.repo.out_of_time else sc.repo.changed_vs("HEAD")
+    finally:
+        sc.repo.deadline = None
     if overlay is None:
         return None
-    result = _scan(root, budget, overlay=overlay, refresh=False)
+    result = _scan(root, budget, overlay=overlay, refresh=False, deadline=deadline)
     return None if result.incomplete else result
 
 
-def _rescan(owner: str, root: str, budget: float) -> Optional[Tuple[List[Finding], List[Finding], int]]:
+def _rescan(owner: str, root: str, budget: float,
+            deadline: Optional[float] = None) -> Optional[Tuple[List[Finding], List[Finding], int]]:
     """(new findings, findings fixed since the last look, still open) or None when unknown."""
     st = _state(owner, root)
     if st["baseline"] is None:
-        base = _baseline_from_git(root, budget)
+        base = _baseline_from_git(root, budget, deadline)
         if base is not None:
             st["baseline"], st["index"] = base.ids(), base.index
     # Always compared with the session baseline, not with the previous edit: a name the session
     # removed stays reported until the docs (or the code) are fixed.
-    current = _scan(root, budget, before=st["index"])
+    current = _scan(root, budget, before=st["index"], deadline=deadline)
     if current.incomplete:
         st["skipped"] = _why_incomplete(current)
         return None
@@ -321,15 +365,21 @@ def on_transform_tool_result(tool_name: str = "", args: Any = None, result: Any 
         if data is None:
             return None
         owner = _owner(kw)
-        budget = float(_setting("hook_time_budget_s"))
+        budget, deadline = _hook_limit()
         limit = int(_setting("max_reported"))
         new_all: List[Finding] = []
         fixed_all: List[Finding] = []
         open_total = 0
         skipped: List[str] = []
-        with _lock:
+        with _locked_until(deadline) as got:
+            if not got:
+                # Another session's docs_drift_scan holds the lock. Nothing was looked at, so say so.
+                data["docs_drift"] = {"not_checked": (
+                    f"docs-drift did not check this edit: another docs-drift scan was still running after "
+                    f"{budget:g}s. docs_drift_scan with changed_only=true checks it once that scan is done.")}
+                return json.dumps(data, ensure_ascii=False)
             for root in _roots_for(_edit_paths(tool_name, args, data)):
-                out = _rescan(owner, root, budget)
+                out = _rescan(owner, root, budget, deadline)
                 note = _skip_note(_state(owner, root), checked=bool(out and (out[0] or out[1])))
                 if note:
                     skipped.append(note)
@@ -383,14 +433,16 @@ def on_pre_verify(changed_paths: Any = None, attempt: int = 0, **kw: Any) -> Opt
         if not _setting("nudge_before_finish") or attempt:
             return None
         owner = _owner(kw)
-        budget = float(_setting("hook_time_budget_s"))
+        budget, deadline = _hook_limit()
         still: List[Finding] = []
-        with _lock:
+        with _locked_until(deadline) as got:
+            if not got:
+                return None
             roots = _roots_for(_abs(p) for p in (changed_paths or []) if isinstance(p, str))
             for root in roots:
                 # Scanned here even when no edit result reported anything: report_after_edit may be
                 # off, or the scan after the edit may have run out of time.
-                out = _rescan(owner, root, budget)
+                out = _rescan(owner, root, budget, deadline)
                 if out is None:
                     continue
                 still.extend(_state(owner, root)["open"].values())

@@ -1,5 +1,5 @@
 name: docs-drift
-version: 0.1.0
+version: 0.1.1
 description: "Checks that README and Markdown docs still match the code after the agent edits files: command-line flags, environment variables, documented defaults, npm scripts, make targets and links to files. Reports new mismatches in the same session with file:line on both sides. Offline and deterministic; no model call, no network, no API key."
 author: "Han Vigo"
 license: MIT
@@ -42,7 +42,7 @@ config_schema:
   hook_time_budget_s:
     type: number
     default: 8
-    description: "Seconds a hook may spend scanning. When the budget runs out the edit is not checked, and the agent is told so once per session and repository."
+    description: "Seconds one call of a hook may take, counting the wait for another scan, git and the scan. Whole seconds, at least 1. When the time runs out the edit is not checked, and the agent is told so once per session and repository."
   max_reported:
     type: int
     default: 8

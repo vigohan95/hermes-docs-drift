@@ -3,6 +3,10 @@
 Written on 2026-11-10 before the search below was run and before anything was cloned.
 The scanner was not changed after this set was scanned.
 
+(Added on 2026-11-11: version 0.1.1 changed the scanner for the reasons in `SECURITY.md`,
+none of them a result on this set. Scanned again with it, the 12 repositories give the same
+findings; see `rescan.txt`.)
+
 ## The rule
 
 1. Ask the GitHub search API for repositories with

@@ -11,7 +11,7 @@ import re
 import time
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Set, Tuple
 
-from .checks import ALL_CHECKS, Context, added_undocumented
+from .checks import ALL_CHECKS, Context, OutOfTime, added_undocumented
 from .docs import Doc, parse_markdown
 from .facts import ENV_TOKEN, FLAG_LITERAL, Fact, FileFacts, Project, extract_file, is_support_path, norm_flag, scan_project
 from .model import CHECKS, CONFIDENCE_ORDER, Finding, Index, ScanResult
@@ -62,8 +62,10 @@ def resolve_checks(spec: Optional[Iterable[str]]) -> List[str]:
 
 
 class Scanner:
-    def __init__(self, root: str, use_git: bool = True):
-        self.repo = Repo(root, use_git=use_git)
+    def __init__(self, root: str, use_git: bool = True, deadline: Optional[float] = None):
+        # ``deadline`` (a time.monotonic() value) limits the first listing of the files only.
+        self.repo = Repo(root, use_git=use_git, deadline=deadline)
+        self.repo.deadline = None
         self.root = self.repo.root
         self._facts: Dict[str, Tuple[Any, FileFacts]] = {}
         self._docs: Dict[str, Tuple[Any, Doc]] = {}
@@ -119,8 +121,13 @@ class Scanner:
         refresh: bool = True,
         before: Optional[Index] = None,
         added: bool = False,
+        deadline: Optional[float] = None,
     ) -> ScanResult:
         """Run the checks.
+
+        ``budget_s`` and ``deadline`` (a ``time.monotonic()`` value) both limit the time; the
+        earlier one counts. The limit covers the git children too. A scan that runs out of
+        time reports nothing and says so in ``notes``.
 
         ``before`` is the :class:`Index` of an earlier scan of the same
         repository (``result.index``). With it, a name that the code had then
@@ -132,11 +139,32 @@ class Scanner:
         mentions. The Hermes hooks ask for it; nothing else does.
         """
         started = time.monotonic()
-        deadline = started + budget_s if budget_s is not None else None
+        if budget_s is not None:
+            deadline = started + budget_s if deadline is None else min(deadline, started + budget_s)
+        outer, self.repo.deadline = self.repo.deadline, deadline
+        try:
+            return self._scan(started, deadline, budget_s, overlay, checks, min_confidence, refresh, before, added)
+        finally:
+            self.repo.deadline = outer
+
+    def _scan(self, started: float, deadline: Optional[float], budget_s: Optional[float],
+              overlay: Optional[Dict[str, Optional[str]]], checks: Optional[Iterable[str]],
+              min_confidence: str, refresh: bool, before: Optional[Index], added: bool) -> ScanResult:
+        result = ScanResult(root=self.root)
+
+        def out_of_time(where: str) -> ScanResult:
+            limit = budget_s if budget_s is not None else round(max(0.0, (deadline or started) - started), 1)
+            result.incomplete = True
+            result.findings = []
+            result.notes.append(f"Time budget of {limit:g}s used up {where}; nothing reported.")
+            result.elapsed_ms = int((time.monotonic() - started) * 1000)
+            return result
+
         if refresh:
             self.repo.refresh()
+        if self.repo.out_of_time:
+            return out_of_time("while listing the files")
         repo = self.repo.with_overlay(overlay) if overlay else self.repo
-        result = ScanResult(root=self.root)
         selected = resolve_checks(checks)
 
         code_files = repo.code_files()
@@ -165,13 +193,8 @@ class Scanner:
         auto_env = False
         keys: Dict[str, Any] = {}
         for n, rel in enumerate(code_files):
-            if deadline and n % 50 == 0 and time.monotonic() > deadline:
-                result.incomplete = True
-                result.notes.append(
-                    f"Time budget of {budget_s:g}s used up after indexing {n} of {len(code_files)} files; nothing reported."
-                )
-                result.elapsed_ms = int((time.monotonic() - started) * 1000)
-                return result
+            if deadline is not None and n % 50 == 0 and time.monotonic() > deadline:
+                return out_of_time(f"after indexing {n} of {len(code_files)} files")
             ff = self._file_facts(repo, rel)
             if ff is None:
                 continue
@@ -188,7 +211,9 @@ class Scanner:
         project = self._project_for(repo, (sig, len(repo.files)))
 
         docs: List[Doc] = []
-        for rel in doc_files:
+        for n, rel in enumerate(doc_files):
+            if deadline is not None and time.monotonic() > deadline:
+                return out_of_time(f"after reading {n} of {len(doc_files)} doc files")
             d = self._doc(repo, rel)
             if d is not None:
                 docs.append(d)
@@ -200,13 +225,13 @@ class Scanner:
 
         def doc_mentions() -> Tuple[Set[str], Set[str]]:
             if not mention_cache:
-                mention_cache.append(self._doc_mentions(repo))
+                mention_cache.append(self._doc_mentions(repo, deadline))
             return mention_cache[0]
 
         ctx = Context(
             repo=repo, docs=docs, project=project, env_tokens=env_tokens, flag_literals=flag_literals,
             facts=facts, dyn_prefixes=dyn_prefixes, auto_env=auto_env, loose=loose, doc_mentions=doc_mentions,
-            before=before, keys=keys, under_tokens=under_tokens,
+            before=before, keys=keys, under_tokens=under_tokens, deadline=deadline,
         )
         result.index = Index(
             flag_literals=frozenset(flag_literals), product_flag_literals=frozenset(product_flag_literals),
@@ -217,13 +242,12 @@ class Scanner:
         floor = CONFIDENCE_ORDER.get(min_confidence, 1)
         findings: List[Finding] = []
         for name in selected:
-            if deadline and time.monotonic() > deadline:
-                result.incomplete = True
-                result.notes.append(f"Time budget of {budget_s:g}s used up before check {name}; nothing reported.")
-                findings = []
-                break
+            if deadline is not None and time.monotonic() > deadline:
+                return out_of_time(f"before check {name}")
             try:
-                found = ALL_CHECKS[name](ctx)
+                found = list(ALL_CHECKS[name](ctx))
+            except OutOfTime:
+                return out_of_time(f"in check {name}")
             except Exception as exc:  # a broken check must not hide the others
                 result.notes.append(f"check {name} failed: {type(exc).__name__}: {exc}")
                 continue
@@ -232,15 +256,20 @@ class Scanner:
                     findings.append(f)
                 else:
                     ctx.skip("below-min-confidence")
-        if added and before is not None and not result.incomplete:
+        if added and before is not None:
             try:
-                for f in added_undocumented(ctx):
+                for f in list(added_undocumented(ctx)):
                     if CONFIDENCE_ORDER.get(f.confidence, 1) >= floor:
                         findings.append(f)
                     else:
                         ctx.skip("below-min-confidence")
+            except OutOfTime:
+                return out_of_time("while looking for names the edit added")
             except Exception as exc:
                 result.notes.append(f"added-name report failed: {type(exc).__name__}: {exc}")
+        if repo.out_of_time or self.repo.out_of_time:
+            # a git child was cut short, so a check worked from an incomplete answer
+            return out_of_time("while git was answering")
         seen: Set[str] = set()
         unique: List[Finding] = []
         for f in sorted(findings, key=lambda x: (x.doc_file, x.doc_line, x.check, x.name)):
@@ -337,13 +366,15 @@ class Scanner:
                     out.add(n)
         return out
 
-    def _doc_mentions(self, repo: Repo) -> Tuple[Set[str], Set[str]]:
+    def _doc_mentions(self, repo: Repo, deadline: Optional[float] = None) -> Tuple[Set[str], Set[str]]:
         """Every --flag and ENV_NAME written in any doc-like file (checked or not)."""
         flags: Set[str] = set()
         envs: Set[str] = set()
         for rel in repo.files:
             if not rel.lower().endswith(_MENTION_EXT) or not may_read(rel.rsplit("/", 1)[-1]):
                 continue
+            if deadline is not None and time.monotonic() > deadline:
+                raise OutOfTime()
             key = repo.stat_key(rel)
             hit = self._mentions.get(rel)
             if not hit or hit[0] != key:
@@ -362,10 +393,16 @@ class Scanner:
         differ from ``rev`` are replaced by their content at ``rev``.
         """
         started = time.monotonic()
-        self.repo.refresh()
-        overlay = self.repo.changed_vs(rev)
+        self.repo.deadline = kw.get("deadline")
+        try:
+            self.repo.refresh()
+            overlay = None if self.repo.out_of_time else self.repo.changed_vs(rev)
+        finally:
+            self.repo.deadline = None
         if overlay is None:
             current = self.scan(refresh=False, **kw)
+            if current.incomplete:
+                return current, [], None
             return current, [], "not a git repository (or git failed); showing every finding"
         if not overlay:
             current = self.scan(refresh=False, **kw)

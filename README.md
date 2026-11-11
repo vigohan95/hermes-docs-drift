@@ -367,7 +367,7 @@ The repositories were used in four sets. The tuning set (8) was scanned while th
 were being written. Held-out 1 (8), held-out 2 (8) and held-out 3 (12) were each scanned for
 the first time with a fixed commit of the scanner, and that first run is the only unseen one
 for that set. The checks were changed after held-out 1 and after held-out 2. They were not
-changed after held-out 3.
+changed after held-out 3 until version 0.1.1 (below the table).
 
 | Run | Scanner commit | Set | Seen before? | Default checks: found / true | Opt-in checks: found / true |
 | --- | --- | --- | --- | --- | --- |
@@ -382,6 +382,11 @@ changed after held-out 3.
 
 The checks at `4a1d964` are the checks of the final run: `docsdrift/checks.py`, `facts.py`
 and `docs.py` did not change in between.
+
+Version 0.1.1 replaced regular expressions in those three files with ones that take linear
+time ([SECURITY.md](SECURITY.md)). That was not meant to change what a check reports, and
+scanned again with 0.1.1 all 36 repositories give the findings of the runs in the table
+([evidence/rescan.txt](evidence/rescan.txt)).
 
 Read plainly:
 
@@ -461,7 +466,9 @@ not.
 All runs are in [evidence/recall.txt](evidence/recall.txt). The last row was run once, on
 the 12 repositories of held-out 3, after everything above it, and nothing in the scanner was
 changed because of it. Three of those 12 repositories gave no candidate (no name that both
-the code and a checked doc contain), so the 221 come from 9.
+the code and a checked doc contain), so the 221 come from 9. Repeated with version 0.1.1,
+the final run and round 5 give the same rows
+([evidence/reinject.txt](evidence/reinject.txt)).
 
 "Edit-aware" is what the hooks and `changed_only` do. "Plain scan" is a whole-repository
 scan of the changed tree with no knowledge of the edit. The gap between the two columns is
@@ -543,11 +550,20 @@ call takes about three seconds on this machine and varies by several hundred mil
 from run to run, which is more than the hooks add on a project of this size; these numbers
 do not show a cost and do not rule out a small one.
 
-A hook stops scanning when it has used `hook_time_budget_s` (default 8 seconds). The first
-time that happens in a session the tool result gets a `not_checked` note saying so; after
-that the hook adds nothing. Files already parsed stay cached, so on a large repository
-the first edits of a session may go unchecked and later ones are checked. On a repository
-the size of Hermes Agent the first scan does not fit in that budget.
+One call of a hook has one time limit, `hook_time_budget_s` (default 8 seconds, never less
+than 1). The limit covers everything the call does: waiting for another docs-drift scan in
+the same process, the git children and the scans. No git child is started after the limit,
+a git child still running at the limit is stopped, and the checks look at the clock between
+doc files. A regular-expression search that has started cannot be stopped, so a call can
+run past the limit by the time one search takes; [SECURITY.md](SECURITY.md) says how the
+patterns were timed. Hermes stops waiting for a `pre_tool_call` hook after 30 seconds and
+blocks the tool call, which is why the limit is far below that.
+
+When the limit is reached, nothing is reported for that edit. The first time that happens
+in a session the tool result gets a `not_checked` note saying so; after that the hook adds
+nothing. Files already parsed stay cached, so on a large repository the first edits of a
+session may go unchecked and later ones are checked. On a repository the size of Hermes
+Agent the first scan does not fit in that budget.
 
 ## Settings
 
@@ -560,7 +576,7 @@ Under `plugins.entries.docs-drift` in the Hermes config:
 | `report_after_edit` | `true` | Add the `docs_drift` entry to edit results. Set to `false` for reminder-only mode. |
 | `nudge_before_finish` | `true` | Ask the agent to continue once if it finishes while drift it introduced is open. |
 | `report_added` | `true` | In a session, also say when an edit added a flag or environment variable that no doc mentions (see "Names an edit added"). |
-| `hook_time_budget_s` | `8` | Seconds a hook may spend scanning. |
+| `hook_time_budget_s` | `8` | Seconds one call of a hook may take: the wait for another scan, git and the scan together. Whole seconds, at least 1. |
 | `max_reported` | `8` | Findings listed in one hook message. |
 | `ignore_names` | `[]` | Flag, variable, script or target names never to report. |
 | `ignore_paths` | `[]` | Glob patterns of doc files never to report on. |
@@ -630,16 +646,30 @@ the numbers of the code that is shipped.
 
 ## What it runs and reads
 
-- Runs `git ls-files`, `git status`, `git show`, `git diff --name-only` and
-  `git check-ignore` in the repository being checked, with `GIT_OPTIONAL_LOCKS=0`. It runs
+- Runs `git ls-files`, `git status`, `git cat-file blob`, `git diff --cached --name-only`,
+  `git check-ignore` and `git config --get-regexp` in the repository being checked. It runs
   no other program.
+- Does not let that repository's git config start a program. Every git child gets
+  `-c core.fsmonitor=false`, `-c core.hooksPath=` the null device,
+  `-c core.untrackedCache=false` and every `protocol.<name>.allow=never`; the filter drivers
+  the config names are set to empty; `diff` runs with `--no-textconv` and `--no-ext-diff`,
+  and submodules are ignored.
+- Gives git a small environment: `PATH`, `HOME`, `LANG` and `LC_ALL` from the parent (on
+  Windows also `SYSTEMROOT`, `TEMP`, `TMP` and `USERPROFILE`), plus `GIT_OPTIONAL_LOCKS=0`,
+  `GIT_TERMINAL_PROMPT=0`, `GIT_NO_LAZY_FETCH=1`, `GIT_ALLOW_PROTOCOL=:` and a
+  `GIT_WORK_TREE` that is the repository being checked. No API key and no inherited
+  `GIT_DIR` reaches it.
 - Reads text files in that repository and `.git/config` (for the repository name). It never
   opens `.env` files, key files or credential stores; the list is in `docsdrift/repo.py`.
+- Follows a symbolic link (on Windows also a junction) only when the file it leads to is
+  inside the repository, outside every `.git` directory, and not one of those names. The
+  same holds for a file below a linked directory. Anything else is treated as a file that
+  cannot be read.
 - Writes nothing. The baseline and the cache live in memory for the session.
 - Makes no network request and sends no telemetry.
 
-[SECURITY.md](SECURITY.md) adds what text from the repository reaches the model through a
-finding, and how to report a problem.
+[SECURITY.md](SECURITY.md) has the details and the tests behind these lines, what text from
+the repository reaches the model through a finding, and how to report a problem.
 
 ## The demos
 
@@ -710,13 +740,15 @@ without a terminal, is [evidence/slash-command.txt](evidence/slash-command.txt).
 ## Development
 
 ```sh
-python -m pytest                      # 263 tests; needs pytest and nothing else
+python -m pytest                      # 301 tests; needs pytest and nothing else
 python -m docsdrift . --checks all    # this repository checks its own docs
 python benchmarks/run_scans.py <clones_dir> <out_dir> owner__name ...
 python benchmarks/precision.py evidence/scans evidence/labels.json
 python benchmarks/inject.py <clones_dir> <out_dir> owner__name ...
 python benchmarks/summarize_inject.py evidence/injected/final-tuning
 python benchmarks/summarize_real.py evidence/real-model/round3
+python benchmarks/compare_scans.py <clones_dir>     # scan again, compare with evidence/scans
+python benchmarks/regex_timing.py                   # time every pattern on long repetitive input
 ```
 
 `<clones_dir>` holds one clone per repository, named `owner__name`, checked out at the
@@ -730,11 +762,12 @@ scripted demos in two Hermes checkouts: `b7db40d`, the commit the recorded sessi
 with, and `3d4dd10`, which was upstream `main` on 2026-11-10 at 17:13 UTC, 986 commits later.
 Each of those two jobs fails if the validator's security scan line says anything but `safe`,
 and installs without `--force` and without a terminal. They do not run `demo/run_real.py` or
-`demo/type_drift.py`. All eleven jobs passed on commit `dd5df40`. The one commit after it
-changed text in this file and added `CHANGELOG.md` and `SECURITY.md`; no code, test or
-workflow file changed. The first run, on `35e6564`, failed in the nine test jobs: pytest
-imported the entry point under the name of the checkout directory, which is not a Python
-identifier there. That is fixed in `2eb97cd` and `tests/test_layout.py` guards it. The
+`demo/type_drift.py`. All eleven jobs passed on commit `dd5df40`, the last commit of
+version 0.1.0 that changed code. A file cannot name the run of the commit that contains it:
+the runs of later commits are listed at
+<https://github.com/vigohan95/hermes-docs-drift/actions/workflows/ci.yml>. The first run, on
+`35e6564`, failed in the nine test jobs: pytest imported the entry point under the name of
+the checkout directory, which is not a Python identifier there. That is fixed in `2eb97cd` and `tests/test_layout.py` guards it. The
 real-model sessions and the precision and injection measurements were run on one Windows
 machine and nowhere else.
 

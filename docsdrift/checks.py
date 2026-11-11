@@ -12,7 +12,8 @@ import difflib
 import fnmatch
 import posixpath
 import re
-from typing import Any, Callable, Dict, Iterable, List, Optional, Set, Tuple
+import time
+from typing import Any, Callable, Dict, Iterable, Iterator, List, Optional, Set, Tuple
 from urllib.parse import unquote
 
 from .docs import Command, Doc, block_at, commands_of, table_columns, table_header_for
@@ -88,8 +89,10 @@ PLACEHOLDER_WORDS = re.compile(
 )
 GENERATED_FIRST_SEG = {"dist", "build", "out", "target", "node_modules", "coverage", ".next", "bin", "obj", "public", "tmp", "_build", "site"}
 SITE_DIR_NAMES = {"docs", "doc", "website", "site", "content", "documentation", "book", "guide", "guides", "pages", "wiki"}
+# Each optional word owns the whitespace after it, so no two \s* runs are adjacent: a long run
+# of spaces after "default" is walked once, not once per way of splitting it between them.
 DEFAULT_RX = re.compile(
-    r"(?i)\bdefaults?\b(?:\s+value)?\s*(?:is|to|of|are)?\s*[:=]?\s*"
+    r"(?i)\bdefaults?\b(?:\s+value)?\s*(?:(?:is|to|of|are)\s*)?(?:[:=]\s*)?"
     r"(`[^`]+`|\"[^\"]+\"|'[^']+'|-?\d+(?:\.\d+)?(?![\w.%])|\btrue\b|\bfalse\b)"
 )
 ANNOUNCED_RX = re.compile(r"(?i)\b(?:will|shall|going to)(?: (?:soon|then|later|eventually))? (?:be the |become the )?$")
@@ -105,6 +108,10 @@ HIDDEN_NAME = re.compile(r"(debug|internal|experimental|deprecated|hidden|unsafe
 def _clip(s: str, n: int = 180) -> str:
     s = " ".join(s.split())
     return s if len(s) <= n else s[: n - 3] + "..."
+
+
+class OutOfTime(Exception):
+    """The caller's deadline passed while a check was running; the scan reports nothing."""
 
 
 class Context:
@@ -125,9 +132,11 @@ class Context:
         before: Optional[Index] = None,
         keys: Optional[Dict[str, Any]] = None,
         under_tokens: Optional[Set[str]] = None,
+        deadline: Optional[float] = None,
     ):
         self.repo = repo
         self.docs = docs
+        self.deadline = deadline          # time.monotonic() value; None: no limit
         self.project = project
         self.env_tokens = env_tokens
         self.flag_literals = flag_literals
@@ -175,6 +184,13 @@ class Context:
         self.changed_files: List[str] = []
         if before is not None:
             self._diff(before, keys or {})
+
+    def each_doc(self) -> Iterator[Doc]:
+        """The docs, one at a time; raises :class:`OutOfTime` once the deadline has passed."""
+        for doc in self.docs:
+            if self.deadline is not None and time.monotonic() > self.deadline:
+                raise OutOfTime()
+            yield doc
 
     def _diff(self, before: Index, keys: Dict[str, Any]) -> None:
         def product(facts: List[Fact]) -> Optional[Fact]:
@@ -282,7 +298,7 @@ class Context:
             base = base[:-4] if base.endswith(".git") else base
             if base.lower() not in names:
                 return True
-        for m in re.finditer(r"(?:^|&&|;)\s*\$?\s*cd\s+(\S+)", text, re.M):
+        for m in re.finditer(r"(?:^|&&|;)[ \t]*(?:\$[ \t]*)?cd[ \t]+(\S+)", text, re.M):
             target = m.group(1).strip("\"'").rstrip("/")
             if target in ("..", "-", "~", ".", "") or target.startswith(("$", "<", "{")):
                 continue
@@ -411,7 +427,7 @@ def _leads_item(text: str, flag_text: str) -> bool:
             return True
         before = body[:pos]
     before = re.sub(r"`\s*-[^`]*`", "", before)            # other flags listed first: `-o`, `--out`
-    before = re.sub(r"<[^>]+>|\bor\b|[\s`*_,/()\[\]:]", "", before)
+    before = re.sub(r"<[^<>]+>|\bor\b|[\s`*_,/()\[\]:]", "", before)
     return before == ""
 
 
@@ -436,7 +452,7 @@ def check_cli_flags(ctx: Context) -> List[Finding]:
     """cli-flag-undefined: flags used in docs with this project's own command."""
     claims: Dict[Tuple[str, str], Dict[str, Any]] = {}   # (doc, key) -> info
     per_command: Dict[str, Set[str]] = {}
-    for doc in ctx.docs:
+    for doc in ctx.each_doc():
         for cmd in ctx.commands(doc):
             own = own_command(ctx, doc, cmd.tokens)
             if not own:
@@ -645,7 +661,7 @@ def check_flags_undocumented(ctx: Context) -> List[Finding]:
             continue
         # where the siblings are documented
         best_doc, best_line, best_n = None, 0, 0
-        for doc in ctx.docs:
+        for doc in ctx.each_doc():
             where = ctx.flag_lines(doc)
             hits = [where[k] for k in documented if k in where]
             if len(hits) > best_n:
@@ -731,7 +747,7 @@ def _removed_env_findings(ctx: Context) -> List[Finding]:
             rx[name] = re.compile(
                 r"(?:\benv\.|\$\{?)" + esc + r"(?![A-Za-z0-9_])|(?<![A-Za-z0-9_.])" + esc + r"=|`" + esc + r"`"
             )
-    for doc in ctx.docs:
+    for doc in ctx.each_doc():
         for name, pat in rx.items():
             code_only = "_" not in name
             lines: List[int] = []
@@ -772,7 +788,7 @@ def _removed_env_findings(ctx: Context) -> List[Finding]:
 def check_env(ctx: Context) -> List[Finding]:
     findings: List[Finding] = _removed_env_findings(ctx) if ctx.removed_envs else []
     pending: List[Tuple[Doc, str, List[int], str]] = []
-    for doc in ctx.docs:
+    for doc in ctx.each_doc():
         for name, lines in _doc_env_claims(doc).items():
             if len(name) < 5 or name in ctx.env_tokens or name in ctx.removed_envs:
                 continue
@@ -851,7 +867,7 @@ def check_env_undocumented(ctx: Context) -> List[Finding]:
         if not missing or len(documented) < 3 or len(documented) < 0.6 * len(names):
             continue
         best_doc, best_line, best_n = None, 0, 0
-        for doc in ctx.docs:
+        for doc in ctx.each_doc():
             where = ctx.env_lines(doc)
             hits = [where[d] for d in documented if d in where]
             if len(hits) > best_n:
@@ -920,7 +936,7 @@ def _doc_default(doc: Doc, line: int, name_span: str) -> Optional[str]:
 
 def check_defaults(ctx: Context) -> List[Finding]:
     findings: List[Finding] = []
-    for doc in ctx.docs:
+    for doc in ctx.each_doc():
         by_line: Dict[int, List[str]] = {}
         for sp in doc.spans:
             by_line.setdefault(sp.line, []).append(sp.text)
@@ -1020,7 +1036,7 @@ def check_npm_scripts(ctx: Context) -> List[Finding]:
     if not ctx.removed_npm and (not p.has_package_json or not p.npm_scripts):
         return []
     findings: List[Finding] = []
-    for doc in ctx.docs:
+    for doc in ctx.each_doc():
         refs: Dict[str, List[Command]] = {}
         for cmd in ctx.commands(doc):
             name = _npm_script_of(cmd.tokens, ctx.removed_npm)
@@ -1096,7 +1112,7 @@ def check_make_targets(ctx: Context) -> List[Finding]:
     if removed_only and not ctx.removed_make:
         return []
     findings: List[Finding] = []
-    for doc in ctx.docs:
+    for doc in ctx.each_doc():
         refs: Dict[str, List[Command]] = {}
         for cmd in ctx.commands(doc):
             t = cmd.tokens
@@ -1200,7 +1216,7 @@ def check_paths(ctx: Context) -> List[Finding]:
         basenames.setdefault(f.rsplit("/", 1)[-1], []).append(f)
     findings: List[Finding] = []
     unchecked: Set[str] = set()      # missing targets that git has not been asked about yet
-    for doc in ctx.docs:
+    for doc in ctx.each_doc():
         site = _site_mode(ctx, doc.path)
         doc_dir = posixpath.dirname(doc.path)
         seen: Dict[str, Finding] = {}
@@ -1266,6 +1282,9 @@ def check_paths(ctx: Context) -> List[Finding]:
                 ctx.skip("link-into-submodule")
                 continue
             segs = target.split("/")
+            if any(s.casefold() == ".git" for s in segs):
+                ctx.skip("link-into-git-directory")      # never looked at, so nothing to say about it
+                continue
             if any(repo.has_file("/".join(segs[:i])) for i in range(1, len(segs))):
                 ctx.skip("link-through-symlink")
                 continue
@@ -1335,7 +1354,7 @@ def check_path_refs(ctx: Context) -> List[Finding]:
         basenames.setdefault(f.rsplit("/", 1)[-1], []).append(f)
     top_dirs = {f.split("/", 1)[0] for f in repo.files if "/" in f}
     findings: List[Finding] = []
-    for doc in ctx.docs:
+    for doc in ctx.each_doc():
         doc_dir = posixpath.dirname(doc.path)
         seen: Dict[str, Finding] = {}
         for sp in doc.spans:
@@ -1409,7 +1428,7 @@ def _sibling_place(ctx: Context, lines_of: Callable[[Doc], Dict[int, Set[str]]],
     """(doc, line, sibling names found there) for the doc that names the most siblings."""
     for names in (preferred, others):
         best: Optional[Tuple[Doc, int, List[str]]] = None
-        for doc in ctx.docs:
+        for doc in ctx.each_doc():
             by_line = {ln: hit & names for ln, hit in lines_of(doc).items() if hit & names}
             found = sorted(set().union(*by_line.values())) if by_line else []
             if found and (best is None or len(found) > len(best[2])):

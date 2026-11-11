@@ -11,14 +11,75 @@ from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Tuple
 
 FENCE = re.compile(r"^(\s{0,3})(`{3,}|~{3,})\s*([^\s`{]*)")
-HEADING = re.compile(r"^\s{0,3}(#{1,6})\s+(.*?)\s*#*\s*$")
-CODE_SPAN = re.compile(r"(`+)(.+?)\1")
+HEADING = re.compile(r"^\s{0,3}(#{1,6})\s+(.*)$")
+_TICKS = re.compile(r"`+")
+# A target in angle brackets holds no "<" (as in CommonMark). With "<" allowed in it, every "](<"
+# of a line full of them was read to the end of the line.
 LINK_TARGET = re.compile(
-    r"\]\(\s*(<[^>\n]+>|[^()\s]+(?:\([^()\s]*\)[^()\s]*)*)(?:\s+(?:\"[^\"]*\"|'[^']*'))?\s*\)"
+    r"\]\(\s*(<[^<>\n]+>|[^()\s]+(?:\([^()\s]*\)[^()\s]*)*)(?:\s+(?:\"[^\"]*\"|'[^']*'))?\s*\)"
 )
 REF_DEF = re.compile(r"^\s{0,3}\[([^\]^][^\]]*)\]:\s*(<[^>]+>|\S+)")
 # The attribute must follow whitespace: `:href="expr"` / `v-bind:href` are template bindings, not paths.
-HTML_SRC = re.compile(r"<(?:img|a|source|video)\b(?:[^>]*?\s)?(?:src|href)\s*=\s*[\"']([^\"']+)[\"']", re.I)
+# The attributes before src/href are bounded and hold no "<": without that a line of
+# "<a <a <a ..." is walked to its end (or 512 characters on) once per "<a".
+HTML_SRC = re.compile(r"<(?:img|a|source|video)\b(?:[^<>]{0,512}?\s)?(?:src|href)\s*=\s*[\"']([^\"']+)[\"']", re.I)
+
+
+def heading_text(rest: str) -> str:
+    """The text of an ATX heading without its closing ``#`` run (``rest`` is what follows the opening)."""
+    return rest.rstrip().rstrip("#").rstrip()
+
+
+def code_spans(line: str) -> List[Tuple[int, int, int]]:
+    """The code spans of one line as ``(start, end, n)``: n backticks, the body, n backticks.
+
+    The spans are the matches of ``(`+)(.+?)\\1``, found in one pass over the line. The pattern
+    itself tries every way of cutting up a long run of backticks and needs cubic time for it.
+    """
+    runs = [(m.start(), m.end()) for m in _TICKS.finditer(line)]
+    if not runs:
+        return []
+    longest_after = [0] * len(runs)
+    for i in range(len(runs) - 2, -1, -1):
+        longest_after[i] = max(longest_after[i + 1], runs[i + 1][1] - runs[i + 1][0])
+    out: List[Tuple[int, int, int]] = []
+    i, pos = 0, runs[0][0]
+    while i < len(runs):
+        start, end = runs[i]
+        pos = max(pos, start)
+        left = end - pos                       # backticks from pos to the end of this run
+        # The opening takes as many backticks as some closing can repeat: one later in the line,
+        # or one cut from this same run with at least one backtick between as the body.
+        n = max(min(left, longest_after[i]), (left - 1) // 2)
+        if n <= 0:
+            i += 1
+            continue
+        if 2 * n + 1 <= left:
+            close = pos + n + 1
+        else:
+            i += 1
+            while runs[i][1] - runs[i][0] < n:
+                i += 1
+            close = runs[i][0]
+        out.append((pos, close + n, n))
+        pos = close + n
+    return out
+
+
+def _replace_spans(line: str, change) -> str:
+    """``line`` with every code span replaced by ``change(span text)``."""
+    spans = code_spans(line)
+    if not spans:
+        return line
+    parts: List[str] = []
+    at = 0
+    for start, end, _n in spans:
+        parts.append(line[at:start])
+        parts.append(change(line[start:end]))
+        at = end
+    parts.append(line[at:])
+    return "".join(parts)
+
 
 SHELL_LANGS = {
     "", "sh", "bash", "shell", "zsh", "console", "terminal", "shell-session",
@@ -182,14 +243,14 @@ def parse_markdown(path: str, text: str) -> Doc:
                 continue
             h = HEADING.match(ln)
             if h:
-                title = re.sub(r"[`*_]", "", h.group(2)).strip()
+                title = re.sub(r"[`*_]", "", heading_text(h.group(2))).strip()
                 doc.headings.append((idx + 1, len(h.group(1)), title))
             # indented code blocks are ignored (ambiguous with list continuation)
-            for sm in CODE_SPAN.finditer(ln):
-                body = sm.group(2).strip()
+            for start, end, n in code_spans(ln):
+                body = ln[start + n:end - n].strip()
                 if body:
                     doc.spans.append(Span(idx + 1, body))
-            no_code = CODE_SPAN.sub(lambda mm: " " * len(mm.group(0)), ln)
+            no_code = _replace_spans(ln, lambda span: " " * len(span))
             for lm in LINK_TARGET.finditer(no_code):
                 doc.links.append(Link(idx + 1, lm.group(1).strip("<>"), "link"))
             rm = REF_DEF.match(no_code)
@@ -300,7 +361,7 @@ def table_columns(line: str) -> List[str]:
     if "|" not in s:
         return []
     # protect pipes inside code spans
-    protected = CODE_SPAN.sub(lambda m: m.group(0).replace("|", "\0"), s)
+    protected = _replace_spans(s, lambda span: span.replace("|", "\0"))
     if protected.startswith("|"):
         protected = protected[1:]
     if protected.endswith("|"):
@@ -314,6 +375,6 @@ def table_header_for(doc: Doc, line: int) -> List[str]:
     while i > 0 and "|" in doc.lines[i - 1] and not doc.in_block[i - 1]:
         i -= 1
     # i is the first row of the table; a header is followed by a |---| row
-    if i + 1 < len(doc.lines) and re.match(r"^\s*\|?\s*:?-{2,}", doc.lines[i + 1]):
+    if i + 1 < len(doc.lines) and re.match(r"^\s*(?:\|\s*)?:?-{2,}", doc.lines[i + 1]):
         return [c.lower() for c in table_columns(doc.lines[i])]
     return []

@@ -1,0 +1,7 @@
+final-tuning: files same 8, different 0; rows 260
+  first ten compared final-heldout1/nektos__act.json: path Makefile (stored 10 other findings, now 14)
+final-heldout1: files same 8, different 0; rows 179
+final-heldout2: files same 8, different 0; rows 133
+round5-heldout3: files same 12, different 0; rows 245
+
+files compared: 36; missing: 0; rows: 817; rows that differ: 0; rows compared on their first ten other findings: 1

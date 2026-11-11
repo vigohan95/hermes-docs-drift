@@ -409,7 +409,7 @@ def _toml_section_keys(text: str, section: str) -> List[str]:
     m = re.search(r"^\[" + re.escape(section) + r"\]\s*$(.*?)(?=^\[|\Z)", text, re.M | re.S)
     if not m:
         return []
-    return re.findall(r"^\s*[\"']?([\w.-]+)[\"']?\s*=", m.group(1), re.M)
+    return re.findall(r"^[ \t]*[\"']?([\w.-]+)[\"']?[ \t]*=", m.group(1), re.M)
 
 
 def scan_project(repo: Repo) -> Project:

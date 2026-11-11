@@ -1,7 +1,9 @@
 # Evidence
 
 Everything here was produced by running the code in this repository on one Windows 11
-machine on 2026-11-10. Nothing was edited afterwards except where a file says so. The test
+machine on 2026-11-10; `rescan.txt`, `reinject.txt` and `regex-timing.txt` were made on the
+same machine on 2026-11-11 (UTC) with version 0.1.1. Nothing was edited afterwards except
+where a file says so. The test
 suite and the scripted example sessions also run in CI (Linux, macOS and Windows for the
 tests; Linux for Hermes); no file in this directory comes from CI.
 
@@ -19,7 +21,11 @@ Commits after `b7ba05d` change the hooks, the command line, the wording of the r
 elapsed-time field of change scans, the README and the files in this directory. They do not
 change a check (`docsdrift/checks.py`, `facts.py` and `docs.py` are the same files at
 `b7ba05d` and at `4a1d964`), so the final run was not repeated, and round 4 measures the same
-checks on repositories they had not seen. No check was changed after round 4.
+checks on repositories they had not seen. No check was changed after round 4 until version
+0.1.1. That version replaced regular expressions in those three files with ones that take
+linear time, and changed how files are listed and reached (`repo.py`); `SECURITY.md` has
+the reasons. It was not meant to change what a check reports. Whether it did is what `rescan.txt` and `reinject.txt` test: no difference in the
+scans of the final run and of round 4, and none in the rows of the injection runs.
 
 The four sets and the commit each repository was scanned at are in `targets.txt`.
 
@@ -35,6 +41,9 @@ The four sets and the commit each repository was scanned at are in `targets.txt`
 | `precision.txt` | Output of `python benchmarks/precision.py evidence/scans evidence/labels.json`. |
 | `injected/<run>-<set>/*.json` | Result of every injected change. Written by `benchmarks/inject.py`. |
 | `recall.txt` | Output of `benchmarks/summarize_inject.py` for every directory in `injected/`. |
+| `rescan.txt` | Output of `python benchmarks/compare_scans.py <clones_dir>` with version 0.1.1: the 36 repositories scanned again and compared with every file in `scans/`. The files of round 3, the final run and round 4 are equal. The files that differ are from round 1 and round 2, written by scanners whose rules were changed in the rounds after them. |
+| `reinject.txt` | Output of `benchmarks/compare_injected.py` after `final-tuning`, `final-heldout1`, `final-heldout2` and `round5-heldout3` were run again with version 0.1.1: every row compared with `injected/`, except the time a scan took. |
+| `regex-timing.txt` | Output of `python benchmarks/regex_timing.py 32000 8` with version 0.1.1: every regular expression in `docsdrift/` timed on long repetitive strings. |
 | `hermes-self/round3/hermes-agent.json` | Scan of Hermes Agent with scanner `8ff4f2c`, before the rules that followed from it. |
 | `hermes-self/final/hermes-agent.json` | Scan of Hermes Agent with scanner `b7ba05d`. |
 | `hermes-self/labels.json` | Hand labels for the 33 default-check findings of that final scan. Its opt-in findings are not labelled. |

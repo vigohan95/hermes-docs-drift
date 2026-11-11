@@ -1,0 +1,30 @@
+docsdrift 0.1.1; python 3.11.9 on win32
+same = findings, file counts and withheld counts are equal to the stored file
+
+final-heldout1: same 8, different 0, skipped 0
+final-heldout2: same 8, different 0, skipped 0
+final-tuning: same 8, different 0, skipped 0
+  different round1-heldout1/casey__just: findings 2 -> 0 (only stored 2, only now 0); doc files 6 -> 6; code files 317 -> 317
+  different round1-heldout1/simonw__llm: findings 1 -> 0 (only stored 1, only now 0); doc files 29 -> 29; code files 92 -> 92
+  different round1-heldout1/yt-dlp__yt-dlp: findings 5 -> 0 (only stored 5, only now 0); doc files 7 -> 7; code files 1197 -> 1197
+round1-heldout1: same 5, different 3, skipped 0
+  different round1-tuning/Aider-AI__aider: findings 2 -> 2 (only stored 0, only now 0); doc files 116 -> 116; code files 367 -> 367
+  different round1-tuning/encode__uvicorn: findings 0 -> 0 (only stored 0, only now 0); doc files 16 -> 16; code files 109 -> 109
+  different round1-tuning/go-task__task: findings 0 -> 0 (only stored 0, only now 0); doc files 101 -> 101; code files 803 -> 803
+  different round1-tuning/nvm-sh__nvm: findings 0 -> 0 (only stored 0, only now 0); doc files 5 -> 5; code files 504 -> 504
+  different round1-tuning/psf__black: findings 1 -> 1 (only stored 0, only now 0); doc files 27 -> 27; code files 516 -> 516
+  different round1-tuning/sharkdp__fd: findings 0 -> 0 (only stored 0, only now 0); doc files 2 -> 2; code files 51 -> 51
+  different round1-tuning/vitejs__vite: findings 0 -> 0 (only stored 0, only now 0); doc files 54 -> 54; code files 2723 -> 2723
+round1-tuning: same 1, different 7, skipped 0
+round2-heldout1: same 8, different 0, skipped 0
+  different round2-heldout2/mikefarah__yq: findings 2 -> 1 (only stored 1, only now 0); doc files 163 -> 163; code files 392 -> 392
+  different round2-heldout2/pdm-project__pdm: findings 10 -> 7 (only stored 3, only now 0); doc files 25 -> 25; code files 349 -> 349
+round2-heldout2: same 6, different 2, skipped 0
+round2-tuning: same 8, different 0, skipped 0
+round3-heldout1: same 8, different 0, skipped 0
+round3-heldout2: same 8, different 0, skipped 0
+round3-tuning: same 8, different 0, skipped 0
+round4-heldout3: same 12, different 0, skipped 0
+
+stored files: same 88, different 12, skipped 0
+repositories scanned: 36; findings now: 78; slowest scan: 9.0s
